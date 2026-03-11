@@ -251,9 +251,10 @@ a:hover {
 }
 
 .logo-img {
-    height: 150px;
-    /* Matched the exact computed height of the btn: 24px (1.5rem line height) + 12px padding top + 12px padding bottom + 2px border */
+    height: auto;
+    max-height: 150px;
     width: auto;
+    object-fit: contain;
     filter: invert(1);
     /* Assuming black logo, making it suitable for dark theme */
 }
@@ -894,4 +895,60 @@ a:hover {
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .logo-img {
+        height: auto;
+        max-height: 150px;
+        width: 200px;
+        object-fit: contain;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 8vw, 3.5rem);
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .section {
+        padding: 4rem 0;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .footer-brand {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-brand .max-w-sm {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .kpi-grid,
+    .perk-stats-grid,
+    .footer-links {
+        grid-template-columns: 1fr;
+    }
 }
