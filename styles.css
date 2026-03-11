@@ -942,6 +942,10 @@ a:hover {
     .footer-brand .max-w-sm {
         text-align: center;
     }
+    
+    .footer-links {
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
