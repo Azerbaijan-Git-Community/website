@@ -252,9 +252,9 @@ a:hover {
 
 .logo-img {
     height: auto;
-    max-height: 150px;
+    max-height: 70px;
     width: auto;
-    object-fit: contain;
+    padding: 15px 0;
     filter: invert(1);
     /* Assuming black logo, making it suitable for dark theme */
 }
@@ -499,8 +499,9 @@ a:hover {
 
 /* Footer */
 .footer {
-    padding: 1rem 0 3rem 0;
+    padding: 3rem 0 3rem 0;
     background-color: var(--bg-main);
+
 }
 
 .footer-layout {
@@ -522,12 +523,14 @@ a:hover {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 .footer-logo {
-    height: auto;
-    max-width: 100%;
+    height: 100px;
+    width: auto;
+    object-fit: contain;
     filter: invert(1);
 }
 
@@ -546,6 +549,7 @@ a:hover {
 @media (min-width: 640px) {
     .footer-links {
         grid-template-columns: repeat(3, 1fr);
+        justify-content: center;
     }
 }
 
@@ -942,7 +946,7 @@ a:hover {
     .footer-brand .max-w-sm {
         text-align: center;
     }
-    
+
     .footer-links {
         text-align: center;
     }
