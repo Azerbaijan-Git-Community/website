@@ -1,8 +1,5 @@
 {
-  "plugins": [
-    "@trivago/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss"
-  ],
+  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/app/globals.css",
   "printWidth": 120,
   "tailwindFunctions": ["clsx", "cn"],
@@ -13,8 +10,6 @@
     "^@heroui/(.*)$",
     "^next/(.*)$",
     "^react",
-    "^@sanity/(.*)$",
-    "sanity",
     "^@/components/(.*)$",
     "^@/data/(.*)$",
     "^@/lib/(.*)$",

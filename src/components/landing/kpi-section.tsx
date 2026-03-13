@@ -1,13 +1,13 @@
 import * as motion from "motion/react-client";
+import type { IconType } from "react-icons";
 import {
+  PiBriefcase,
+  PiCalendarStar,
+  PiCode,
+  PiLightbulb,
   // PiActivity,
   PiStudent,
-  PiCode,
-  PiCalendarStar,
-  PiLightbulb,
-  PiBriefcase,
 } from "react-icons/pi";
-import type { IconType } from "react-icons";
 
 const kpis: { Icon: IconType; title: string; sub: string }[] = [
   { Icon: PiStudent, title: "Activity", sub: "Pushes, Repos" },
@@ -20,17 +20,14 @@ const kpis: { Icon: IconType; title: string; sub: string }[] = [
 
 export function KpiSection() {
   return (
-    <section className="py-24 bg-surface border-t border-b border-line">
-      <div className="max-w-300 mx-auto px-8 text-center">
-        <h2 className="font-outfit text-[2.5rem] font-bold mb-2">
-          National KPI Framework
-        </h2>
-        <p className="text-xl text-lo max-w-xl mx-auto mb-12">
-          Tracking our progress across multiple dimensions of the digital
-          ecosystem.
+    <section className="border-t border-b border-line bg-surface py-24">
+      <div className="mx-auto max-w-300 px-8 text-center">
+        <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">National KPI Framework</h2>
+        <p className="mx-auto mb-12 max-w-xl text-xl text-lo">
+          Tracking our progress across multiple dimensions of the digital ecosystem.
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {kpis.map((kpi, i) => (
             <motion.div
               key={kpi.title}
@@ -43,15 +40,10 @@ export function KpiSection() {
                 ease: [0.22, 1, 0.36, 1],
               }}
               whileHover={{ y: -5, borderColor: "var(--color-blue)" }}
-              className="glass rounded-xl p-6 transition-colors cursor-default"
+              className="glass cursor-default rounded-xl p-6 transition-colors"
             >
-              <kpi.Icon
-                className="text-[2rem] text-hi mb-2 mx-auto"
-                size={32}
-              />
-              <h4 className="font-outfit font-bold text-sm mb-1">
-                {kpi.title}
-              </h4>
+              <kpi.Icon className="mx-auto mb-2 text-[2rem] text-hi" size={32} />
+              <h4 className="mb-1 font-outfit text-sm font-bold">{kpi.title}</h4>
               <p className="text-xs text-lo">{kpi.sub}</p>
             </motion.div>
           ))}

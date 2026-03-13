@@ -80,11 +80,7 @@ body {
 
 /* Gradient text — needs -webkit-text-fill-color, no Tailwind utility */
 .text-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--color-blue) 0%,
-    var(--color-purple) 100%
-  );
+  background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-purple) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -149,9 +145,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    var(--color-blue) 0%,
-    var(--color-purple) 100%
-  );
+  background: linear-gradient(180deg, var(--color-blue) 0%, var(--color-purple) 100%);
 }

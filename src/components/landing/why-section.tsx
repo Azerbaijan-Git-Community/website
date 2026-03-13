@@ -1,6 +1,6 @@
 import * as motion from "motion/react-client";
-import { PiUsersThree, PiGitBranch, PiTrendUp } from "react-icons/pi";
 import type { IconType } from "react-icons";
+import { PiGitBranch, PiTrendUp, PiUsersThree } from "react-icons/pi";
 
 const cards: {
   Icon: IconType;
@@ -33,18 +33,15 @@ const cards: {
 export function WhySection() {
   return (
     <section id="about" className="py-24">
-      <div className="max-w-300 mx-auto px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-outfit text-[2.5rem] font-bold mb-2">
-            Why It Matters?
-          </h2>
-          <p className="text-xl text-lo max-w-xl mx-auto">
-            Addressing the core challenges in Azerbaijan&apos;s digital
-            ecosystem.
+      <div className="mx-auto max-w-300 px-8">
+        <div className="mb-16 text-center">
+          <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">Why It Matters?</h2>
+          <p className="mx-auto max-w-xl text-xl text-lo">
+            Addressing the core challenges in Azerbaijan&apos;s digital ecosystem.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {cards.map((card, i) => (
             <motion.div
               key={card.title}
@@ -59,19 +56,15 @@ export function WhySection() {
               whileHover={{ y: -5 }}
               className={`glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)] transition-colors ${
                 card.highlight
-                  ? "border-[rgba(137,87,229,0.4)] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-linear-to-r before:from-blue before:to-purple"
+                  ? "relative overflow-hidden border-[rgba(137,87,229,0.4)] before:absolute before:top-0 before:right-0 before:left-0 before:h-1 before:bg-linear-to-r before:from-blue before:to-purple"
                   : ""
               }`}
             >
-              <card.Icon className="text-[2.5rem] text-blue mb-4" />
+              <card.Icon className="mb-4 text-[2.5rem] text-blue" />
               {card.stat && (
-                <div className="font-outfit text-5xl font-extrabold text-white mb-2 leading-none">
-                  {card.stat}
-                </div>
+                <div className="mb-2 font-outfit text-5xl leading-none font-extrabold text-white">{card.stat}</div>
               )}
-              <h3 className="font-outfit text-xl font-bold mb-3">
-                {card.title}
-              </h3>
+              <h3 className="mb-3 font-outfit text-xl font-bold">{card.title}</h3>
               <p className="text-lo">{card.body}</p>
             </motion.div>
           ))}
