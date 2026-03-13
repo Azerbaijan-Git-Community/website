@@ -35,37 +35,12 @@ export function HeroSection() {
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div
-          className="blob"
-          style={{
-            top: "-10%",
-            right: "-5%",
-            width: "50vw",
-            height: "50vw",
-            background: "radial-gradient(circle, rgba(137,87,229,0.3) 0%, rgba(137,87,229,0) 70%)",
-          }}
-        />
-        <div
-          className="blob"
-          style={{
-            bottom: "-20%",
-            left: "-10%",
-            width: "60vw",
-            height: "60vw",
-            animationDelay: "-10s",
-            background: "radial-gradient(circle, rgba(46,160,67,0.2) 0%, rgba(46,160,67,0) 70%)",
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-            maskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
-          }}
-        />
+        {/* Purple blob */}
+        <div className="blob blob-purple absolute -top-[10%] -right-[5%] h-[50vw] w-[50vw]" />
+        {/* Green blob */}
+        <div className="blob blob-green absolute -bottom-[20%] -left-[10%] h-[60vw] w-[60vw] [animation-delay:-10s]" />
+        {/* Grid overlay */}
+        <div className="grid-overlay absolute inset-0" />
       </div>
     </section>
   );

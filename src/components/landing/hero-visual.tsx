@@ -60,18 +60,12 @@ export function HeroVisual() {
 
       <div className="relative h-3 overflow-hidden rounded-full bg-overlay">
         <motion.div
-          className="relative h-full rounded-full"
-          style={{
-            background: "linear-gradient(135deg, var(--color-green), var(--color-lime))",
-          }}
+          className="relative h-full rounded-full bg-linear-135 from-green to-lime"
           initial={{ width: "0%" }}
           animate={inView ? { width: "14%" } : { width: "0%" }}
           transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
         >
-          <div
-            className="absolute top-0 right-0 bottom-0 w-5 opacity-50"
-            style={{ background: "white", filter: "blur(5px)" }}
-          />
+          <div className="absolute top-0 right-0 bottom-0 w-5 bg-white opacity-50 blur-sm" />
         </motion.div>
       </div>
 
