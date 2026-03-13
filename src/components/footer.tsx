@@ -37,12 +37,13 @@ export function Footer() {
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-8 grid grid-cols-1 items-center gap-12 md:grid-cols-[2fr_3fr]">
           {/* Brand */}
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex w-full flex-col items-start gap-4">
             <Image
               src="/logo.png"
               alt="GitHub Azerbaijan"
               width={160}
               height={60}
+              unoptimized
               className="h-25 w-auto object-contain invert"
             />
             <p className="max-w-sm text-sm leading-relaxed text-lo">
