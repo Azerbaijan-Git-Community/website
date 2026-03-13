@@ -7,9 +7,7 @@ export function HeroSection() {
       id="hero"
       className="relative min-h-screen flex items-center pt-44 pb-32 overflow-hidden"
     >
-      {/* Content */}
       <div className="relative z-10 w-full max-w-300 mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Text */}
         <div>
           <span className="inline-block px-3 py-1 rounded-full border border-line text-sm font-medium text-lo bg-[rgba(48,54,61,0.5)] mb-6">
             National Open Source Program
@@ -37,11 +35,9 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Progress Visual — client island for animation */}
         <HeroVisual />
       </div>
 
-      {/* Background effects */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div
           className="blob"
@@ -66,7 +62,6 @@ export function HeroSection() {
               "radial-gradient(circle, rgba(46,160,67,0.2) 0%, rgba(46,160,67,0) 70%)",
           }}
         />
-        {/* Grid overlay */}
         <div
           className="absolute inset-0"
           style={{

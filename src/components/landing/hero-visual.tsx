@@ -27,7 +27,7 @@ function useCountUp(target: number, duration: number, active: boolean) {
 
 export function HeroVisual() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
 
   const current = useCountUp(700_000, 2.5, inView);
   const goal = useCountUp(5_000_000, 2.5, inView);
@@ -47,7 +47,6 @@ export function HeroVisual() {
         <p className="text-sm text-lo">Growing GitHub Activity</p>
       </div>
 
-      {/* Stats row */}
       <div className="flex justify-between mb-3">
         <div className="flex flex-col">
           <span className="text-xs uppercase tracking-widest text-lo mb-1">
@@ -67,7 +66,6 @@ export function HeroVisual() {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="h-3 rounded-full bg-overlay overflow-hidden relative">
         <motion.div
           className="h-full rounded-full relative"

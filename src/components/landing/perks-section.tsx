@@ -36,11 +36,10 @@ export function PerksSection() {
     <section id="perks" className="py-24">
       <div className="max-w-300 mx-auto px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left: text */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <span className="inline-block px-3 py-1 rounded-full border border-line text-sm font-medium text-lo bg-[rgba(48,54,61,0.5)] mb-4">
@@ -68,22 +67,19 @@ export function PerksSection() {
             </ul>
           </motion.div>
 
-          {/* Right: mockup */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="glass rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-              {/* Window chrome */}
               <div className="flex gap-2 px-4 py-3 bg-[rgba(48,54,61,0.5)] border-b border-line">
                 <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                 <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
                 <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
               </div>
               <div className="p-8 bg-overlay">
-                {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {tags.map((tag) => (
                     <span
@@ -94,7 +90,6 @@ export function PerksSection() {
                     </span>
                   ))}
                 </div>
-                {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-4">
                   {stats.map((s) => (
                     <div

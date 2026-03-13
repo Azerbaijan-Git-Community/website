@@ -47,9 +47,7 @@ export function RoadmapSection() {
           A structured 5-stage national movement for digital transformation.
         </p>
 
-        {/* Timeline */}
         <div className="relative max-w-2xl mx-auto py-8">
-          {/* Vertical line */}
           <div className="timeline-line" />
 
           <div className="space-y-12">
@@ -58,7 +56,7 @@ export function RoadmapSection() {
                 key={stage.label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{
                   duration: 0.6,
                   delay: i * 0.1,
@@ -66,7 +64,6 @@ export function RoadmapSection() {
                 }}
                 className="relative"
               >
-                {/* Dot */}
                 <div
                   className={`absolute top-0 left-5 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 z-10 transition-all ${
                     stage.highlight
@@ -75,7 +72,6 @@ export function RoadmapSection() {
                   }`}
                 />
 
-                {/* Card */}
                 <div
                   className={`ml-15 md:ml-0 md:w-[calc(50%-40px)] glass rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-left ${
                     i % 2 === 0 ? "md:ml-auto" : "md:mr-auto md:text-right"
