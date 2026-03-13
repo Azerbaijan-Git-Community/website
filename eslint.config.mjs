@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    ".heroui-docs/**",
+    "./agents/**",
     "next-env.d.ts",
   ]),
 ]);
