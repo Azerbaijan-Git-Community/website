@@ -48,7 +48,7 @@ export function RoadmapSection() {
         </p>
 
         <div className="relative mx-auto max-w-2xl py-8">
-          <div className="timeline-line" />
+          <div className="absolute top-0 bottom-0 left-5 w-0.5 bg-line md:left-1/2 md:-translate-x-1/2" />
 
           <div className="space-y-12">
             {stages.map((stage, i) => (
