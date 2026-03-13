@@ -11,6 +11,8 @@
     "format:fix": "prettier --write ."
   },
   "dependencies": {
+    "@heroui/react": "3.0.0-beta.8",
+    "@heroui/styles": "3.0.0-beta.8",
     "motion": "^12.36.0",
     "next": "16.1.6",
     "react": "19.2.3",
