@@ -1,6 +1,6 @@
 import * as motion from "motion/react-client";
-import { CiWavePulse1 } from "react-icons/ci";
 import type { IconType } from "react-icons";
+import { CiWavePulse1 } from "react-icons/ci";
 import {
   PiBriefcase,
   PiCalendarStar,
