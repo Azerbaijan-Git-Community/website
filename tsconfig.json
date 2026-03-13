@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "noUnusedLocals": true,
     "incremental": true,
     "plugins": [
       {
