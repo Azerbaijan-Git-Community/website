@@ -2,16 +2,16 @@ import * as motion from "motion/react-client";
 import type { IconType } from "react-icons";
 import { CiWavePulse1 } from "react-icons/ci";
 import {
+  PiActivity,
   PiBriefcase,
   PiCalendarStar,
   PiCode,
   PiLightbulb,
-  // PiActivity,
   PiStudent,
 } from "react-icons/pi";
 
 const kpis: { Icon: IconType; title: string; sub: string }[] = [
-  { Icon: CiWavePulse1, title: "Activity", sub: "Pushes, Repos" },
+  { Icon: PiActivity, title: "Activity", sub: "Pushes, Repos" },
   { Icon: PiStudent, title: "Talent", sub: "Training Numbers" },
   { Icon: PiCode, title: "OSS Projects", sub: "Public Goods" },
   { Icon: PiCalendarStar, title: "Events", sub: "Community reach" },
