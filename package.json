@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "format:check": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "format:fix": "prettier --write .",
+    "install:skills": "pnpx skills@latest experimental_install",
+    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react"
   },
   "dependencies": {
     "@heroui/react": "3.0.0-beta.8",
