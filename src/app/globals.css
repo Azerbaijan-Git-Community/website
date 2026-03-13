@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/*
+  globals.css — only truly global things:
+  1. @theme  → design tokens → Tailwind utility classes
+  2. Base    → html/body global resets
+  3. Helpers → CSS that cannot be expressed as Tailwind utilities
+               (gradient text-clip, backdrop-filter glass, keyframe blobs)
+*/
+
+/* ── 1. Design Tokens ──────────────────────────────────────────── */
+@theme {
+  /*
+    Fonts — CSS vars injected by next/font in layout.tsx.
+    --font-outfit  →  font-outfit
+    --font-inter   →  font-inter
+  */
+  --font-outfit: var(--font-outfit);
+  --font-inter: var(--font-inter);
+
+  /*
+    Backgrounds
+    bg-canvas | bg-surface | bg-overlay
+  */
+  --color-canvas: #0d1117;
+  --color-surface: #161b22;
+  --color-overlay: #21262d;
+
+  /*
+    Text
+    text-hi | text-lo | text-dim
+  */
+  --color-hi: #f0f6fc;
+  --color-lo: #8b949e;
+  --color-dim: #6e7681;
+
+  /*
+    Stroke / divider
+    border-line | divide-line
+  */
+  --color-line: #30363d;
+
+  /*
+    Brand palette
+    bg-green / text-green   (CTA primary)
+    bg-lime  / text-lime    (CTA hover / accent)
+    text-blue               (links, icons)
+    text-purple             (brand accent)
+  */
+  --color-green: #2ea043;
+  --color-lime: #3fb950;
+  --color-blue: #58a6ff;
+  --color-purple: #8957e5;
+
+  /*
+    Icon accent shades (impact cards)
+    text-icon-blue | text-icon-purple | text-icon-green
+    text-icon-orange | text-icon-pink
+  */
+  --color-icon-blue: #58a6ff;
+  --color-icon-purple: #8957e5;
+  --color-icon-green: #3fb950;
+  --color-icon-orange: #d29922;
+  --color-icon-pink: #f778ba;
+}
+
+/* ── 2. Base ───────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-hi);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 3. CSS-only helpers ───────────────────────────────────────── */
+
+/* Gradient text — needs -webkit-text-fill-color, no Tailwind utility */
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-blue) 0%,
+    var(--color-purple) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card — combined backdrop-filter + semi-transparent bg + border */
+.glass {
+  background: rgba(22, 27, 34, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(240, 246, 252, 0.1);
+}
+
+/* Hero background orbs — keyframe animation with alternate direction */
+.blob {
+  position: absolute;
+  filter: blur(100px);
+  border-radius: 9999px;
+  opacity: 0.4;
+  animation: floatBlob 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatBlob {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-30px, 50px) scale(1.1);
+  }
+}
+
+/* Timeline vertical line — responsive left offset needs a media query */
+.timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  width: 2px;
+  background: var(--color-line);
+}
+
+@media (min-width: 768px) {
+  .timeline-line {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--color-blue) 0%,
+    var(--color-purple) 100%
+  );
+}
