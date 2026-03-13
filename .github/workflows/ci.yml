@@ -39,6 +39,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Prettier
+        run: pnpm prettier --check .
+
   lhci:
     name: Lighthouse
     runs-on: ubuntu-latest
