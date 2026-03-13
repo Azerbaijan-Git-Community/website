@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import { inter, outfit } from "@/lib/fonts";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
+import { inter, outfit } from "@/lib/fonts";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
@@ -17,16 +17,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
-    description:
-      "Uniting talent, expanding open-source, and building national innovation metrics.",
+    description: "Uniting talent, expanding open-source, and building national innovation metrics.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
-    description:
-      "Uniting talent, expanding open-source, and building national innovation metrics.",
+    description: "Uniting talent, expanding open-source, and building national innovation metrics.",
   },
   robots: {
     index: true,

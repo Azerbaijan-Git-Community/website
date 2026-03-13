@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 function useCountUp(target: number, duration: number, active: boolean) {
   const [value, setValue] = useState(0);
@@ -41,37 +41,28 @@ export function HeroVisual() {
       className="glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
     >
       <div className="mb-6">
-        <h3 className="font-outfit font-bold text-xl mb-1">
-          National 5-Year Target
-        </h3>
+        <h3 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h3>
         <p className="text-sm text-lo">Growing GitHub Activity</p>
       </div>
 
-      <div className="flex justify-between mb-3">
+      <div className="mb-3 flex justify-between">
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-widest text-lo mb-1">
-            Current
-          </span>
-          <span className="font-outfit text-3xl font-extrabold leading-none">
-            {current.toLocaleString()}
-          </span>
+          <span className="mb-1 text-xs tracking-widest text-lo uppercase">Current</span>
+          <span className="font-outfit text-3xl leading-none font-extrabold">{current.toLocaleString()}</span>
         </div>
         <div className="flex flex-col text-right">
-          <span className="text-xs uppercase tracking-widest text-lo mb-1">
-            Goal
-          </span>
-          <span className="text-gradient font-outfit text-3xl font-extrabold leading-none">
+          <span className="mb-1 text-xs tracking-widest text-lo uppercase">Goal</span>
+          <span className="text-gradient font-outfit text-3xl leading-none font-extrabold">
             {goal.toLocaleString()}
           </span>
         </div>
       </div>
 
-      <div className="h-3 rounded-full bg-overlay overflow-hidden relative">
+      <div className="relative h-3 overflow-hidden rounded-full bg-overlay">
         <motion.div
-          className="h-full rounded-full relative"
+          className="relative h-full rounded-full"
           style={{
-            background:
-              "linear-gradient(135deg, var(--color-green), var(--color-lime))",
+            background: "linear-gradient(135deg, var(--color-green), var(--color-lime))",
           }}
           initial={{ width: "0%" }}
           animate={inView ? { width: "14%" } : { width: "0%" }}
@@ -84,9 +75,8 @@ export function HeroVisual() {
         </motion.div>
       </div>
 
-      <p className="text-center mt-4 text-sm text-lo">
-        Increasing GitHub activity directly increases national innovation
-        output.
+      <p className="mt-4 text-center text-sm text-lo">
+        Increasing GitHub activity directly increases national innovation output.
       </p>
     </motion.div>
   );

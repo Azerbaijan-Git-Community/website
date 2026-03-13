@@ -36,18 +36,18 @@ const stages = [
 export function RoadmapSection() {
   return (
     <section id="roadmap" className="py-24">
-      <div className="max-w-300 mx-auto px-8 text-center">
-        <span className="inline-block px-3 py-1 rounded-full border border-line text-sm font-medium text-lo bg-[rgba(48,54,61,0.5)] mb-4">
+      <div className="mx-auto max-w-300 px-8 text-center">
+        <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
           Strategic Plan
         </span>
-        <h2 className="font-outfit text-[2.5rem] font-bold mb-2">
+        <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">
           The Path to <span className="text-gradient">5,000,000</span>
         </h2>
-        <p className="text-xl text-lo max-w-xl mx-auto mb-16">
+        <p className="mx-auto mb-16 max-w-xl text-xl text-lo">
           A structured 5-stage national movement for digital transformation.
         </p>
 
-        <div className="relative max-w-2xl mx-auto py-8">
+        <div className="relative mx-auto max-w-2xl py-8">
           <div className="timeline-line" />
 
           <div className="space-y-12">
@@ -65,39 +65,31 @@ export function RoadmapSection() {
                 className="relative"
               >
                 <div
-                  className={`absolute top-0 left-5 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 z-10 transition-all ${
+                  className={`absolute top-0 left-5 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 transition-all md:left-1/2 ${
                     stage.highlight
-                      ? "bg-lime border-lime shadow-[0_0_15px_rgba(63,185,80,0.6)]"
-                      : "bg-surface border-dim"
+                      ? "border-lime bg-lime shadow-[0_0_15px_rgba(63,185,80,0.6)]"
+                      : "border-dim bg-surface"
                   }`}
                 />
 
                 <div
-                  className={`ml-15 md:ml-0 md:w-[calc(50%-40px)] glass rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-left ${
+                  className={`glass ml-15 rounded-xl p-6 text-left shadow-[0_8px_32px_rgba(0,0,0,0.2)] md:ml-0 md:w-[calc(50%-40px)] ${
                     i % 2 === 0 ? "md:ml-auto" : "md:mr-auto md:text-right"
                   } ${
                     stage.highlight
-                      ? "border-[rgba(137,87,229,0.4)] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-linear-to-r before:from-blue before:to-purple"
+                      ? "relative overflow-hidden border-[rgba(137,87,229,0.4)] before:absolute before:top-0 before:right-0 before:left-0 before:h-1 before:bg-linear-to-r before:from-blue before:to-purple"
                       : ""
                   }`}
                 >
                   <span
-                    className={`text-xs font-semibold uppercase tracking-widest mb-2 block ${
+                    className={`mb-2 block text-xs font-semibold tracking-widest uppercase ${
                       stage.highlight ? "text-gradient" : "text-lo"
                     }`}
                   >
                     {stage.label}
                   </span>
-                  <h3 className="font-outfit text-xl font-bold mb-2">
-                    {stage.title}
-                  </h3>
-                  <p
-                    className={
-                      stage.highlight ? "text-lime font-semibold" : "text-lo"
-                    }
-                  >
-                    {stage.body}
-                  </p>
+                  <h3 className="mb-2 font-outfit text-xl font-bold">{stage.title}</h3>
+                  <p className={stage.highlight ? "font-semibold text-lime" : "text-lo"}>{stage.body}</p>
                 </div>
               </motion.div>
             ))}

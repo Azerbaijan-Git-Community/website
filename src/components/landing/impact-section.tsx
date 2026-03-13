@@ -1,12 +1,6 @@
 import * as motion from "motion/react-client";
-import {
-  PiChartLineUp,
-  PiGlobeHemisphereEast,
-  PiLaptop,
-  PiGitMerge,
-  PiTarget,
-} from "react-icons/pi";
 import type { IconType } from "react-icons";
+import { PiChartLineUp, PiGitMerge, PiGlobeHemisphereEast, PiLaptop, PiTarget } from "react-icons/pi";
 
 const impacts: {
   Icon: IconType;
@@ -48,21 +42,14 @@ const impacts: {
 
 export function ImpactSection() {
   return (
-    <section
-      id="impact"
-      className="py-24 bg-surface border-t border-b border-line"
-    >
-      <div className="max-w-300 mx-auto px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-outfit text-[2.5rem] font-bold mb-2">
-            National Impact Goals
-          </h2>
-          <p className="text-xl text-lo max-w-xl mx-auto">
-            How 5,000,000 pushes will transform the nation.
-          </p>
+    <section id="impact" className="border-t border-b border-line bg-surface py-24">
+      <div className="mx-auto max-w-300 px-8">
+        <div className="mb-16 text-center">
+          <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">National Impact Goals</h2>
+          <p className="mx-auto max-w-xl text-xl text-lo">How 5,000,000 pushes will transform the nation.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {impacts.map((item, i) => (
             <motion.div
               key={item.title}
@@ -75,17 +62,13 @@ export function ImpactSection() {
                 ease: [0.22, 1, 0.36, 1],
               }}
               whileHover={{ y: -5 }}
-              className="glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col"
+              className="glass flex flex-col rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
             >
-              <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4 ${item.color}`}
-              >
+              <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-2xl ${item.color}`}>
                 <item.Icon size={24} />
               </div>
-              <h3 className="font-outfit text-xl font-bold mb-2">
-                {item.title}
-              </h3>
-              <p className="text-lo text-sm leading-relaxed">{item.body}</p>
+              <h3 className="mb-2 font-outfit text-xl font-bold">{item.title}</h3>
+              <p className="text-sm leading-relaxed text-lo">{item.body}</p>
             </motion.div>
           ))}
         </div>

@@ -34,10 +34,10 @@ const linkGroups = [
 export function Footer() {
   return (
     <footer className="border-t border-line bg-canvas pt-12 pb-12">
-      <div className="max-w-300 mx-auto px-8">
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-12 mb-8 items-center">
+      <div className="mx-auto max-w-300 px-8">
+        <div className="mb-8 grid grid-cols-1 items-center gap-12 md:grid-cols-[2fr_3fr]">
           {/* Brand */}
-          <div className="flex items-start flex-col gap-4">
+          <div className="flex flex-col items-start gap-4">
             <Image
               src="/logo.png"
               alt="GitHub Azerbaijan"
@@ -45,26 +45,20 @@ export function Footer() {
               height={60}
               className="h-25 w-auto object-contain invert"
             />
-            <p className="text-lo max-w-sm text-sm leading-relaxed">
-              A national movement to unite talent, open-source, innovation, and
-              digital transformation.
+            <p className="max-w-sm text-sm leading-relaxed text-lo">
+              A national movement to unite talent, open-source, innovation, and digital transformation.
             </p>
           </div>
 
           {/* Links */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {linkGroups.map((group) => (
               <div key={group.title}>
-                <h4 className="font-outfit text-hi mb-4 text-lg font-semibold">
-                  {group.title}
-                </h4>
+                <h4 className="mb-4 font-outfit text-lg font-semibold text-hi">{group.title}</h4>
                 <ul className="space-y-2">
                   {group.links.map((link) => (
                     <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="text-lo text-sm hover:text-blue transition-colors"
-                      >
+                      <Link href={link.href} className="text-sm text-lo transition-colors hover:text-blue">
                         {link.label}
                       </Link>
                     </li>
@@ -77,9 +71,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-line pt-6 text-center">
-          <p className="text-sm text-dim">
-            © 2026 Azerbaijan GitHub Community. Push the future.
-          </p>
+          <p className="text-sm text-dim">© 2026 Azerbaijan GitHub Community. Push the future.</p>
         </div>
       </div>
     </footer>
