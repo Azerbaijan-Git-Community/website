@@ -30,7 +30,7 @@ export function HeroVisual() {
   const inView = useInView(ref, { once: true, amount: 0.3 });
 
   const current = useCountUp(700_000, 2.5, inView);
-  const goal = useCountUp(5_000_000, 2.5, inView);
+  const goal = 5_000_000;
 
   return (
     <motion.div
