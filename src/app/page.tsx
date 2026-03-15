@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <WhySection >
+      <WhySection />
       <ImpactSection />
       <PerksSection />
       <KpiSection />
