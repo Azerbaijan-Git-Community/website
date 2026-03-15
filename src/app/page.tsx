@@ -9,6 +9,7 @@ import { WhySection } from "@/components/landing/why-section";
 export default function HomePage() {
   return (
     <>
+      <img />
       <HeroSection />
       <WhySection />
       <ImpactSection />
