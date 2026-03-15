@@ -1,7 +1,11 @@
 "use client";
 
 import { motion, useInView } from "motion/react";
+import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
+import { getGithubStats } from "@/data/stats/get";
+
+const GOAL = 5_000_000;
 
 function useCountUp(target: number, duration: number, active: boolean) {
   const [value, setValue] = useState(0);
@@ -29,8 +33,12 @@ export function HeroVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.3 });
 
-  const current = useCountUp(700_000, 2.5, inView);
-  const goal = 5_000_000;
+  const { data } = useSWR("github-stats", () => getGithubStats());
+
+  const currentProp = data?.totalCommits ?? 0;
+  const current = useCountUp(currentProp, 2.5, inView);
+  const calculatedPercentage = Number(Math.min((currentProp / GOAL) * 100, 100).toFixed(1));
+  const progressPercentage = calculatedPercentage < 1 ? 1 : calculatedPercentage;
 
   return (
     <motion.div
@@ -53,7 +61,7 @@ export function HeroVisual() {
         <div className="flex flex-col text-right">
           <span className="mb-1 text-xs tracking-widest text-lo uppercase">Goal</span>
           <span className="text-gradient font-outfit text-3xl leading-none font-extrabold">
-            {goal.toLocaleString()}
+            {GOAL.toLocaleString()}
           </span>
         </div>
       </div>
@@ -62,7 +70,7 @@ export function HeroVisual() {
         <motion.div
           className="relative h-full rounded-full bg-linear-135 from-green to-lime"
           initial={{ width: "0%" }}
-          animate={inView ? { width: "14%" } : { width: "0%" }}
+          animate={inView ? { width: `${progressPercentage}%` } : { width: "0%" }}
           transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
         >
           <div className="absolute top-0 right-0 bottom-0 w-5 bg-white opacity-50 blur-sm" />

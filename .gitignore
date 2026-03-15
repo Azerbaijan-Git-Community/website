@@ -31,7 +31,9 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.local
+.env.development.local
 
 # vercel
 .vercel
@@ -43,3 +45,5 @@ next-env.d.ts
 .agents
 # heroui-agents-md
 .heroui-docs/
+
+/src/generated/prisma

@@ -1,0 +1,16 @@
+name: Sync GitHub Stats
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync GitHub Stats
+        run: |
+          response=$(curl -s -X POST "${{ secrets.APP_URL }}/api/cron/sync-github" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}")
+          echo "Response: $response"
