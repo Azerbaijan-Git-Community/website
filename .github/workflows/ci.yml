@@ -7,6 +7,16 @@ on:
 
 env:
   LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DIRECT_URL: ${{ secrets.DIRECT_URL }}
+  BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+  BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+  # Do not replace the env vars below with secrets
+  CRON_SECRET: "abcde"
+  GITHUB_CLIENT_ID: "abcde"
+  GITHUB_CLIENT_SECRET: "abcde"
+  GH_STATS_TOKEN: "abcde"
 
 jobs:
   quality:

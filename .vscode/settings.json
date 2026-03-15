@@ -1,3 +1,6 @@
 {
-  "eslint.rules.customizations": [{ "rule": "prettier/*", "severity": "off" }]
+  "eslint.rules.customizations": [{ "rule": "prettier/*", "severity": "off" }],
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
 }

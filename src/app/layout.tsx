@@ -1,3 +1,4 @@
+import "@/lib/env.server";
 import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
@@ -39,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} antialiased`}>
+      <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Navbar />
         <main>{children}</main>
         <Footer />
