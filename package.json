@@ -7,12 +7,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "pre-publish": "node scripts/pre-publish.ts",
+    "checks": "node scripts/pre-publish.ts",
     "lint": "eslint",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "install:skills": "pnpx skills@latest experimental_install",
-    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react"
+    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react",
+    "prepare": "husky"
   },
   "dependencies": {
     "@heroui/react": "3.0.0-beta.8",
@@ -34,6 +35,7 @@
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",

@@ -1,21 +1,7 @@
-"use client";
-
-import Link from "next/link";
+import { SmoothLink } from "../smooth-link";
 import { HeroVisual } from "./hero-visual";
 
 export function HeroSection() {
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    const href = e.currentTarget.getAttribute("href");
-    if (!href?.startsWith("#")) return;
-    e.preventDefault();
-    const targetId = href.substring(1);
-    const elem = document.getElementById(targetId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: "smooth" });
-      window.history.pushState(null, "", href);
-    }
-  };
-
   return (
     <section id="hero" className="relative flex min-h-screen items-center overflow-hidden pt-44 pb-32">
       <div className="relative z-10 mx-auto grid w-full max-w-300 grid-cols-1 items-center gap-16 px-8 lg:grid-cols-2">
@@ -30,20 +16,18 @@ export function HeroSection() {
             Uniting talent, expanding open-source, and building national innovation metrics.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link
+            <SmoothLink
               href="#join"
-              onClick={handleScroll}
               className="inline-flex items-center justify-center rounded-md bg-green px-8 py-4 text-lg font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_15px_rgba(46,160,67,0.4)]"
             >
               Start Contributing
-            </Link>
-            <Link
+            </SmoothLink>
+            <SmoothLink
               href="#about"
-              onClick={handleScroll}
               className="inline-flex items-center justify-center rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
             >
               View Our Goal
-            </Link>
+            </SmoothLink>
           </div>
         </div>
 
