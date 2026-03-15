@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,6 +11,18 @@ const links = [
 ];
 
 export function Navbar() {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    const href = e.currentTarget.getAttribute("href");
+    if (!href?.startsWith("#")) return;
+    e.preventDefault();
+    const targetId = href.substring(1);
+    const elem = document.getElementById(targetId);
+    if (elem) {
+      elem.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", href);
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 z-50 flex h-20 w-full items-center border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-300 items-center justify-between px-8">
@@ -31,6 +45,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={handleScroll}
               className="font-outfit font-medium text-hi transition-colors hover:text-blue"
             >
               {link.label}
@@ -41,6 +56,7 @@ export function Navbar() {
         {/* CTA */}
         <Link
           href="#join"
+          onClick={handleScroll}
           className="inline-flex items-center justify-center rounded-md bg-green px-6 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_15px_rgba(46,160,67,0.4)]"
         >
           Join the Movement
