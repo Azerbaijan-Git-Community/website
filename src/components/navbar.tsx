@@ -12,6 +12,7 @@ const links = [
   { href: "#impact", label: "Impact" },
   { href: "#perks", label: "Perks" },
   { href: "#roadmap", label: "Roadmap" },
+  { href: "/leaderboard/monthly", label: "Leaderboard" },
 ];
 
 async function NavAuth() {
@@ -43,15 +44,25 @@ export function Navbar() {
 
         {/* Nav links — hidden on mobile */}
         <div className="hidden gap-8 md:flex">
-          {links.map((link) => (
-            <SmoothLink
-              key={link.href}
-              href={link.href}
-              className="font-outfit font-medium text-hi transition-colors hover:text-blue"
-            >
-              {link.label}
-            </SmoothLink>
-          ))}
+          {links.map((link) =>
+            link.href.startsWith("#") ? (
+              <SmoothLink
+                key={link.href}
+                href={link.href}
+                className="font-outfit font-medium text-hi transition-colors hover:text-blue"
+              >
+                {link.label}
+              </SmoothLink>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-outfit font-medium text-hi transition-colors hover:text-blue"
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="flex flex-row items-center gap-5">
