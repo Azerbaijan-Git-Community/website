@@ -1,9 +1,9 @@
 "use client";
 
 import { useQueryState } from "nuqs";
+import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
 import { FaMedal } from "react-icons/fa";
 import { type LeaderboardEntry, getMonthlyLeaderboard } from "@/data/leaderboard/get";
 
@@ -91,52 +91,51 @@ function PodiumCard({
   );
 }
 
-interface PodiumClientProps {
+type PodiumClientProps = {
   initialData: LeaderboardEntry[];
   currentMonthKey: string;
-}
+};
 
 export function PodiumClient({ initialData, currentMonthKey }: PodiumClientProps) {
   const [month] = useQueryState("month", { defaultValue: currentMonthKey, shallow: true });
-  const [top3, setTop3] = useState(initialData);
-  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    startTransition(async () => {
-      const data = await getMonthlyLeaderboard(month);
-      setTop3(data.slice(0, 3));
-    });
-  }, [month]);
+  const { data = [] } = useSWR<LeaderboardEntry[]>(
+    `leaderboard-podium-${month}`,
+    () => getMonthlyLeaderboard(month).then((d) => d.slice(0, 3)),
+    {
+      fallbackData: month === currentMonthKey ? initialData : [],
+      revalidateOnMount: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true,
+    },
+  );
 
-  const [first, second, third] = top3;
+  const [first, second, third] = data;
 
-  function renderPodium() {
-    if (top3.length === 0) return null;
-    if (top3.length === 1) {
-      return (
-        <div className="flex justify-center">
-          <div className="w-full max-w-sm">
-            <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
-          </div>
-        </div>
-      );
-    }
-    if (top3.length === 2) {
-      return (
-        <div className="grid grid-cols-1 gap-6 md:mx-auto md:max-w-2xl md:grid-cols-2">
-          <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
+  if (data.length === 0) return null;
+  if (data.length === 1) {
+    return (
+      <div className="flex justify-center">
+        <div className="w-full max-w-sm">
           <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
         </div>
-      );
-    }
-    return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
-        <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
-        <PodiumCard entry={third!} config={MEDAL_CONFIG[2]} mt="md:mt-8" />
       </div>
     );
   }
-
-  return <div className={`transition-opacity ${isPending ? "opacity-60" : ""}`}>{renderPodium()}</div>;
+  if (data.length === 2) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:mx-auto md:max-w-2xl md:grid-cols-2">
+        <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
+        <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
+      <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
+      <PodiumCard entry={third!} config={MEDAL_CONFIG[2]} mt="md:mt-8" />
+    </div>
+  );
 }
