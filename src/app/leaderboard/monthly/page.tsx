@@ -3,6 +3,7 @@
 import * as motion from "motion/react-client";
 import Image from "next/image";
 import { useState } from "react";
+import { FaMedal } from "react-icons/fa";
 import { MonthlyLeaderboard } from "@/components/leaderboard/MonthlyLeaderboard";
 import { MOCK_CONTRIBUTORS } from "@/lib/mock/leaderboard";
 
@@ -93,9 +94,13 @@ export default function MonthlyLeaderboardPage() {
                     className="rounded-full ring-4 ring-[#C0C0C0]"
                     unoptimized
                   />
-                  <div className="absolute -right-2 -bottom-2 flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-[#C0C0C0] to-[#A8A8A8] text-xl font-bold text-black shadow-[0_0_20px_rgba(192,192,192,0.6)]">
-                    🥈
+                  <div
+                    className="absolute -right-2 -bottom-2 flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-[#C0C0C0] to-[#A8A8A8] text-xl font-bold text-black shadow-[0_0_20px_rgba(192,192,192,0.6)]"
+                    aria-hidden="true"
+                  >
+                    <FaMedal className="h-5 w-5" />
                   </div>
+                  <span className="sr-only">Second place badge</span>
                 </div>
                 <h3 className="mb-1 font-outfit text-xl font-bold text-hi">{topThree[1].username}</h3>
                 <div className="mb-3 text-sm text-lo">2nd Place</div>
