@@ -16,4 +16,4 @@
 - [ ] No hardcoded secrets or API keys
 - [ ] Tested on mobile and desktop
 - [ ] Schema changes reviewed and approved
-- [ ] Read the [Code of Conduct](../blob/main/CODE_OF_CONDUCT.md)
+- [ ] Read the [Code of Conduct](https://github.com/Azerbaijan-Git-Community/website?tab=coc-ov-file)
