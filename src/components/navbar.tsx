@@ -1,3 +1,4 @@
+import { Route } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,12 +8,13 @@ import { SignInButton } from "./sign-in-button";
 import { SmoothLink } from "./smooth-link";
 import { UserAvatar } from "./user-avatar";
 
-const links = [
-  { href: "#about", label: "About" },
-  { href: "#impact", label: "Impact" },
-  { href: "#perks", label: "Perks" },
-  { href: "#roadmap", label: "Roadmap" },
-  { href: "/leaderboard/monthly", label: "Leaderboard" },
+const links: { href: Route; label: string }[] = [
+  { href: "/", label: "Home" },
+  { href: "/#about", label: "About" },
+  { href: "/#impact", label: "Impact" },
+  { href: "/#perks", label: "Perks" },
+  { href: "/#roadmap", label: "Roadmap" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
 async function NavAuth() {
@@ -65,15 +67,8 @@ export function Navbar() {
           )}
         </div>
 
-        <div className="flex flex-row items-center gap-5">
-          {/* CTA */}
-          <SmoothLink
-            href="#join"
-            className="inline-flex items-center justify-center rounded-md bg-green px-6 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_15px_rgba(46,160,67,0.4)]"
-          >
-            Join the Movement
-          </SmoothLink>
-          <Suspense fallback={<div className="size-12 animate-pulse rounded-full bg-surface" />}>
+        <div className="flex w-26 flex-row items-center justify-center">
+          <Suspense fallback={<div className="size-14 animate-pulse rounded-full bg-surface" />}>
             <NavAuth />
           </Suspense>
         </div>

@@ -20,12 +20,12 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
   return (
     <Dropdown>
       <Dropdown.Trigger className="rounded-full">
-        <Avatar size="lg" className="cursor-pointer ring-2 ring-line transition-all hover:ring-blue">
+        <Avatar size="lg" className="size-14 cursor-pointer ring-2 ring-line transition-all hover:ring-blue">
           <Avatar.Image src={image ?? undefined} alt={name ?? "User"} />
           <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>
         </Avatar>
       </Dropdown.Trigger>
-      <Dropdown.Popover>
+      <Dropdown.Popover placement="bottom">
         <Dropdown.Menu
           onAction={(key) => {
             console.log("Action key:", key);
