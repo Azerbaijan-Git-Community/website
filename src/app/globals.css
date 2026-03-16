@@ -67,7 +67,7 @@
 
 /* ── 2. Base ───────────────────────────────────────────────────── */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
 }
 
 body {

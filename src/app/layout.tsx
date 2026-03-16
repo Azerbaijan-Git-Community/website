@@ -1,5 +1,6 @@
 import "@/lib/env.server";
 import type { Metadata } from "next";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { inter, outfit } from "@/lib/fonts";
@@ -42,7 +43,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Navbar />
-        <main>{children}</main>
+        <main>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </main>
         <Footer />
       </body>
     </html>
