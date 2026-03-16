@@ -10,7 +10,7 @@ type SmoothLinkProps = LinkProps<Route> & ComponentPropsWithoutRef<"a"> & { scro
 
 function ScrollAfterNav({ hash, offset }: { hash: string; offset: number }) {
   const { pending } = useLinkStatus();
-  const didScroll = useRef(true); // true = skip first render
+  const didScroll = useRef(true);
 
   useEffect(() => {
     if (!pending && !didScroll.current) {
@@ -36,19 +36,27 @@ export function SmoothLink({ href, onClick, scrollOffset = 70, ...props }: Smoot
     <Link
       href={href}
       onClick={(e) => {
-        if (hash) {
-          const pagePath = hrefStr.substring(0, hashIndex) || "/";
-          if (window.location.pathname === pagePath) {
-            e.preventDefault();
+        const currentPath = window.location.pathname;
+        const targetPath = hash ? hrefStr.substring(0, hashIndex) || "/" : hrefStr;
+
+        // Same page — scroll to top or to hash smoothly
+        if (currentPath === targetPath) {
+          e.preventDefault();
+          if (hash) {
             const elem = document.getElementById(hash);
             if (elem) {
               const top = elem.getBoundingClientRect().top + window.scrollY - scrollOffset;
               window.scrollTo({ top, behavior: "smooth" });
             }
             window.history.pushState(null, "", hrefStr);
+          } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
           }
-          // different page — let Next.js navigate, ScrollAfterNav handles scroll
+          onClick?.(e);
+          return;
         }
+
+        // Different page with hash — navigate, ScrollAfterNav handles scroll
         onClick?.(e);
       }}
       {...props}
