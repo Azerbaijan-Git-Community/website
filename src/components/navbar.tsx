@@ -46,25 +46,15 @@ export function Navbar() {
 
         {/* Nav links — hidden on mobile */}
         <div className="hidden gap-8 md:flex">
-          {links.map((link) =>
-            link.href.startsWith("#") ? (
-              <SmoothLink
-                key={link.href}
-                href={link.href}
-                className="font-outfit font-medium text-hi transition-colors hover:text-blue"
-              >
-                {link.label}
-              </SmoothLink>
-            ) : (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="font-outfit font-medium text-hi transition-colors hover:text-blue"
-              >
-                {link.label}
-              </Link>
-            ),
-          )}
+          {links.map((link) => (
+            <SmoothLink
+              key={link.href}
+              href={link.href}
+              className="font-outfit font-medium text-hi transition-colors hover:text-blue"
+            >
+              {link.label}
+            </SmoothLink>
+          ))}
         </div>
 
         <div className="flex w-26 flex-row items-center justify-center">
