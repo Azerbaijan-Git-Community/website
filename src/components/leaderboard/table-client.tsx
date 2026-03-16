@@ -5,7 +5,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import useSWR, { preload } from "swr";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { type LeaderboardEntry, getLeaderboard, getMonthlyLeaderboard } from "@/data/leaderboard/get";
 
 function getRankBadgeClass(rank: number): string {
@@ -47,29 +47,39 @@ export function TableClient({ initialData, currentMonthKey }: TableClientProps) 
     parseAsStringLiteral(["weekly", "monthly", "allTime"]).withDefault("monthly").withOptions({ shallow: true }),
   );
 
+  // initialData yalnızca monthly + currentMonth için geçerli
+  const isInitialPeriod = period === "monthly";
+  const mountedRef = useRef(false);
+
   const swrKey = `leaderboard-${period === "monthly" ? `monthly-${currentMonthKey}` : period}`;
 
-  // Preload other tabs on mount
+  const fetcher = () =>
+    period === "monthly" ? getMonthlyLeaderboard(currentMonthKey) : getLeaderboard(period as "weekly" | "allTime");
+
+  const { data: entries, isLoading } = useSWR<LeaderboardEntry[]>(swrKey, fetcher, {
+    // period monthly ise initialData ile başla, değilse undefined (yani fetch tamamlanana kadar bekle)
+    fallbackData: isInitialPeriod ? initialData : undefined,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    keepPreviousData: false,
+  });
+
+  // Preload diğer tab'lar
   useEffect(() => {
+    if (mountedRef.current) return;
+    mountedRef.current = true;
     preload("leaderboard-weekly", () => getLeaderboard("weekly"));
     preload("leaderboard-allTime", () => getLeaderboard("allTime"));
     preload(`leaderboard-monthly-${currentMonthKey}`, () => getMonthlyLeaderboard(currentMonthKey));
   }, [currentMonthKey]);
 
-  const { data: entries = initialData } = useSWR<LeaderboardEntry[]>(
-    swrKey,
-    () =>
-      period === "monthly" ? getMonthlyLeaderboard(currentMonthKey) : getLeaderboard(period as "weekly" | "allTime"),
-    {
-      fallbackData: initialData,
-      revalidateOnMount: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      keepPreviousData: true,
-    },
-  );
+  // Fetch tamamlanana kadar skeleton göster
+  if (isLoading && !entries) {
+    return <div className="h-110 animate-pulse rounded-xl bg-surface" />;
+  }
 
-  if (entries.length === 0) return <EmptyState />;
+  if (!entries || entries.length === 0) return <EmptyState />;
 
   return (
     <div className="w-full">
