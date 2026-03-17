@@ -86,19 +86,19 @@ export function TableClient({ initialData, currentMonthKey }: TableClientProps) 
       {/* Desktop */}
       <div className="hidden lg:block">
         <div className="glass min-h-110 overflow-hidden rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             <thead>
               <tr className="border-b border-line bg-[rgba(48,54,61,0.5)]">
-                <th className="px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                <th className="w-50 px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                   Rank
                 </th>
                 <th className="px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                   Contributor
                 </th>
-                <th className="px-6 py-4 text-right font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                <th className="w-60 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                   Commits
                 </th>
-                <th className="px-6 py-4 text-right font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                <th className="w-40 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo">
                   PRs
                 </th>
               </tr>
@@ -141,10 +141,10 @@ export function TableClient({ initialData, currentMonthKey }: TableClientProps) 
                           </Link>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right font-mono text-lg font-bold text-lime">
+                      <td className="px-6 py-4 text-center font-mono text-lg font-bold text-lime">
                         {entry.commits.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 text-right font-mono text-lg text-lo">
+                      <td className="px-6 py-4 text-center font-mono text-lg text-lo">
                         {entry.pullRequests.toLocaleString()}
                       </td>
                     </motion.tr>

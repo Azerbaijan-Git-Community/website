@@ -19,6 +19,10 @@ export const auth = betterAuth({
       maxAge: 30 * 60, // 30 minutes
     },
   },
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+  },
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
