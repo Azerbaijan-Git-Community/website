@@ -86,7 +86,7 @@ model RateLimit {
   lastRequest BigInt
 
   @@unique([key])
-  @@map("rateLimit")
+  @@map("rate_limit")
 }
 
 model GithubStats {
