@@ -43,14 +43,14 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Prettier
+        run: pnpm prettier --check .
+
       - name: Type check
         run: pnpm tsc --noEmit
 
       - name: Lint
         run: pnpm lint
-
-      - name: Prettier
-        run: pnpm prettier --check .
 
   lhci:
     name: Lighthouse
