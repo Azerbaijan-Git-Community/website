@@ -79,6 +79,16 @@ model Verification {
   @@map("verification")
 }
 
+model RateLimit {
+  id          String @id
+  key         String
+  count       Int
+  lastRequest BigInt
+
+  @@unique([key])
+  @@map("rate_limit")
+}
+
 model GithubStats {
   id            String   @id @default(cuid())
   userId        String   @unique
