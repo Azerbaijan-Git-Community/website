@@ -8,7 +8,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "prisma:generate": "prisma generate",
-    "checks": "node scripts/pre-publish.ts",
+    "checks": "node scripts/pr-checks.ts",
     "lint": "eslint",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
