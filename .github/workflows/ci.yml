@@ -10,7 +10,7 @@ env:
   NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   DIRECT_URL: "nice_try"
-  BETTER_AUTH_SECRET: "nice_try"
+  BETTER_AUTH_SECRET: "abcdefghijklmnopqrstuvwxyz1234567890"
   BETTER_AUTH_URL: "http://localhost:3000"
   # Do not replace the env vars below with secrets
   CRON_SECRET: "nice_try"
