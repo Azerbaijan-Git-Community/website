@@ -13,7 +13,7 @@
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "install:skills": "pnpx skills@latest experimental_install",
-    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react",
+    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
     "prepare": "husky"
   },
   "dependencies": {
