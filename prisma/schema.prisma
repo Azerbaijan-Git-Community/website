@@ -24,7 +24,8 @@ model User {
   sessions       Session[]
   accounts       Account[]
 
-  githubStats GithubStats?
+  githubStats    GithubStats?
+  statsSnapshots GithubStatsSnapshot[]
 
   @@unique([email])
   @@map("user")
@@ -78,6 +79,16 @@ model Verification {
   @@map("verification")
 }
 
+model RateLimit {
+  id          String @id
+  key         String
+  count       Int
+  lastRequest BigInt
+
+  @@unique([key])
+  @@map("rate_limit")
+}
+
 model GithubStats {
   id            String   @id @default(cuid())
   userId        String   @unique
@@ -88,4 +99,27 @@ model GithubStats {
   contributions Int      @default(0)
   followers     Int      @default(0)
   updatedAt     DateTime @updatedAt
+
+  @@map("github_stats")
+}
+
+model GithubStatsSnapshot {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  period       SnapshotPeriod
+  periodKey    String
+  commits      Int            @default(0)
+  pullRequests Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, period, periodKey])
+  @@index([period, periodKey])
+  @@map("github_stats_snapshot")
+}
+
+enum SnapshotPeriod {
+  WEEKLY
+  MONTHLY
 }

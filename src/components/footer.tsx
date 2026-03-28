@@ -1,19 +1,20 @@
+import { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-const community = [
+const community: { href: Route; label: string }[] = [
   { href: "#", label: "About" },
   { href: "#", label: "Regional Chapters" },
   { href: "#", label: "Events Calendar" },
 ];
 
-const resources = [
+const resources: { href: Route; label: string }[] = [
   { href: "#", label: "Learning Portal" },
   { href: "#", label: "Perks & Benefits" },
   { href: "#", label: "Open Data API" },
 ];
 
-const connect = [
+const connect: { href: Route; label: string }[] = [
   {
     href: "https://www.linkedin.com/company/github-azerbaijan/",
     label: "LinkedIn",
