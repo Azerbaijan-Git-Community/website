@@ -132,6 +132,7 @@ chore(deps): upgrade next to v14.2.0
 ```
 
 **Rules:**
+
 - Use the **imperative mood** in the description ("add", not "added" or "adds")
 - Keep the first line under **72 characters**
 - Do not end the subject line with a period
@@ -155,10 +156,12 @@ chore(deps): upgrade next to v14.2.0
 ## Issue Reporting
 
 Before opening an issue:
+
 - Search [existing issues](https://github.com/Azerbaijan-Git-Community/website/issues) to avoid duplicates.
 - Make sure you are on the latest version.
 
 When reporting a **bug**, please include:
+
 - A clear title and description
 - Steps to reproduce the problem
 - Expected vs. actual behavior
@@ -166,6 +169,7 @@ When reporting a **bug**, please include:
 - Screenshots or screen recordings if helpful
 
 When requesting a **feature**, please include:
+
 - A clear description of the problem it solves
 - Your proposed solution or idea
 - Any relevant examples or references
@@ -176,12 +180,12 @@ When requesting a **feature**, please include:
 
 In alignment with our [Code of Conduct §5](https://github.com/Azerbaijan-Git-Community/.github/blob/main/CODE_OF_CONDUCT.md#5-open-standards-and-software-freedom), we prefer open, vendor-neutral formats for community-facing files:
 
-| Format | Preferred use |
-|--------|---------------|
-| `.md` | Documentation, guides, notes |
-| `.html` | Web-facing content |
-| `.csv` | Tabular/data files |
-| `.pdf` | Final, read-only distributions only |
+| Format  | Preferred use                       |
+| ------- | ----------------------------------- |
+| `.md`   | Documentation, guides, notes        |
+| `.html` | Web-facing content                  |
+| `.csv`  | Tabular/data files                  |
+| `.pdf`  | Final, read-only distributions only |
 
 Proprietary formats (`.docx`, `.pptx`, etc.) are acceptable for personal use but contributors are encouraged to provide an open equivalent when sharing within community spaces.
 
@@ -190,6 +194,7 @@ Proprietary formats (`.docx`, `.pptx`, etc.) are acceptable for personal use but
 ## AI-Generated Content
 
 If your contribution includes AI-generated code or content, please:
+
 - **Disclose it** clearly in your PR description.
 - **Review and verify** the output for correctness, quality, and security.
 - **Ensure license compatibility** — do not submit AI-generated code if its licensing status is unclear or incompatible with MPL-2.0.
@@ -206,4 +211,4 @@ Have a question that is not covered here? Reach out:
 
 ---
 
-*Thank you for helping build Azerbaijan's open-source future. Every push counts.*
+_Thank you for helping build Azerbaijan's open-source future. Every push counts._
