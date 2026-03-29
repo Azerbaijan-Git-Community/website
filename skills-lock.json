@@ -14,7 +14,7 @@
     "heroui-react": {
       "source": "heroui-inc/heroui",
       "sourceType": "github",
-      "computedHash": "890ddb374d1baf208b4015e38ebb16b633596e3de575927075640b6480eef917"
+      "computedHash": "692cc86ded65b603961fa1bc5685670e2976a3a6e1459187c210b415e8dfeb1e"
     },
     "next-best-practices": {
       "source": "vercel-labs/next-skills",
@@ -24,7 +24,7 @@
     "next-browser": {
       "source": "vercel-labs/next-browser",
       "sourceType": "github",
-      "computedHash": "54cfbbd103ed720b4b6388389b850663eb276658ad8085f3aa4ba13472ad5b4c"
+      "computedHash": "fcd888ef101b1350e1a1c904efbc1d9ee52c3a56fa784325ad9b9340d4d281dc"
     },
     "next-cache-components": {
       "source": "vercel-labs/next-skills",
@@ -39,7 +39,7 @@
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
-      "computedHash": "c858d2d9023e73edb4e5504868cb0e36313e58fd56af12ef888b43c5634a3c17"
+      "computedHash": "bbc31a48537b473ff4feea6360ef0de3bfdcbef26c14f4967a5deefe8ca801d3"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",

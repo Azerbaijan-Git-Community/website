@@ -62,6 +62,7 @@ git remote add upstream https://github.com/Azerbaijan-Git-Community/website.git
 ```
 
 ### Install Dependencies & Setup
+
 ```bash
 pnpm bootstrap
 ```
