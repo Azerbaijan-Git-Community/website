@@ -61,16 +61,17 @@ cd website
 git remote add upstream https://github.com/Azerbaijan-Git-Community/website.git
 ```
 
-### Install Dependencies
-
+### Install Dependencies & Setup
 ```bash
-npm install
+pnpm bootstrap
 ```
+
+This installs all dependencies, sets up additional tooling, and generates the Prisma client.
 
 ### Run Locally
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 The site will be available at `http://localhost:3000`.
