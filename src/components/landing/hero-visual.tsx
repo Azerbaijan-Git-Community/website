@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useInView } from "motion/react";
-import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
 import { getGithubStats } from "@/data/stats/get";
 
@@ -29,11 +28,9 @@ function useCountUp(target: number, duration: number, active: boolean) {
   return value;
 }
 
-export function HeroVisual() {
+export function HeroVisual({ data }: { data: Awaited<ReturnType<typeof getGithubStats>> }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.3 });
-
-  const { data } = useSWR("github-stats", () => getGithubStats());
 
   const currentProp = data?.totalCommits ?? 0;
   const current = useCountUp(currentProp, 2.5, inView);

@@ -2,11 +2,9 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import useSWR, { preload } from "swr";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { type LeaderboardEntry, getLeaderboard, getMonthlyLeaderboard } from "@/data/leaderboard/get";
+import { type AllTableData } from "@/data/leaderboard/get";
 
 function getRankBadgeClass(rank: number): string {
   if (rank === 1)
@@ -37,49 +35,20 @@ function EmptyState() {
 }
 
 interface TableClientProps {
-  initialData: LeaderboardEntry[];
+  allData: AllTableData;
   currentMonthKey: string;
 }
 
-export function TableClient({ initialData, currentMonthKey }: TableClientProps) {
+export function TableClient({ allData, currentMonthKey }: TableClientProps) {
   const [period] = useQueryState(
     "period",
     parseAsStringLiteral(["weekly", "monthly", "allTime"]).withDefault("monthly").withOptions({ shallow: true }),
   );
+  const [month] = useQueryState("month", { defaultValue: currentMonthKey, shallow: true });
 
-  // initialData yalnızca monthly + currentMonth için geçerli
-  const isInitialPeriod = period === "monthly";
-  const mountedRef = useRef(false);
+  const entries = period === "monthly" ? (allData.monthly[month] ?? []) : allData[period];
 
-  const swrKey = `leaderboard-${period === "monthly" ? `monthly-${currentMonthKey}` : period}`;
-
-  const fetcher = () =>
-    period === "monthly" ? getMonthlyLeaderboard(currentMonthKey) : getLeaderboard(period as "weekly" | "allTime");
-
-  const { data: entries, isLoading } = useSWR<LeaderboardEntry[]>(swrKey, fetcher, {
-    // period monthly ise initialData ile başla, değilse undefined (yani fetch tamamlanana kadar bekle)
-    fallbackData: isInitialPeriod ? initialData : undefined,
-    revalidateOnMount: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    keepPreviousData: false,
-  });
-
-  // Preload diğer tab'lar
-  useEffect(() => {
-    if (mountedRef.current) return;
-    mountedRef.current = true;
-    preload("leaderboard-weekly", () => getLeaderboard("weekly"));
-    preload("leaderboard-allTime", () => getLeaderboard("allTime"));
-    preload(`leaderboard-monthly-${currentMonthKey}`, () => getMonthlyLeaderboard(currentMonthKey));
-  }, [currentMonthKey]);
-
-  // Fetch tamamlanana kadar skeleton göster
-  if (isLoading && !entries) {
-    return <div className="h-110 animate-pulse rounded-xl bg-surface" />;
-  }
-
-  if (!entries || entries.length === 0) return <EmptyState />;
+  if (entries.length === 0) return <EmptyState />;
 
   return (
     <div className="w-full">
