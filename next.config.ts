@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
   typedRoutes: true,
+  images: {
+    qualities: [75, 100],
+    remotePatterns: [{ hostname: "avatars.githubusercontent.com" }],
+  },
 };
 
 export default nextConfig;

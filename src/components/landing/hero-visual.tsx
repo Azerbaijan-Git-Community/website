@@ -46,7 +46,7 @@ export function HeroVisual({ data }: { data: Awaited<ReturnType<typeof getGithub
       className="glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
     >
       <div className="mb-6">
-        <h3 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h3>
+        <h2 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h2>
         <p className="text-sm text-lo">Growing GitHub Activity</p>
       </div>
 

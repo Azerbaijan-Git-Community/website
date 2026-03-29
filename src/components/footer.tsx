@@ -42,10 +42,10 @@ export function Footer() {
             <Image
               src="/logo.png"
               alt="GitHub Azerbaijan"
-              width={160}
-              height={60}
-              unoptimized
-              className="h-25 w-auto object-contain invert"
+              width={232}
+              height={91}
+              quality={100}
+              className="h-auto w-58 object-contain invert"
             />
             <p className="max-w-sm text-sm leading-relaxed text-lo">
               A national movement to unite talent, open-source, innovation, and digital transformation.
@@ -56,7 +56,7 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {linkGroups.map((group) => (
               <div key={group.title}>
-                <h4 className="mb-4 font-outfit text-lg font-semibold text-hi">{group.title}</h4>
+                <h3 className="mb-4 font-outfit text-lg font-semibold text-hi">{group.title}</h3>
                 <ul className="space-y-2">
                   {group.links.map((link) => (
                     <li key={link.label}>

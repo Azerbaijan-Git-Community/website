@@ -24,7 +24,7 @@ export function JoinSection() {
               href="https://github.com/Azerbaijan-Git-Community"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-green px-8 py-4 text-lg font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_20px_rgba(46,160,67,0.5)]"
+              className="inline-flex items-center gap-2 rounded-md bg-green px-8 py-4 text-lg font-semibold text-black transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_20px_rgba(46,160,67,0.5)]"
             >
               <PiGithubLogo size={22} />
               Join on GitHub

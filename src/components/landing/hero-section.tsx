@@ -25,7 +25,7 @@ export async function HeroSection() {
           <div className="flex flex-wrap gap-4">
             <SmoothLink
               href="#join"
-              className="inline-flex items-center justify-center rounded-md bg-green px-8 py-4 text-lg font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_15px_rgba(46,160,67,0.4)]"
+              className="inline-flex items-center justify-center rounded-md bg-green px-8 py-4 text-lg font-semibold text-black transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_15px_rgba(46,160,67,0.4)]"
             >
               Start Contributing
             </SmoothLink>
