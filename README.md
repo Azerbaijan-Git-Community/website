@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<img src="https://github.com/Azerbaijan-Git-Community/.github/blob/main/profile/agc-logo.png" align="left" width="200"/>
 
-## Getting Started
+### `Azerbaijan Github Community`
 
-First, run the development server:
+Uniting talent, expanding open-source, and building national innovation metrics.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<a href="https://azerbaijangithubcommunity.vercel.app/">Website</a> ·
+<a href="https://www.linkedin.com/company/github-azerbaijan/">Linkedin</a> ·
+<a href="https://t.me/github_azerbaijan">Telegram</a> ·
+<a href="https://www.instagram.com/azerbaijan_github_community/">Instagram</a>
+
+<br clear="left"/>
+
+---
+
+## About
+
+Azerbaijan GitHub Community is a national open-source growth program with an ambitious goal: **5,000,000 GitHub pushes**. The website serves as the public face of the community — showcasing impact metrics, contributor leaderboards, and the roadmap for Azerbaijan's open-source future.
+
+Members sign in with their GitHub accounts, and their contribution stats (commits, pull requests) are automatically synced and displayed on a competitive leaderboard with weekly, monthly, and all-time rankings.
+
+## Tech Stack
+
+| Layer          | Technology                                                 |
+| -------------- | ---------------------------------------------------------- |
+| Framework      | [Next.js 16](https://nextjs.org/) (App Router, React 19)   |
+| Language       | TypeScript                                                 |
+| Styling        | [Tailwind CSS 4](https://tailwindcss.com/)                 |
+| UI Components  | [HeroUI v3](https://heroui.com/)                           |
+| Animation      | [Motion](https://motion.dev/) (Framer Motion)              |
+| Database       | PostgreSQL via [Prisma ORM](https://www.prisma.io/)        |
+| Authentication | [Better Auth](https://www.better-auth.com/) (GitHub OAuth) |
+| Deployment     | [Vercel](https://vercel.com/)                              |
+
+## Key Features
+
+- **Contributor Leaderboard** — Weekly, monthly, and all-time rankings with podium highlights for top contributors.
+- **GitHub Stats Sync** — Automated hourly sync via GitHub Actions keeps contribution data fresh.
+- **Server-Side Caching** — Leverages Next.js Cache Components for fast page loads with zero client-side data fetching on navigation.
+- **GitHub OAuth** — One-click sign-in to join the community and appear on the leaderboard.
+- **Community Roadmap** — Public roadmap showing past milestones and upcoming goals.
+
+## Project Structure
+
+```
+src/
+├── app/                  # Next.js App Router pages and API routes
+│   ├── leaderboard/      # Leaderboard page
+│   └── api/              # Auth and cron sync endpoints
+├── components/           # React components
+│   ├── landing/          # Homepage sections
+│   └── leaderboard/      # Podium, table, tabs, month selector
+├── data/                 # Server-side data fetching functions
+└── lib/                  # Shared utilities (Prisma, auth, fonts)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup and guidelines.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source under the [MPL-2.0 license](./LICENSE).

@@ -2,8 +2,8 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 .next
 node_modules
-README.md
 AGENTS.md
+CLAUDE.md
 .agents
 .heroui-docs
 /src/generated/
