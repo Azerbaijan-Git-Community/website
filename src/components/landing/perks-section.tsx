@@ -51,7 +51,7 @@ export function PerksSection() {
                 <li key={perk.title} className="flex items-start gap-4">
                   <PiCheckCircleFill className="text-gradient mt-0.5 shrink-0 text-2xl" />
                   <div>
-                    <h4 className="mb-1 font-outfit font-bold">{perk.title}</h4>
+                    <h3 className="mb-1 font-outfit font-bold">{perk.title}</h3>
                     <p className="text-sm text-lo">{perk.body}</p>
                   </div>
                 </li>

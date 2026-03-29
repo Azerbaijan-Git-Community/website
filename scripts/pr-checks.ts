@@ -7,11 +7,11 @@
 import { execSync } from "child_process";
 import * as readline from "readline";
 
-interface Check {
+type Check = {
   name: string;
   cmd: string;
   onFail?: string;
-}
+};
 
 // ── Colors ────────────────────────────────────────────────────────
 const RESET = "\x1b[0m";

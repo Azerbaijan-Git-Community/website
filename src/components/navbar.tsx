@@ -38,9 +38,10 @@ export function Navbar() {
             alt="GitHub Azerbaijan"
             width={120}
             height={40}
-            unoptimized
+            quality={100}
             className="h-auto max-h-17.5 w-auto py-3 invert"
             priority
+            loading="eager"
           />
         </Link>
 

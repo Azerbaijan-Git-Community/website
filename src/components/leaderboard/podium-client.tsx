@@ -1,10 +1,44 @@
 "use client";
 
-import { useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
 import { type LeaderboardEntry } from "@/data/leaderboard/get";
+import { MonthSelector } from "./month-selector";
+
+type PodiumClientProps = {
+  allData: Record<string, LeaderboardEntry[]>;
+  currentMonthKey: string;
+  availableMonths: string[];
+};
+
+const PODIUM_ORDER = [1, 0, 2];
+
+export function PodiumClient({ allData, currentMonthKey, availableMonths }: PodiumClientProps) {
+  const [month, setMonth] = useState(currentMonthKey);
+
+  const months = Object.keys(allData).sort().reverse();
+  const data = allData[month]?.length ? allData[month] : (allData[months.find((m) => m < month) ?? months[0]] ?? []);
+
+  return (
+    <>
+      <div className="mb-8">
+        <MonthSelector months={availableMonths} month={month} onMonthChange={setMonth} />
+      </div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {PODIUM_ORDER.map((i) => (
+          <PodiumCard
+            key={data[i].username}
+            entry={data[i]}
+            config={MEDAL_CONFIG[i]}
+            mt={i !== 0 ? "md:mt-8" : undefined}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
 
 const MEDAL_CONFIG = [
   {
@@ -39,15 +73,13 @@ const MEDAL_CONFIG = [
   },
 ] as const;
 
-function PodiumCard({
-  entry,
-  config,
-  mt,
-}: {
+type PodiumCardProps = {
   entry: LeaderboardEntry;
   config: (typeof MEDAL_CONFIG)[number];
   mt?: string;
-}) {
+};
+
+function PodiumCard({ entry, config, mt }: PodiumCardProps) {
   return (
     <div
       className={`glass flex flex-col items-center rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ${mt ?? ""} ${
@@ -63,7 +95,8 @@ function PodiumCard({
           width={config.size}
           height={config.size}
           className={`rounded-full ring-4 ${config.ring}`}
-          unoptimized
+          quality={100}
+          loading="eager"
         />
         <div
           className={`absolute -right-2 -bottom-2 flex items-center justify-center rounded-full bg-linear-to-br ${config.gradient} font-bold text-black ${config.glow} ${config.badgeSize}`}
@@ -86,44 +119,6 @@ function PodiumCard({
           {entry.commits.toLocaleString()}
         </div>
       </div>
-    </div>
-  );
-}
-
-type PodiumClientProps = {
-  allData: Record<string, LeaderboardEntry[]>;
-  currentMonthKey: string;
-};
-
-export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
-  const [month] = useQueryState("month", { defaultValue: currentMonthKey, shallow: true });
-
-  const data = allData[month] ?? [];
-  const [first, second, third] = data;
-
-  if (data.length === 0) return null;
-  if (data.length === 1) {
-    return (
-      <div className="flex justify-center">
-        <div className="w-full max-w-sm">
-          <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
-        </div>
-      </div>
-    );
-  }
-  if (data.length === 2) {
-    return (
-      <div className="grid grid-cols-1 gap-6 md:mx-auto md:max-w-2xl md:grid-cols-2">
-        <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
-        <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
-      </div>
-    );
-  }
-  return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-      <PodiumCard entry={second} config={MEDAL_CONFIG[1]} mt="md:mt-8" />
-      <PodiumCard entry={first} config={MEDAL_CONFIG[0]} />
-      <PodiumCard entry={third!} config={MEDAL_CONFIG[2]} mt="md:mt-8" />
     </div>
   );
 }

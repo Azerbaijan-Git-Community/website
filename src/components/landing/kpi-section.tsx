@@ -37,7 +37,7 @@ export function KpiSection() {
               className="glass cursor-default rounded-xl p-6 transition-colors"
             >
               <kpi.Icon className="mx-auto mb-2 text-[2rem] text-hi" size={32} />
-              <h4 className="mb-1 font-outfit text-sm font-bold">{kpi.title}</h4>
+              <h3 className="mb-1 font-outfit text-sm font-bold">{kpi.title}</h3>
               <p className="text-xs text-lo">{kpi.sub}</p>
             </motion.div>
           ))}
