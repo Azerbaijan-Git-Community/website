@@ -7,7 +7,7 @@ import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
+  title: "Azerbaijan GitHub Community | 5,000,000 commits",
   description:
     "Push the future of Azerbaijan. National open source & innovation growth program aiming for 5,000,000 GitHub pushes.",
   keywords: [
