@@ -1,11 +1,10 @@
 "use client";
 
 import { useQueryState } from "nuqs";
-import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { FaMedal } from "react-icons/fa";
-import { type LeaderboardEntry, getMonthlyLeaderboard } from "@/data/leaderboard/get";
+import { type LeaderboardEntry } from "@/data/leaderboard/get";
 
 const MEDAL_CONFIG = [
   {
@@ -92,25 +91,14 @@ function PodiumCard({
 }
 
 type PodiumClientProps = {
-  initialData: LeaderboardEntry[];
+  allData: Record<string, LeaderboardEntry[]>;
   currentMonthKey: string;
 };
 
-export function PodiumClient({ initialData, currentMonthKey }: PodiumClientProps) {
+export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
   const [month] = useQueryState("month", { defaultValue: currentMonthKey, shallow: true });
 
-  const { data = [] } = useSWR<LeaderboardEntry[]>(
-    `leaderboard-podium-${month}`,
-    () => getMonthlyLeaderboard(month).then((d) => d.slice(0, 3)),
-    {
-      fallbackData: month === currentMonthKey ? initialData : [],
-      revalidateOnMount: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      keepPreviousData: true,
-    },
-  );
-
+  const data = allData[month] ?? [];
   const [first, second, third] = data;
 
   if (data.length === 0) return null;
