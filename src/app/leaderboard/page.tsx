@@ -7,17 +7,13 @@ import { TableClient } from "@/components/leaderboard/table-client";
 import { LeaderboardTabs } from "@/components/leaderboard/tabs";
 import { getAvailableMonths, getMonthlyLeaderboard } from "@/data/leaderboard/get";
 
-export async function getCurrentMonthKey(): Promise<string> {
+export default async function LeaderboardPage() {
   "use cache";
-  cacheLife("minutes");
+  cacheLife("hours");
 
   const now = new Date();
-  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-}
-
-export default async function LeaderboardPage() {
-  const availableMonthsPromise = getAvailableMonths();
-  const currentMonthKey = await getCurrentMonthKey();
+  const currentMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+  const availableMonths = await getAvailableMonths();
   const initialData = await getMonthlyLeaderboard(currentMonthKey);
 
   const podiumData = initialData.slice(0, 3);
@@ -51,7 +47,7 @@ export default async function LeaderboardPage() {
           className="mb-8"
         >
           <Suspense fallback={<div className="mx-auto h-13 max-w-xs animate-pulse rounded-lg bg-surface" />}>
-            <MonthSelector availableMonthsPromise={availableMonthsPromise} currentMonthKey={currentMonthKey} />
+            <MonthSelector months={availableMonths} currentMonthKey={currentMonthKey} />
           </Suspense>
         </motion.div>
 

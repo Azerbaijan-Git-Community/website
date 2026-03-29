@@ -2,7 +2,6 @@
 
 import { useQueryState } from "nuqs";
 import { ListBox, Select } from "@heroui/react";
-import { use } from "react";
 import { PiCaretUpDownBold } from "react-icons/pi";
 
 function formatMonthKey(key: string): string {
@@ -14,12 +13,11 @@ function formatMonthKey(key: string): string {
 }
 
 type MonthSelectorProps = {
-  availableMonthsPromise: Promise<string[]>;
+  months: string[];
   currentMonthKey: string;
 };
 
-export function MonthSelector({ availableMonthsPromise, currentMonthKey }: MonthSelectorProps) {
-  const months = use(availableMonthsPromise);
+export function MonthSelector({ months, currentMonthKey }: MonthSelectorProps) {
   const [month, setMonth] = useQueryState("month", {
     defaultValue: currentMonthKey,
     shallow: true,
