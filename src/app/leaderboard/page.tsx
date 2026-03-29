@@ -11,8 +11,8 @@ export default async function LeaderboardPage() {
   "use cache";
   cacheLife("hours");
 
-  const currentMonthKey = await getCurrentMonthKey();
-  const [availableMonths, tableData, podiumData] = await Promise.all([
+  const [currentMonthKey, availableMonths, tableData, podiumData] = await Promise.all([
+    getCurrentMonthKey(),
     getAvailableMonths(),
     getTableData(),
     getPodiumData(),
