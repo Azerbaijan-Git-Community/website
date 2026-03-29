@@ -5,19 +5,18 @@ import { MonthSelector } from "@/components/leaderboard/month-selector";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { LeaderboardTabs } from "@/components/leaderboard/tabs";
-import { getAvailableMonths, getMonthlyLeaderboard } from "@/data/leaderboard/get";
+import { getAvailableMonths, getCurrentMonthKey, getPodiumData, getTableData } from "@/data/leaderboard/get";
 
 export default async function LeaderboardPage() {
   "use cache";
   cacheLife("hours");
 
-  const now = new Date();
-  const currentMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-  const availableMonths = await getAvailableMonths();
-  const initialData = await getMonthlyLeaderboard(currentMonthKey);
-
-  const podiumData = initialData.slice(0, 3);
-  const tableData = initialData;
+  const currentMonthKey = await getCurrentMonthKey();
+  const [availableMonths, tableData, podiumData] = await Promise.all([
+    getAvailableMonths(),
+    getTableData(),
+    getPodiumData(),
+  ]);
 
   return (
     <div className="min-h-screen pt-32 pb-24">
@@ -59,7 +58,7 @@ export default async function LeaderboardPage() {
           className="mb-16"
         >
           <Suspense fallback={<div className="h-80 animate-pulse rounded-xl bg-surface" />}>
-            <PodiumClient initialData={podiumData} currentMonthKey={currentMonthKey} />
+            <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} />
           </Suspense>
         </motion.div>
 
@@ -87,7 +86,7 @@ export default async function LeaderboardPage() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <Suspense fallback={<div className="h-110 animate-pulse rounded-xl bg-surface" />}>
-            <TableClient initialData={tableData} currentMonthKey={currentMonthKey} />
+            <TableClient allData={tableData} currentMonthKey={currentMonthKey} />
           </Suspense>
         </motion.div>
       </div>

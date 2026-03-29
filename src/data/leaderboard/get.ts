@@ -15,6 +15,12 @@ export type LeaderboardEntry = {
   joinedAt: Date;
 };
 
+export type AllTableData = {
+  weekly: LeaderboardEntry[];
+  allTime: LeaderboardEntry[];
+  monthly: Record<string, LeaderboardEntry[]>;
+};
+
 function getCurrentWeekKey(): string {
   const date = new Date();
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -25,56 +31,27 @@ function getCurrentWeekKey(): string {
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
 }
 
-function getCurrentMonthKey(): string {
+export async function getCurrentMonthKey(): Promise<string> {
   const date = new Date();
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
-// weekly and allTime only — monthly is handled by getMonthlyLeaderboard
-export async function getLeaderboard(period: "weekly" | "allTime"): Promise<LeaderboardEntry[]> {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("leaderboard");
-
-  if (period === "allTime") {
-    const stats = await prisma.githubStats.findMany({
-      include: { user: { select: { githubUsername: true, name: true, image: true, createdAt: true } } },
-      orderBy: { commits: "desc" },
-      take: 100,
-    });
-
-    return stats
-      .filter((s) => s.user.githubUsername)
-      .map((s) => ({
-        userId: s.userId,
-        username: s.user.githubUsername!,
-        name: s.user.name,
-        image: s.user.image,
-        commits: s.commits,
-        pullRequests: s.pullRequests,
-        joinedAt: s.user.createdAt,
-      }));
-  }
-
-  // weekly
-  const snapshots = await prisma.githubStatsSnapshot.findMany({
-    where: { period: "WEEKLY", periodKey: getCurrentWeekKey() },
-    include: { user: { select: { githubUsername: true, name: true, image: true, createdAt: true } } },
-    orderBy: { commits: "desc" },
-    take: 100,
-  });
-
-  return snapshots
-    .filter((s) => s.user.githubUsername)
-    .map((s) => ({
-      userId: s.userId,
-      username: s.user.githubUsername!,
-      name: s.user.name,
-      image: s.user.image,
-      commits: s.commits,
-      pullRequests: s.pullRequests,
-      joinedAt: s.user.createdAt,
-    }));
+function mapEntry(s: {
+  userId: string;
+  commits: number;
+  pullRequests: number;
+  user: { githubUsername: string | null; name: string | null; image: string | null; createdAt: Date };
+}): LeaderboardEntry | null {
+  if (!s.user.githubUsername) return null;
+  return {
+    userId: s.userId,
+    username: s.user.githubUsername,
+    name: s.user.name,
+    image: s.user.image,
+    commits: s.commits,
+    pullRequests: s.pullRequests,
+    joinedAt: s.user.createdAt,
+  };
 }
 
 export async function getAvailableMonths(): Promise<string[]> {
@@ -82,7 +59,7 @@ export async function getAvailableMonths(): Promise<string[]> {
   cacheLife("hours");
   cacheTag("leaderboard");
 
-  const currentKey = getCurrentMonthKey();
+  const currentKey = await getCurrentMonthKey();
 
   const keys = await prisma.githubStatsSnapshot.findMany({
     where: { period: "MONTHLY" },
@@ -97,27 +74,55 @@ export async function getAvailableMonths(): Promise<string[]> {
   return existing;
 }
 
-export async function getMonthlyLeaderboard(monthKey: string): Promise<LeaderboardEntry[]> {
+export async function getTableData(): Promise<AllTableData> {
   "use cache";
   cacheLife("hours");
   cacheTag("leaderboard");
 
-  const snapshots = await prisma.githubStatsSnapshot.findMany({
-    where: { period: "MONTHLY", periodKey: monthKey },
-    include: { user: { select: { githubUsername: true, name: true, image: true, createdAt: true } } },
-    orderBy: { commits: "desc" },
-    take: 100,
-  });
+  const userSelect = { githubUsername: true, name: true, image: true, createdAt: true } as const;
 
-  return snapshots
-    .filter((s) => s.user.githubUsername)
-    .map((s) => ({
-      userId: s.userId,
-      username: s.user.githubUsername!,
-      name: s.user.name,
-      image: s.user.image,
-      commits: s.commits,
-      pullRequests: s.pullRequests,
-      joinedAt: s.user.createdAt,
-    }));
+  const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
+    prisma.githubStatsSnapshot.findMany({
+      where: { period: "WEEKLY", periodKey: getCurrentWeekKey() },
+      include: { user: { select: userSelect } },
+      orderBy: { commits: "desc" },
+      take: 100,
+    }),
+    prisma.githubStats.findMany({
+      include: { user: { select: userSelect } },
+      orderBy: { commits: "desc" },
+      take: 100,
+    }),
+    prisma.githubStatsSnapshot.findMany({
+      where: { period: "MONTHLY" },
+      include: { user: { select: userSelect } },
+      orderBy: { commits: "desc" },
+    }),
+  ]);
+
+  const weekly = weeklyRaw.map(mapEntry).filter((e): e is LeaderboardEntry => e !== null);
+  const allTime = allTimeRaw.map(mapEntry).filter((e): e is LeaderboardEntry => e !== null);
+
+  const monthly: Record<string, LeaderboardEntry[]> = {};
+  for (const s of monthlyRaw) {
+    const entry = mapEntry(s);
+    if (!entry) continue;
+    if (!monthly[s.periodKey]) monthly[s.periodKey] = [];
+    if (monthly[s.periodKey].length < 100) monthly[s.periodKey].push(entry);
+  }
+
+  return { weekly, allTime, monthly };
+}
+
+export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("leaderboard");
+
+  const { monthly } = await getTableData();
+  const podium: Record<string, LeaderboardEntry[]> = {};
+  for (const [key, entries] of Object.entries(monthly)) {
+    podium[key] = entries.slice(0, 3);
+  }
+  return podium;
 }
