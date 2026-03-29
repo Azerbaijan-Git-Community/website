@@ -61,3 +61,5 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup and guidelines.
 ## License
 
 This project is open source under the [MPL-2.0 license](./LICENSE).
+
+<p align="center">Built by the community · for the community · 🇦🇿 Azerbaijan</p>
