@@ -1,4 +1,4 @@
 pnpm install
-pnpm install:skills
+pnpm install:skills --yes
 pnpm install:heroui_docs
 pnpm prisma:generate
