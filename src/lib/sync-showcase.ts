@@ -46,7 +46,7 @@ async function fetchRegistry(): Promise<ShowcaseYaml[]> {
       const content = await fetch(file.download_url, {
         headers: { Authorization: `Bearer ${process.env.GH_STATS_TOKEN}` },
       }).then((r) => r.text());
-      return yaml.load(content) as ShowcaseYaml;
+      return yaml.load(content, { schema: yaml.JSON_SCHEMA }) as ShowcaseYaml;
     }),
   );
 
