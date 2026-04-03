@@ -17,6 +17,7 @@ env:
   GITHUB_CLIENT_ID: "nice_try"
   GITHUB_CLIENT_SECRET: "nice_try"
   GH_STATS_TOKEN: "nice_try"
+  SHOWCASE_WEBHOOK_SECRET: "nice_try"
 
 jobs:
   quality:
