@@ -11,7 +11,7 @@ interface ShowcaseYaml {
   repo: string;
   submittedBy: string;
   banner?: string;
-  npm?: string;
+  links?: string[];
   website?: string;
   addedAt: string;
   updatedAt: string;
@@ -112,7 +112,7 @@ export async function syncShowcase(): Promise<{ synced: number; removed: number 
       const shared = {
         submittedBy: project.submittedBy,
         banner: project.banner ?? null,
-        npm: project.npm ?? null,
+        links: project.links ?? [],
         website: project.website ?? null,
         stars: ghData?.stargazerCount ?? 0,
         forks: ghData?.forkCount ?? 0,

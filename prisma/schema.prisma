@@ -129,7 +129,7 @@ model ShowcaseProject {
   repo             String   @unique
   submittedBy      String
   banner           String?
-  npm              String?
+  links            String[]
   website          String?
   addedAt          DateTime
   projectUpdatedAt DateTime
