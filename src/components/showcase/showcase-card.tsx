@@ -1,9 +1,17 @@
 import * as motion from "motion/react-client";
+import type { IconType } from "react-icons";
 import { FaDocker, FaNpm, FaPython } from "react-icons/fa";
-import { PiArrowSquareOut, PiGitPullRequest, PiGithubLogo, PiGlobeSimple, PiScales, PiStar, PiWarningCircle } from "react-icons/pi";
+import {
+  PiArrowSquareOut,
+  PiGitPullRequest,
+  PiGithubLogo,
+  PiGlobeSimple,
+  PiScales,
+  PiStar,
+  PiWarningCircle,
+} from "react-icons/pi";
 import { SiNuget, SiRubygems, SiRust } from "react-icons/si";
 import { VscExtensions } from "react-icons/vsc";
-import type { IconType } from "react-icons";
 import type { ShowcaseProject } from "@/data/showcase/get";
 import { ImageFallback } from "../image-fallback";
 
@@ -20,7 +28,12 @@ type LinkIconDef = { icon: IconType; hoverClass: string; label: string };
 const DOMAIN_ICONS: Array<{ pattern: RegExp } & LinkIconDef> = [
   { pattern: /npmjs\.com/, icon: FaNpm, hoverClass: "hover:text-[#CB3837]", label: "npm" },
   { pattern: /pypi\.org/, icon: FaPython, hoverClass: "hover:text-[#3776AB]", label: "PyPI" },
-  { pattern: /marketplace\.visualstudio\.com/, icon: VscExtensions, hoverClass: "hover:text-[#0078D4]", label: "VS Code Marketplace" },
+  {
+    pattern: /marketplace\.visualstudio\.com/,
+    icon: VscExtensions,
+    hoverClass: "hover:text-[#0078D4]",
+    label: "VS Code Marketplace",
+  },
   { pattern: /crates\.io/, icon: SiRust, hoverClass: "hover:text-[#DEA584]", label: "crates.io" },
   { pattern: /rubygems\.org/, icon: SiRubygems, hoverClass: "hover:text-[#E9573F]", label: "RubyGems" },
   { pattern: /nuget\.org/, icon: SiNuget, hoverClass: "hover:text-[#004880]", label: "NuGet" },
