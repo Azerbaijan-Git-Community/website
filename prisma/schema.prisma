@@ -123,3 +123,26 @@ enum SnapshotPeriod {
   WEEKLY
   MONTHLY
 }
+
+model ShowcaseProject {
+  id               String   @id @default(cuid())
+  repo             String   @unique
+  submittedBy      String
+  banner           String?
+  npm              String?
+  website          String?
+  addedAt          DateTime
+  projectUpdatedAt DateTime
+  stars            Int      @default(0)
+  forks            Int      @default(0)
+  openIssues       Int      @default(0)
+  openPRs          Int      @default(0)
+  description      String?
+  homepageUrl      String?
+  license          String?
+  language         String?
+  languageColor    String?
+  syncedAt         DateTime @updatedAt
+
+  @@map("showcase_project")
+}

@@ -1,11 +1,12 @@
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getAvailableMonths, getCurrentMonthKey, getPodiumData, getTableData } from "@/data/leaderboard/get";
 
 export default async function LeaderboardPage() {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
+  cacheTag("leaderboard");
 
   const [currentMonthKey, availableMonths, tableData, podiumData] = await Promise.all([
     getCurrentMonthKey(),
