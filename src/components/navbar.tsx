@@ -5,16 +5,12 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { SignInButton } from "./sign-in-button";
-import { SmoothLink } from "./smooth-link";
 import { UserAvatar } from "./user-avatar";
 
 const links: { href: Route; label: string }[] = [
   { href: "/", label: "Home" },
-  { href: "/#about", label: "About" },
-  { href: "/#impact", label: "Impact" },
-  { href: "/#perks", label: "Perks" },
-  { href: "/#roadmap", label: "Roadmap" },
   { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/showcase", label: "Showcase" },
 ];
 
 async function NavAuth() {
@@ -48,13 +44,13 @@ export function Navbar() {
         {/* Nav links — hidden on mobile */}
         <div className="hidden gap-8 md:flex">
           {links.map((link) => (
-            <SmoothLink
+            <Link
               key={link.href}
               href={link.href}
               className="font-outfit font-medium text-hi transition-colors hover:text-blue"
             >
               {link.label}
-            </SmoothLink>
+            </Link>
           ))}
         </div>
 

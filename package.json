@@ -25,6 +25,7 @@
     "@prisma/client": "^7.6.0",
     "better-auth": "^1.5.6",
     "dotenv": "^17.4.0",
+    "js-yaml": "^4.1.1",
     "motion": "^12.38.0",
     "next": "16.2.2",
     "nuqs": "^2.8.9",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

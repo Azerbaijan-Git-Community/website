@@ -1,11 +1,12 @@
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getGithubStats } from "@/data/stats/get";
 import { SmoothLink } from "../smooth-link";
 import { HeroVisual } from "./hero-visual";
 
 export async function HeroSection() {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
+  cacheTag("github-stats");
 
   const data = await getGithubStats();
 

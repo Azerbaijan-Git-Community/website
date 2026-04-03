@@ -24,7 +24,7 @@
     "next-browser": {
       "source": "vercel-labs/next-browser",
       "sourceType": "github",
-      "computedHash": "fcd888ef101b1350e1a1c904efbc1d9ee52c3a56fa784325ad9b9340d4d281dc"
+      "computedHash": "219dd19d5bc7a6c2598881bcabc30ac34398b90940089924a3e826625155c234"
     },
     "next-cache-components": {
       "source": "vercel-labs/next-skills",
@@ -39,7 +39,7 @@
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
-      "computedHash": "b1142c5e1bc7b77e8479db09dbabf671f44e1f2d4d9d3eed8cc20cc2c90aeb20"
+      "computedHash": "1be892a3ea68b74654326ef836a58dd528d99ae0ab8d879764e2519c39068e67"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
