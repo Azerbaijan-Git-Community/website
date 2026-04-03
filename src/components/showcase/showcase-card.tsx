@@ -1,10 +1,8 @@
-"use client";
-
 import * as motion from "motion/react-client";
-import Image from "next/image";
 import { FaNpm } from "react-icons/fa";
 import { PiGitPullRequest, PiGithubLogo, PiGlobeSimple, PiScales, PiStar, PiWarningCircle } from "react-icons/pi";
 import type { ShowcaseProject } from "@/data/showcase/get";
+import { ImageFallback } from "../image-fallback";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
@@ -13,7 +11,7 @@ function formatCount(n: number): string {
 
 export function ShowcaseCard({ project, index }: { project: ShowcaseProject; index: number }) {
   const [owner, repoName] = project.repo.split("/");
-  const bannerSrc = project.banner ?? `https://opengraph.githubassets.com/1/${project.repo}`;
+  const ogFallback = `https://opengraph.githubassets.com/1/${project.repo}`;
 
   return (
     <motion.div
@@ -30,13 +28,15 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
     >
       {/* Banner */}
       <div className="relative h-44 w-full overflow-hidden bg-overlay">
-        <Image
-          src={bannerSrc}
+        <ImageFallback
+          src={project.banner ?? ogFallback}
+          fallback={ogFallback}
           alt={`${project.repo} banner`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
           loading="lazy"
+          unoptimized
         />
       </div>
 
@@ -76,6 +76,7 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
             </span>
           </div>
         </div>
+
         {/* Footer */}
         <div className="mt-auto flex items-center justify-between border-t border-line pt-3">
           <span className="flex items-center gap-1 text-xs text-dim">
