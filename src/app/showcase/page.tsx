@@ -44,10 +44,18 @@ export default async function ShowcasePage() {
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Open Source <span className="text-gradient">Showcase</span>
           </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-lo">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-lo">
             {projects.length > 0
               ? `${projects.length} project${projects.length === 1 ? "" : "s"} built by Azerbaijan GitHub Community members.`
-              : "Projects built by Azerbaijan GitHub Community members will appear here."}
+              : "Projects built by Azerbaijan GitHub Community members will appear here."}{" "}
+            <a
+              href="https://github.com/Azerbaijan-Git-Community/showcase#readme"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue transition-colors hover:text-lime"
+            >
+              Submit your project
+            </a>
           </p>
         </div>
 

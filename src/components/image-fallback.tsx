@@ -9,7 +9,9 @@ type ImageFallbackProps = ImageProps & {
 
 export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackProps) {
   const [imgSrc, setImgSrc] = useState(src);
-  const didFallback = useRef(false);
+  const retryCount = useRef(0);
+  const originalSrc = useRef(src);
+  const isFinal = useRef(false);
 
   return (
     <Image
@@ -17,8 +19,14 @@ export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackPro
       src={imgSrc}
       alt={alt}
       onError={() => {
-        if (!didFallback.current) {
-          didFallback.current = true;
+        if (isFinal.current) return;
+        if (retryCount.current < 3) {
+          retryCount.current += 1;
+          const base = String(originalSrc.current);
+          const sep = base.includes("?") ? "&" : "?";
+          setImgSrc(`${base}${sep}_retry=${retryCount.current}`);
+        } else {
+          isFinal.current = true;
           setImgSrc(fallback);
         }
       }}
