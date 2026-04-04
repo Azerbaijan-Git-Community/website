@@ -1,12 +1,5 @@
 import * as motion from "motion/react-client";
-import {
-  PiGitPullRequest,
-  PiGithubLogo,
-  PiGlobeSimple,
-  PiScales,
-  PiStar,
-  PiWarningCircle,
-} from "react-icons/pi";
+import { PiGitPullRequest, PiGithubLogo, PiGlobeSimple, PiScales, PiStar, PiWarningCircle } from "react-icons/pi";
 import type { ShowcaseProject } from "@/data/showcase/get";
 import { getLinkIcon } from "@/lib/link-icons";
 import { ImageFallback } from "../image-fallback";
@@ -23,7 +16,6 @@ function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
   return String(n);
 }
-
 
 export function ShowcaseCard({ project, index }: { project: ShowcaseProject; index: number }) {
   const [owner, repoName] = project.repo.split("/");
