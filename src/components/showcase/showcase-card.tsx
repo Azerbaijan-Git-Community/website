@@ -17,32 +17,6 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-// ── Domain → icon registry ────────────────────────────────────────
-// Add a new entry here to support a new registry or marketplace.
-// The icon is picked automatically from the link URL — no user input needed.
-type LinkIconDef = { icon: IconType; hoverClass: string; label: string };
-
-const DOMAIN_ICONS: Array<{ pattern: RegExp } & LinkIconDef> = [
-  { pattern: /npmjs\.com/, icon: FaNpm, hoverClass: "hover:text-[#CB3837]", label: "npm" },
-  { pattern: /pypi\.org/, icon: FaPython, hoverClass: "hover:text-[#3776AB]", label: "PyPI" },
-  {
-    pattern: /marketplace\.visualstudio\.com/,
-    icon: VscExtensions,
-    hoverClass: "hover:text-[#0078D4]",
-    label: "VS Code Marketplace",
-  },
-  { pattern: /crates\.io/, icon: SiRust, hoverClass: "hover:text-[#DEA584]", label: "crates.io" },
-  { pattern: /rubygems\.org/, icon: SiRubygems, hoverClass: "hover:text-[#E9573F]", label: "RubyGems" },
-  { pattern: /nuget\.org/, icon: SiNuget, hoverClass: "hover:text-[#004880]", label: "NuGet" },
-  { pattern: /hub\.docker\.com/, icon: FaDocker, hoverClass: "hover:text-[#1D63ED]", label: "Docker Hub" },
-];
-
-const FALLBACK_LINK_ICON: LinkIconDef = { icon: PiArrowSquareOut, hoverClass: "hover:text-hi", label: "Link" };
-
-function getLinkIcon(url: string): LinkIconDef {
-  return DOMAIN_ICONS.find(({ pattern }) => pattern.test(url)) ?? FALLBACK_LINK_ICON;
-}
-
 export function ShowcaseCard({ project, index }: { project: ShowcaseProject; index: number }) {
   const [owner, repoName] = project.repo.split("/");
   const ogFallback = `https://opengraph.githubassets.com/1/${project.repo}`;
