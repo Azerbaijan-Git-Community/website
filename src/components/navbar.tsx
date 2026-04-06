@@ -9,9 +9,9 @@ import { UserAvatar } from "./user-avatar";
 
 const links: { href: Route; label: string }[] = [
   { href: "/", label: "Home" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/showcase", label: "Showcase" },
   { href: "/blog", label: "Blog" },
+  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/showcase", label: "Showcase" }
 ];
 
 async function NavAuth() {
