@@ -34,8 +34,14 @@ export const auth = betterAuth({
         email: profile.email,
         image: profile.avatar_url,
         githubUsername: profile.login,
+        githubId: profile.id,
       }),
     },
   },
-  user: { additionalFields: { githubUsername: { type: "string", required: false } } },
+  user: {
+    additionalFields: {
+      githubUsername: { type: "string", required: false },
+      githubId: { type: "number", required: false },
+    },
+  },
 });

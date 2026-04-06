@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function getGithubStats() {
   "use cache";
-  cacheLife("hours");
+  cacheLife("weeks");
   cacheTag("github-stats");
 
   const result = await prisma.githubStats.aggregate({

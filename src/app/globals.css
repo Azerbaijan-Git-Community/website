@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@heroui/styles";
+@plugin "@tailwindcss/typography";
 
 /*
   globals.css — only truly global things:
@@ -147,4 +148,114 @@ body {
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+/* ── Blog prose overrides ─────────────────────────────────────── */
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--color-blue);
+  text-decoration: none;
+}
+
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+  color: var(--color-lime);
+}
+
+.prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  font-family: var(--font-outfit);
+  color: var(--color-hi);
+}
+
+.prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--color-hi);
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--color-hi);
+  background: var(--color-overlay);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.875em;
+}
+
+/* rehype-pretty-code handles code block styling */
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: transparent !important;
+  padding: 0;
+}
+
+.prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Blog table styling */
+.prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-collapse: collapse;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--color-line);
+}
+
+.prose :where(thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: rgba(48, 54, 61, 0.5);
+}
+
+.prose :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--color-hi);
+  font-family: var(--font-outfit);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.prose :where(td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-lo);
+}
+
+.prose :where(tr):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+  background: rgba(48, 54, 61, 0.3);
+}
+
+.prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-left-color: var(--color-blue);
+  color: var(--color-lo);
+}
+
+/* rehype-pretty-code code block container */
+[data-rehype-pretty-code-figure] pre {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+[data-rehype-pretty-code-figure] [data-line] {
+  padding: 0 16px;
+}
+
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  background: rgba(88, 166, 255, 0.1);
+  border-left: 2px solid var(--color-blue);
+}
+
+[data-rehype-pretty-code-title] {
+  background: var(--color-overlay);
+  color: var(--color-lo);
+  font-family: var(--font-inter);
+  font-size: 0.8125rem;
+  padding: 8px 16px;
+  border: 1px solid var(--color-line);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+[data-rehype-pretty-code-title] + pre {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }

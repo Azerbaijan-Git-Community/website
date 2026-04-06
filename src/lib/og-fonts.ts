@@ -1,7 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { cacheLife } from "next/cache";
 
 export async function getOgFonts() {
+  "use cache";
+  cacheLife("max");
   const dir = join(process.cwd(), "assets", "fonts");
 
   const [outfitBold, interRegular] = await Promise.all([
