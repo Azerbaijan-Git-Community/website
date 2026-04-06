@@ -56,7 +56,7 @@ function mapEntry(s: {
 
 export async function getAvailableMonths(): Promise<string[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("weeks");
   cacheTag("leaderboard");
 
   const currentKey = await getCurrentMonthKey();
@@ -76,7 +76,7 @@ export async function getAvailableMonths(): Promise<string[]> {
 
 export async function getTableData(): Promise<AllTableData> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("weeks");
   cacheTag("leaderboard");
 
   const userSelect = { githubUsername: true, name: true, image: true, createdAt: true } as const;
@@ -116,7 +116,7 @@ export async function getTableData(): Promise<AllTableData> {
 
 export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]>> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("weeks");
   cacheTag("leaderboard");
 
   const { monthly } = await getTableData();
