@@ -18,6 +18,7 @@ model User {
   email          String
   emailVerified  Boolean   @default(false)
   githubUsername String?   @unique
+  githubId       Int?      @unique
   image          String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
