@@ -14,7 +14,7 @@
     "jsx": "react-jsx",
     "noUnusedLocals": true,
     "incremental": true,
-    "types": ["node", "react", "react-dom", "js-yaml"],
+    "types": ["node", "react", "react-dom", "js-yaml", "mdx"],
     "plugins": [
       {
         "name": "next"

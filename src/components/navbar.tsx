@@ -11,6 +11,7 @@ const links: { href: Route; label: string }[] = [
   { href: "/", label: "Home" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/showcase", label: "Showcase" },
+  { href: "/blog", label: "Blog" },
 ];
 
 async function NavAuth() {

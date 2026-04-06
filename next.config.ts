@@ -7,7 +7,12 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   images: {
     qualities: [75, 100],
-    remotePatterns: [{ hostname: "avatars.githubusercontent.com" }, { hostname: "opengraph.githubassets.com" }],
+    minimumCacheTTL: 2592000, // 30 days
+    remotePatterns: [
+      { hostname: "avatars.githubusercontent.com" },
+      { hostname: "opengraph.githubassets.com" },
+      { hostname: "raw.githubusercontent.com" },
+    ],
   },
 };
 
