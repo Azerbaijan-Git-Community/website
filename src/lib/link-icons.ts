@@ -4,19 +4,23 @@ import { PiArrowSquareOut, PiGithubLogo } from "react-icons/pi";
 import {
   SiAnaconda,
   SiApachemaven,
+  SiArchlinux,
   SiCocoapods,
   SiDart,
   SiDeno,
   SiElixir,
   SiFirefox,
+  SiFlathub,
   SiGo,
   SiGooglechrome,
   SiHomebrew,
   SiJetbrains,
+  SiNixos,
   SiNuget,
   SiPhp,
   SiRubygems,
   SiRust,
+  SiSnapcraft,
 } from "react-icons/si";
 import { VscExtensions, VscVscode } from "react-icons/vsc";
 
@@ -62,6 +66,10 @@ const DOMAIN_ICONS: DomainIconEntry[] = [
     label: "Chrome Web Store",
   },
   { domain: "addons.mozilla.org", icon: SiFirefox, hoverClass: "hover:text-[#FF7139]", label: "Firefox Add-ons" },
+  { domain: "aur.archlinux.org", icon: SiArchlinux, hoverClass: "hover:text-[#1793D1]", label: "AUR" },
+  { domain: "snapcraft.io", icon: SiSnapcraft, hoverClass: "hover:text-[#E95420]", label: "Snap Store" },
+  { domain: "flathub.org", icon: SiFlathub, hoverClass: "hover:text-[#4A86CF]", label: "Flathub" },
+  { domain: "search.nixos.org", icon: SiNixos, hoverClass: "hover:text-[#5277C3]", label: "NixOS" },
   { domain: "formulae.brew.sh", icon: SiHomebrew, hoverClass: "hover:text-[#FBB040]", label: "Homebrew" },
   { domain: "ghcr.io", icon: PiGithubLogo, hoverClass: "hover:text-hi", label: "GitHub Container Registry" },
 ];
