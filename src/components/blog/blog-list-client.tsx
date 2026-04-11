@@ -14,7 +14,15 @@ function formatDate(date: string | Date): string {
   });
 }
 
-function BlogCardClient({ post, authorName, authorAvatar }: { post: BlogPostListItem; authorName: string; authorAvatar: string }) {
+function BlogCardClient({
+  post,
+  authorName,
+  authorAvatar,
+}: {
+  post: BlogPostListItem;
+  authorName: string;
+  authorAvatar: string;
+}) {
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -130,9 +138,7 @@ export function BlogListClient({ initialData, authorMap }: BlogListClientProps) 
       {/* Sentinel for infinite scroll */}
       {hasMore && (
         <div ref={sentinelRef} className="flex items-center justify-center py-12">
-          {isLoading && (
-            <div className="size-6 animate-spin rounded-full border-2 border-line border-t-blue" />
-          )}
+          {isLoading && <div className="size-6 animate-spin rounded-full border-2 border-line border-t-blue" />}
         </div>
       )}
     </>

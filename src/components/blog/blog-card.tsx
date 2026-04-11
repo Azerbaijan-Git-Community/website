@@ -23,7 +23,16 @@ function formatDate(date: string | Date): string {
   });
 }
 
-export async function BlogCard({ slug, title, description, coverImage, authorId, readingTime, createdAt, index }: BlogCardProps) {
+export async function BlogCard({
+  slug,
+  title,
+  description,
+  coverImage,
+  authorId,
+  readingTime,
+  createdAt,
+  index,
+}: BlogCardProps) {
   const author = await getBlogAuthor(authorId);
   const authorName = author?.name ?? "Community Member";
   const authorAvatar = author?.image ?? `https://avatars.githubusercontent.com/u/${authorId}`;
@@ -58,13 +67,7 @@ export async function BlogCard({ slug, title, description, coverImage, authorId,
           {/* Footer */}
           <div className="mt-auto flex items-center justify-between border-t border-line pt-3">
             <div className="flex items-center gap-2">
-              <Image
-                src={authorAvatar}
-                alt={authorName}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
+              <Image src={authorAvatar} alt={authorName} width={24} height={24} className="rounded-full" />
               <span className="text-xs text-dim">{authorName}</span>
             </div>
 
