@@ -60,10 +60,7 @@ export default async function Image({ params }: { params: Params }) {
 
       {/* Middle: title */}
       <div tw="flex flex-col" style={{ gap: 16 }}>
-        <div
-          tw="text-[52px] font-bold leading-tight"
-          style={{ fontFamily: "Outfit", color: "#f0f6fc" }}
-        >
+        <div tw="text-[52px] leading-tight font-bold" style={{ fontFamily: "Outfit", color: "#f0f6fc" }}>
           {post.title.length > 70 ? `${post.title.slice(0, 70)}...` : post.title}
         </div>
 
@@ -76,13 +73,7 @@ export default async function Image({ params }: { params: Params }) {
       <div tw="flex items-center justify-between">
         <div tw="flex items-center" style={{ gap: 12 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={authorAvatar}
-            alt={authorName}
-            width={44}
-            height={44}
-            style={{ borderRadius: "50%" }}
-          />
+          <img src={authorAvatar} alt={authorName} width={44} height={44} style={{ borderRadius: "50%" }} />
           <div tw="text-[18px] font-bold" style={{ fontFamily: "Inter", color: "#f0f6fc" }}>
             {authorName}
           </div>

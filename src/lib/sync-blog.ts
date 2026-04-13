@@ -32,7 +32,10 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   const get = (key: string): string | undefined => {
     const line = block.split("\n").find((l) => l.startsWith(`${key}:`));
     if (!line) return undefined;
-    return line.slice(key.length + 1).trim().replace(/^["']|["']$/g, "");
+    return line
+      .slice(key.length + 1)
+      .trim()
+      .replace(/^["']|["']$/g, "");
   };
 
   const title = get("title");
@@ -40,7 +43,9 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   const authorStr = get("author");
 
   if (!title || !description || !authorStr) {
-    throw new Error(`Missing required frontmatter fields. Got: title=${title}, description=${description}, author=${authorStr}`);
+    throw new Error(
+      `Missing required frontmatter fields. Got: title=${title}, description=${description}, author=${authorStr}`,
+    );
   }
 
   // Parse tags: [tag1, tag2, tag3]
