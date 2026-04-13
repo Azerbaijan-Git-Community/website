@@ -1,6 +1,7 @@
 import * as motion from "motion/react-client";
 import Link from "next/link";
 import { PiGithubLogo, PiTelegramLogo } from "react-icons/pi";
+import { SiSignal } from "react-icons/si";
 
 export function JoinSection() {
   return (
@@ -37,6 +38,15 @@ export function JoinSection() {
             >
               <PiTelegramLogo size={22} />
               Telegram Community
+            </Link>
+            <Link
+              href="https://signal.group/#CjQKIGpriH2T1K5xzUWdf_n-i0RV5x18SNfY68gLXhBqRgCqEhCVaDUk4PoGMoeaEo-aZ8ry"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
+            >
+              <SiSignal size={22} />
+              Signal Community
             </Link>
           </div>
         </motion.div>
