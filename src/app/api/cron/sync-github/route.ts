@@ -3,7 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 10;
+
+type ContributionData = {
+  totalCommitContributions: number;
+  totalPullRequestContributions: number;
+};
+
+type UserData = {
+  weekly: ContributionData;
+  monthly: ContributionData;
+  allTime: ContributionData;
+  repositories: { totalCount: number };
+  followers: { totalCount: number };
+};
 
 function getWeekKey(date: Date): string {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -67,22 +80,54 @@ function buildBatchQuery(
   return `query { ${aliases} }`;
 }
 
-async function fetchBatch(
-  users: { id: string; githubUsername: string }[],
-  weekRange: { from: string; to: string },
-  monthRange: { from: string; to: string },
-) {
+async function fetchGraphQL(query: string): Promise<{ data?: Record<string, unknown>; errors?: unknown[] }> {
   const res = await fetch(GITHUB_GRAPHQL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query: buildBatchQuery(users, weekRange, monthRange) }),
+    body: JSON.stringify({ query }),
   });
 
-  const json = await res.json();
-  return json?.data ?? {};
+  return res.json();
+}
+
+async function fetchBatch(
+  users: { id: string; githubUsername: string }[],
+  weekRange: { from: string; to: string },
+  monthRange: { from: string; to: string },
+): Promise<Record<string, UserData>> {
+  const json = await fetchGraphQL(buildBatchQuery(users, weekRange, monthRange));
+  const result: Record<string, UserData> = {};
+
+  // Collect successfully fetched users
+  for (let i = 0; i < users.length; i++) {
+    const key = `u${i}`;
+    const d = json.data?.[key] as UserData | undefined;
+    if (d?.weekly && d?.monthly && d?.allTime) {
+      result[key] = d;
+    }
+  }
+
+  // Retry failed users individually
+  const failedIndices = Array.from({ length: users.length }, (_, i) => i).filter((i) => !result[`u${i}`]);
+
+  if (failedIndices.length > 0 && json.errors) {
+    console.warn(`Batch had ${failedIndices.length} failures, retrying individually...`);
+
+    for (const i of failedIndices) {
+      const singleJson = await fetchGraphQL(buildBatchQuery([users[i]], weekRange, monthRange));
+      const d = singleJson.data?.u0 as UserData | undefined;
+      if (d?.weekly && d?.monthly && d?.allTime) {
+        result[`u${i}`] = d;
+      } else if (singleJson.errors) {
+        console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
+      }
+    }
+  }
+
+  return result;
 }
 
 export async function POST(req: NextRequest) {
@@ -119,7 +164,7 @@ export async function POST(req: NextRequest) {
             return;
           }
 
-          const { weekly, monthly, allTime, repositories, followers } = userData;
+          const { weekly, monthly, allTime, repositories, followers } = userData as UserData;
 
           await prisma.$transaction([
             prisma.githubStats.upsert({
