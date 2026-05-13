@@ -140,16 +140,25 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; rem
     toSync.map(async ({ slug, sha }) => {
       const raw = await fetchPostContent(slug);
       const { frontmatter, content } = parseFrontmatter(raw);
-      const readingTime = calculateReadingTime(content);
+
+      const user = await prisma.user.findUnique({
+        where: { githubId: frontmatter.author },
+        select: { id: true },
+      });
+
+      if (!user) {
+        console.warn(`Skipping post "${slug}": no user found with githubId ${frontmatter.author}`);
+        return;
+      }
 
       const data = {
         title: frontmatter.title,
         description: frontmatter.description,
         tags: frontmatter.tags,
         coverImage: getCoverImageUrl(slug),
-        authorId: frontmatter.author,
+        userId: user.id,
         contentMdx: content,
-        readingTime,
+        readingTime: calculateReadingTime(content),
         contentSha: sha,
       };
 

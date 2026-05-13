@@ -13,8 +13,6 @@ interface ShowcaseYaml {
   banner?: string;
   links?: string[];
   website?: string;
-  addedAt: string;
-  updatedAt: string;
 }
 
 interface RepoGqlData {
@@ -50,8 +48,7 @@ async function fetchRegistry(): Promise<ShowcaseYaml[]> {
     }),
   );
 
-  // Only include projects that have been timestamped by the bot
-  return projects.filter((p) => p?.repo && p?.addedAt);
+  return projects.filter((p) => p?.repo);
 }
 
 function buildBatchQuery(repos: Array<{ owner: string; name: string }>): string {
@@ -127,16 +124,8 @@ export async function syncShowcase(): Promise<{ synced: number; removed: number 
 
       return prisma.showcaseProject.upsert({
         where: { repo: project.repo },
-        create: {
-          repo: project.repo,
-          addedAt: new Date(project.addedAt),
-          projectUpdatedAt: new Date(project.updatedAt),
-          ...shared,
-        },
-        update: {
-          projectUpdatedAt: new Date(project.updatedAt),
-          ...shared,
-        },
+        create: { repo: project.repo, ...shared },
+        update: { ...shared },
       });
     }),
   );

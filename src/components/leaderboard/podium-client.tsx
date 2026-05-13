@@ -30,7 +30,7 @@ export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {PODIUM_ORDER.map((i) => (
           <PodiumCard
-            key={data[i].user.githubUsername}
+            key={data[i]?.user.githubUsername}
             entry={data[i]}
             config={MEDAL_CONFIG[i]}
             mt={i !== 0 ? "md:mt-8" : undefined}
@@ -81,6 +81,7 @@ type PodiumCardProps = {
 };
 
 function PodiumCard({ entry, config, mt }: PodiumCardProps) {
+  if (!entry) return null;
   return (
     <div
       className={`glass flex flex-col items-center rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ${mt ?? ""} ${
