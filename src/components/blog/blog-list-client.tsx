@@ -4,11 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type BlogPostsResponse, getBlogPosts } from "@/data/blog/get";
 import { BlogPostCard } from "./blog-card";
 
-interface BlogListClientProps {
-  blogPosts: BlogPostsResponse;
-}
-
-export function BlogListClient({ blogPosts }: BlogListClientProps) {
+export function BlogListClient({ blogPosts }: { blogPosts: BlogPostsResponse }) {
   const [posts, setPosts] = useState(blogPosts.items);
   const [cursor, setCursor] = useState(blogPosts.nextCursor);
   const [hasMore, setHasMore] = useState(blogPosts.hasMore);

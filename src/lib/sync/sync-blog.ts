@@ -148,7 +148,7 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; rem
         tags: frontmatter.tags,
         coverImage: getCoverImageUrl(slug),
         authorId: frontmatter.author,
-        contentMdx: raw,
+        contentMdx: content,
         readingTime,
         contentSha: sha,
       };

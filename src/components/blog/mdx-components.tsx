@@ -2,7 +2,7 @@ import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import type { AnchorHTMLAttributes, ImgHTMLAttributes } from "react";
 
-function MdxImage({ src, alt, ...rest }: ImgHTMLAttributes<HTMLImageElement>) {
+function MdxImage({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) {
   if (!src || typeof src !== "string") return null;
 
   return (
