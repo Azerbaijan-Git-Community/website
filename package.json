@@ -25,6 +25,8 @@
     "@prisma/client": "7.8.0",
     "@tailwindcss/typography": "0.5.19",
     "@types/mdx": "2.0.13",
+    "@vercel/analytics": "2.0.1",
+    "@vercel/speed-insights": "2.0.0",
     "better-auth": "1.6.11",
     "dotenv": "17.4.2",
     "js-yaml": "4.1.1",

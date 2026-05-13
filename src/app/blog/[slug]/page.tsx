@@ -6,17 +6,11 @@ import { notFound } from "next/navigation";
 import { PiArrowLeft, PiCalendar } from "react-icons/pi";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { ReadingTimeBadge } from "@/components/blog/reading-time-badge";
-import { getAllBlogSlugs, getBlogAuthor, getBlogPost } from "@/data/blog/get";
+import { getAllBlogSlugs, getBlogPost } from "@/data/blog/get";
 import { compileMdx } from "@/lib/compile-mdx";
+import { formatDate } from "@/lib/utils.client";
 
-type Params = Promise<{ slug: string }>;
-
-export async function generateStaticParams() {
-  const slugs = await getAllBlogSlugs();
-  return slugs.map((s) => ({ slug: s.slug }));
-}
-
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   "use cache";
   cacheLife("weeks");
   cacheTag("blog");
@@ -43,14 +37,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 /**
  * Strips the frontmatter block from raw MDX so only the content body is compiled.
  */
@@ -58,7 +44,12 @@ function stripFrontmatter(raw: string): string {
   return raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
 }
 
-export default async function BlogPostPage({ params }: { params: Params }) {
+export async function generateStaticParams() {
+  const slugs = await getAllBlogSlugs();
+  return slugs.map((s) => ({ slug: s.slug }));
+}
+
+export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
   "use cache";
   cacheLife("weeks");
   cacheTag("blog");
@@ -66,11 +57,6 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
   if (!post) notFound();
-
-  const author = await getBlogAuthor(post.authorId);
-  const authorName = author?.name ?? "Community Member";
-  const authorAvatar = author?.image ?? `https://avatars.githubusercontent.com/u/${post.authorId}`;
-  const authorUsername = author?.githubUsername;
 
   const contentBody = stripFrontmatter(post.contentMdx);
   const MDXContent = await compileMdx(contentBody, post.slug);
@@ -106,17 +92,17 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           <div className="flex flex-wrap items-center gap-4 text-sm">
             {/* Author */}
             <div className="flex items-center gap-2">
-              <Image src={authorAvatar} alt={authorName} width={32} height={32} className="rounded-full" />
+              <Image src={post.author.image} alt={post.author.name} width={32} height={32} className="rounded-full" />
               <div>
-                <span className="text-hi">{authorName}</span>
-                {authorUsername && (
+                <span className="text-hi">{post.author.name}</span>
+                {post.author.githubUsername && (
                   <a
-                    href={`https://github.com/${authorUsername}`}
+                    href={`https://github.com/${post.author.githubUsername}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-1 text-dim transition-colors hover:text-blue"
                   >
-                    @{authorUsername}
+                    @{post.author.githubUsername}
                   </a>
                 )}
               </div>

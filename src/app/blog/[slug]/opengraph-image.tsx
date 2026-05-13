@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 import { PiCalendar, PiClock } from "react-icons/pi";
-import { getBlogAuthor, getBlogPost } from "@/data/blog/get";
+import { getBlogPost } from "@/data/blog/get";
 import { getOgFonts } from "@/lib/og-fonts";
+import { formatDate } from "@/lib/utils.client";
 
 export const alt = "Blog Post — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
@@ -9,10 +10,6 @@ export const contentType = "image/png";
 export const revalidate = 86400;
 
 type Params = Promise<{ slug: string }>;
-
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-}
 
 export default async function Image({ params }: { params: Params }) {
   const { slug } = await params;
@@ -28,10 +25,6 @@ export default async function Image({ params }: { params: Params }) {
       { ...size, fonts },
     );
   }
-
-  const author = await getBlogAuthor(post.authorId);
-  const authorName = author?.name ?? "Community Member";
-  const authorAvatar = author?.image ?? `https://avatars.githubusercontent.com/u/${post.authorId}`;
 
   return new ImageResponse(
     <div
@@ -73,9 +66,9 @@ export default async function Image({ params }: { params: Params }) {
       <div tw="flex items-center justify-between">
         <div tw="flex items-center" style={{ gap: 12 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={authorAvatar} alt={authorName} width={44} height={44} style={{ borderRadius: "50%" }} />
+          <img src={post.author.image} alt={post.author.name} width={44} height={44} style={{ borderRadius: "50%" }} />
           <div tw="text-[18px] font-bold" style={{ fontFamily: "Inter", color: "#f0f6fc" }}>
-            {authorName}
+            {post.author.name}
           </div>
         </div>
 

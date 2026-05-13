@@ -1,6 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const BATCH_SIZE = 10;
@@ -17,19 +18,6 @@ type UserData = {
   repositories: { totalCount: number };
   followers: { totalCount: number };
 };
-
-function getWeekKey(date: Date): string {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
-}
-
-function getMonthKey(date: Date): string {
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
-}
 
 function getWeekRange(date: Date): { from: string; to: string } {
   const d = new Date(date);
@@ -137,15 +125,12 @@ export async function POST(req: NextRequest) {
   }
 
   const now = new Date();
-  const weekKey = getWeekKey(now);
-  const monthKey = getMonthKey(now);
+  const weekKey = getWeekKey();
+  const monthKey = getMonthKey();
   const weekRange = getWeekRange(now);
   const monthRange = getMonthRange(now);
 
-  const users = (await prisma.user.findMany({
-    where: { githubUsername: { not: null } },
-    select: { id: true, githubUsername: true },
-  })) as { id: string; githubUsername: string }[];
+  const users = await prisma.user.findMany({ select: { id: true, githubUsername: true } });
 
   let synced = 0;
   let failed = 0;
