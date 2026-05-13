@@ -3,28 +3,11 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
-/** Blog post metadata for list pages (excludes raw MDX content). */
-export type BlogPostListItem = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  tags: string[];
-  coverImage: string;
-  authorId: number;
-  readingTime: number;
-  createdAt: Date;
-};
-
 /** Paginated blog post list response. */
-export type BlogPostListResponse = {
-  items: BlogPostListItem[];
-  hasMore: boolean;
-  nextCursor: string | null;
-};
-
+export type BlogPostsResponse = Awaited<ReturnType<typeof getBlogPosts>>;
+export type BlogPostListItem = NonNullable<BlogPostsResponse["items"]>[number];
 /** Fetch a paginated list of blog posts (metadata only, no content). */
-export async function getBlogPosts(cursor?: string, limit = 12): Promise<BlogPostListResponse> {
+export async function getBlogPosts(cursor?: string, limit = 12) {
   "use cache";
   cacheLife("weeks");
   cacheTag("blog");
@@ -40,6 +23,7 @@ export async function getBlogPosts(cursor?: string, limit = 12): Promise<BlogPos
       authorId: true,
       readingTime: true,
       createdAt: true,
+      author: { select: { name: true, image: true } },
     },
     orderBy: { createdAt: "desc" },
     take: limit + 1,
@@ -62,7 +46,10 @@ export async function getBlogPost(slug: string) {
   cacheLife("weeks");
   cacheTag("blog");
 
-  return prisma.blogPost.findUnique({ where: { slug } });
+  return prisma.blogPost.findUnique({
+    where: { slug },
+    include: { author: { select: { name: true, image: true, githubUsername: true } } },
+  });
 }
 
 /** Fetch all blog post slugs for sitemap and generateStaticParams. */
@@ -74,17 +61,5 @@ export async function getAllBlogSlugs() {
   return prisma.blogPost.findMany({
     select: { slug: true, updatedAt: true },
     orderBy: { createdAt: "desc" },
-  });
-}
-
-/** Resolve a blog post author from the User table by githubId. */
-export async function getBlogAuthor(githubId: number) {
-  "use cache";
-  cacheLife("weeks");
-  cacheTag("blog");
-
-  return prisma.user.findFirst({
-    where: { githubId },
-    select: { name: true, image: true, githubUsername: true },
   });
 }

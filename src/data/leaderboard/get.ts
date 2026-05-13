@@ -1,19 +1,20 @@
 "use server";
 
 import { cacheLife, cacheTag } from "next/cache";
+import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 import { prisma } from "@/lib/prisma";
+import { getWeekKey } from "@/lib/utils.server";
 
 export type LeaderboardPeriod = "weekly" | "monthly" | "allTime";
 
-export type LeaderboardEntry = {
-  userId: string;
-  username: string;
-  name: string | null;
-  image: string | null;
-  commits: number;
-  pullRequests: number;
-  joinedAt: Date;
-};
+export type LeaderboardEntry = GithubStatsSnapshotGetPayload<{
+  select: {
+    userId: true;
+    commits: true;
+    pullRequests: true;
+    user: { select: typeof userSelect };
+  };
+}>;
 
 export type AllTableData = {
   weekly: LeaderboardEntry[];
@@ -21,94 +22,45 @@ export type AllTableData = {
   monthly: Record<string, LeaderboardEntry[]>;
 };
 
-function getCurrentWeekKey(): string {
-  const date = new Date();
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
-}
-
-export async function getCurrentMonthKey(): Promise<string> {
-  const date = new Date();
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
-}
-
-function mapEntry(s: {
-  userId: string;
-  commits: number;
-  pullRequests: number;
-  user: { githubUsername: string | null; name: string | null; image: string | null; createdAt: Date };
-}): LeaderboardEntry | null {
-  if (!s.user.githubUsername) return null;
-  return {
-    userId: s.userId,
-    username: s.user.githubUsername,
-    name: s.user.name,
-    image: s.user.image,
-    commits: s.commits,
-    pullRequests: s.pullRequests,
-    joinedAt: s.user.createdAt,
-  };
-}
-
-export async function getAvailableMonths(): Promise<string[]> {
-  "use cache";
-  cacheLife("weeks");
-  cacheTag("leaderboard");
-
-  const currentKey = await getCurrentMonthKey();
-
-  const keys = await prisma.githubStatsSnapshot.findMany({
-    where: { period: "MONTHLY" },
-    select: { periodKey: true },
-    distinct: ["periodKey"],
-    orderBy: { periodKey: "desc" },
-  });
-
-  const existing = keys.map((k) => k.periodKey);
-  if (!existing.includes(currentKey)) existing.unshift(currentKey);
-
-  return existing;
-}
-
+const userSelect = { githubUsername: true, name: true, image: true, createdAt: true } as const;
 export async function getTableData(): Promise<AllTableData> {
   "use cache";
   cacheLife("weeks");
   cacheTag("leaderboard");
 
-  const userSelect = { githubUsername: true, name: true, image: true, createdAt: true } as const;
+  const entrySelect = {
+    userId: true,
+    commits: true,
+    pullRequests: true,
+    user: { select: userSelect },
+  } as const;
 
   const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({
-      where: { period: "WEEKLY", periodKey: getCurrentWeekKey() },
-      include: { user: { select: userSelect } },
+      where: { period: "WEEKLY", periodKey: getWeekKey() },
+      select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStats.findMany({
-      include: { user: { select: userSelect } },
+      select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStatsSnapshot.findMany({
       where: { period: "MONTHLY" },
-      include: { user: { select: userSelect } },
+      select: { ...entrySelect, periodKey: true },
       orderBy: { commits: "desc" },
     }),
   ]);
 
-  const weekly = weeklyRaw.map(mapEntry).filter((e): e is LeaderboardEntry => e !== null);
-  const allTime = allTimeRaw.map(mapEntry).filter((e): e is LeaderboardEntry => e !== null);
+  const weekly = weeklyRaw as unknown as LeaderboardEntry[];
+  const allTime = allTimeRaw as unknown as LeaderboardEntry[];
 
   const monthly: Record<string, LeaderboardEntry[]> = {};
   for (const s of monthlyRaw) {
-    const entry = mapEntry(s);
-    if (!entry) continue;
     if (!monthly[s.periodKey]) monthly[s.periodKey] = [];
-    if (monthly[s.periodKey].length < 100) monthly[s.periodKey].push(entry);
+    if (monthly[s.periodKey].length < 100) monthly[s.periodKey].push(s as unknown as LeaderboardEntry);
   }
 
   return { weekly, allTime, monthly };

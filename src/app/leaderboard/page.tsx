@@ -1,19 +1,16 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { TableClient } from "@/components/leaderboard/table-client";
-import { getAvailableMonths, getCurrentMonthKey, getPodiumData, getTableData } from "@/data/leaderboard/get";
+import { getPodiumData, getTableData } from "@/data/leaderboard/get";
+import { getMonthKey } from "@/lib/utils.server";
 
 export default async function LeaderboardPage() {
   "use cache";
   cacheLife("days");
   cacheTag("leaderboard");
 
-  const [currentMonthKey, availableMonths, tableData, podiumData] = await Promise.all([
-    getCurrentMonthKey(),
-    getAvailableMonths(),
-    getTableData(),
-    getPodiumData(),
-  ]);
+  const currentMonthKey = getMonthKey();
+  const [tableData, podiumData] = await Promise.all([getTableData(), getPodiumData()]);
 
   return (
     <div className="min-h-screen pt-32 pb-24">
@@ -31,7 +28,7 @@ export default async function LeaderboardPage() {
         </div>
 
         <div className="mb-16">
-          <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} availableMonths={availableMonths} />
+          <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} />
         </div>
 
         <TableClient allData={tableData} currentMonthKey={currentMonthKey} />

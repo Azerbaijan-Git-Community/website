@@ -8,11 +8,9 @@ const TABS: { id: LeaderboardPeriod; label: string }[] = [
   { id: "allTime", label: "All Time" },
 ];
 
-export type Period = (typeof TABS)[number]["id"];
-
 type PeriodSelectorProps = {
-  period: Period;
-  onTabChange: (tab: Period) => void;
+  period: LeaderboardPeriod;
+  onTabChange: (tab: LeaderboardPeriod) => void;
 };
 
 export function PeriodSelector({ period, onTabChange }: PeriodSelectorProps) {

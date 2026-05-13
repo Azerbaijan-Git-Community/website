@@ -2,15 +2,12 @@ import { ImageResponse } from "next/og";
 import { PiCalendar, PiClock } from "react-icons/pi";
 import { getBlogPosts } from "@/data/blog/get";
 import { getOgFonts } from "@/lib/og-fonts";
+import { formatDate } from "@/lib/utils.client";
 
 export const alt = "Developer Blog — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const revalidate = 86400;
-
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
 
 export default async function Image() {
   const [fonts, data] = await Promise.all([getOgFonts(), getBlogPosts(undefined, 3)]);

@@ -10,16 +10,17 @@ import { MonthSelector } from "./month-selector";
 type PodiumClientProps = {
   allData: Record<string, LeaderboardEntry[]>;
   currentMonthKey: string;
-  availableMonths: string[];
 };
 
 const PODIUM_ORDER = [1, 0, 2];
 
-export function PodiumClient({ allData, currentMonthKey, availableMonths }: PodiumClientProps) {
+export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
   const [month, setMonth] = useState(currentMonthKey);
 
-  const months = Object.keys(allData).sort().reverse();
-  const data = allData[month]?.length ? allData[month] : (allData[months.find((m) => m < month) ?? months[0]] ?? []);
+  const availableMonths = Object.keys(allData).sort().reverse();
+  const data = allData[month]?.length
+    ? allData[month]
+    : (allData[availableMonths.find((m) => m < month) ?? availableMonths[0]] ?? []);
 
   return (
     <>
@@ -29,7 +30,7 @@ export function PodiumClient({ allData, currentMonthKey, availableMonths }: Podi
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {PODIUM_ORDER.map((i) => (
           <PodiumCard
-            key={data[i].username}
+            key={data[i].user.githubUsername}
             entry={data[i]}
             config={MEDAL_CONFIG[i]}
             mt={i !== 0 ? "md:mt-8" : undefined}
@@ -90,8 +91,8 @@ function PodiumCard({ entry, config, mt }: PodiumCardProps) {
     >
       <div className="relative mb-4">
         <Image
-          src={entry.image ?? `https://github.com/${entry.username}.png`}
-          alt={entry.username}
+          src={entry.user.image}
+          alt={`@${entry.user.githubUsername}`}
           width={config.size}
           height={config.size}
           className={`rounded-full ring-4 ${config.ring}`}
@@ -105,9 +106,9 @@ function PodiumCard({ entry, config, mt }: PodiumCardProps) {
           {config.icon}
         </div>
       </div>
-      <Link href={`https://github.com/${entry.username}`} target="_blank" className="text-center">
+      <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank" className="text-center">
         <h3 className={`mb-1 font-outfit font-bold text-hi ${config.isFirst ? "text-2xl" : "text-xl"}`}>
-          {entry.username}
+          {entry.user.githubUsername}
         </h3>
       </Link>
       <div className={`mb-3 text-sm ${config.isFirst ? "text-gradient font-semibold" : "text-lo"}`}>{config.label}</div>

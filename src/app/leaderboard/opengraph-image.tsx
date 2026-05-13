@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
-import { getCurrentMonthKey, getPodiumData } from "@/data/leaderboard/get";
+import { getPodiumData } from "@/data/leaderboard/get";
 import { getOgFonts } from "@/lib/og-fonts";
+import { getMonthKey } from "@/lib/utils.server";
+import { formatMonthKey } from "@/lib/utils.client";
 
 export const alt = "Monthly Leaderboard — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
@@ -15,21 +17,14 @@ const MEDAL_CONFIG = [
   { ring: "#CD7F32", label: "3rd Place", avatarSize: 90, isFirst: false },
 ] as const;
 
-function formatMonth(key: string): string {
-  const [year, month] = key.split("-");
-  return new Date(Number(year), Number(month) - 1).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-}
-
 export default async function Image() {
-  const [fonts, podiumData, currentMonth] = await Promise.all([getOgFonts(), getPodiumData(), getCurrentMonthKey()]);
+  const currentMonthKey = getMonthKey();
+  const [fonts, podiumData] = await Promise.all([getOgFonts(), getPodiumData()]);
 
   const months = Object.keys(podiumData).sort().reverse();
-  const month = podiumData[currentMonth]?.length
-    ? currentMonth
-    : (months.find((m) => m < currentMonth) ?? months[0] ?? currentMonth);
+  const month = podiumData[currentMonthKey]?.length
+    ? currentMonthKey
+    : (months.find((m) => m < currentMonthKey) ?? months[0] ?? currentMonthKey);
   const entries = podiumData[month] ?? [];
 
   return new ImageResponse(
@@ -61,7 +56,7 @@ export default async function Image() {
       </div>
 
       <div tw="mb-8 text-[22px]" style={{ fontFamily: "Inter", color: "#8b949e" }}>
-        {formatMonth(month)}
+        {formatMonthKey(month)}
       </div>
 
       {/* Podium cards */}
@@ -72,7 +67,7 @@ export default async function Image() {
             const config = MEDAL_CONFIG[idx];
             return (
               <div
-                key={entry.username}
+                key={entry.user.githubUsername}
                 tw="flex flex-col items-center px-10 py-7"
                 style={{
                   background: "rgba(22, 27, 34, 0.8)",
@@ -103,8 +98,8 @@ export default async function Image() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={entry.image ?? `https://github.com/${entry.username}.png?size=200`}
-                    alt={entry.username}
+                    src={entry.user.image}
+                    alt={entry.user.githubUsername}
                     width={config.avatarSize}
                     height={config.avatarSize}
                     style={{ borderRadius: "50%" }}
@@ -116,7 +111,7 @@ export default async function Image() {
                   tw={`mb-1 font-bold ${config.isFirst ? "text-[24px]" : "text-[20px]"}`}
                   style={{ fontFamily: "Outfit", color: "#f0f6fc" }}
                 >
-                  {entry.username}
+                  {entry.user.githubUsername}
                 </div>
 
                 {/* Medal label */}

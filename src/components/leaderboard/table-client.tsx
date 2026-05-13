@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { type AllTableData } from "@/data/leaderboard/get";
-import { Period, PeriodSelector } from "./period-selector";
+import { LeaderboardPeriod, type AllTableData } from "@/data/leaderboard/get";
+import { PeriodSelector } from "./period-selector";
 
 function getRankBadgeClass(rank: number): string {
   if (rank === 1)
@@ -41,7 +41,7 @@ type TableClientProps = {
 };
 
 export function TableClient({ allData, currentMonthKey }: TableClientProps) {
-  const [period, setPeriod] = useState<Period>("monthly");
+  const [period, setPeriod] = useState<LeaderboardPeriod>("monthly");
 
   const entries = period === "monthly" ? (allData.monthly[currentMonthKey] ?? []) : allData[period];
 
@@ -95,17 +95,17 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <Image
-                              src={entry.image ?? `https://github.com/${entry.username}.png`}
-                              alt={entry.username}
+                              src={entry.user.image}
+                              alt={`@${entry.user.githubUsername}`}
                               width={40}
                               height={40}
                               className="rounded-full ring-2 ring-line"
                               quality={100}
                               loading="lazy"
                             />
-                            <Link href={`https://github.com/${entry.username}`} target="_blank">
+                            <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
                               <span className="font-outfit font-semibold text-hi transition-colors hover:text-blue">
-                                {entry.username}
+                                {entry.user.githubUsername}
                               </span>
                             </Link>
                           </div>
@@ -149,17 +149,17 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                   </div>
                   <div className="mb-4 flex items-center gap-3">
                     <Image
-                      src={entry.image ?? `https://github.com/${entry.username}.png`}
-                      alt={entry.username}
+                      src={entry.user.image}
+                      alt={`@${entry.user.githubUsername}`}
                       width={56}
                       height={56}
                       className="rounded-full ring-2 ring-line"
                       quality={100}
                       loading="lazy"
                     />
-                    <Link href={`https://github.com/${entry.username}`} target="_blank">
+                    <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
                       <h3 className="font-outfit text-lg font-bold text-hi transition-colors hover:text-blue">
-                        {entry.username}
+                        {entry.user.githubUsername}
                       </h3>
                     </Link>
                   </div>

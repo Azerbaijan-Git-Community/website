@@ -1,15 +1,8 @@
 "use client";
 
+import { formatMonthKey } from "@/lib/utils.client";
 import { ListBox, Select } from "@heroui/react";
 import { PiCaretUpDownBold } from "react-icons/pi";
-
-function formatMonthKey(key: string): string {
-  const [year, month] = key.split("-");
-  return new Date(Number(year), Number(month) - 1).toLocaleString("en", {
-    month: "long",
-    year: "numeric",
-  });
-}
 
 type MonthSelectorProps = {
   months: string[];
@@ -33,8 +26,8 @@ export function MonthSelector({ months, month, onMonthChange }: MonthSelectorPro
           </Select.Indicator>
         </Select.Trigger>
         <Select.Popover
-          placement="top"
-          className="glass rounded-lg border border-line shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+          placement="bottom"
+          className="rounded-lg border border-line shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
         >
           <ListBox className="p-1">
             {months.map((m) => (

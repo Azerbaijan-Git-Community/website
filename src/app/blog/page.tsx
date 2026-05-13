@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { BlogListClient } from "@/components/blog/blog-list-client";
-import { getBlogAuthor, getBlogPosts } from "@/data/blog/get";
+import { getBlogPosts } from "@/data/blog/get";
 
 export const metadata: Metadata = {
   title: "Blog | Azerbaijan GitHub Community",
@@ -31,23 +31,7 @@ export default async function BlogPage() {
   cacheLife("weeks");
   cacheTag("blog");
 
-  const initialData = await getBlogPosts();
-
-  // Resolve authors for initial page
-  const uniqueAuthorIds = [...new Set(initialData.items.map((p) => p.authorId))];
-  const authors = await Promise.all(
-    uniqueAuthorIds.map(async (id) => {
-      const author = await getBlogAuthor(id);
-      return [
-        id,
-        {
-          name: author?.name ?? "Community Member",
-          avatar: author?.image ?? `https://avatars.githubusercontent.com/u/${id}`,
-        },
-      ] as const;
-    }),
-  );
-  const authorMap = Object.fromEntries(authors);
+  const blogPosts = await getBlogPosts();
 
   return (
     <div className="min-h-screen pt-32 pb-24">
@@ -72,7 +56,7 @@ export default async function BlogPage() {
           </p>
         </div>
 
-        <BlogListClient initialData={initialData} authorMap={authorMap} />
+        <BlogListClient blogPosts={blogPosts} />
       </div>
     </div>
   );
