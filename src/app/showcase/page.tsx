@@ -5,7 +5,7 @@ import { ShowcaseCard } from "@/components/showcase/showcase-card";
 import { getShowcaseProjects } from "@/data/showcase/get";
 
 export const metadata: Metadata = {
-  title: "Showcase | Azerbaijan GitHub Community",
+  title: "Showcase",
   description:
     "Open-source projects built by Azerbaijan GitHub Community members. Browse tools, libraries, and websites created by our developers.",
   keywords: [
@@ -14,17 +14,6 @@ export const metadata: Metadata = {
     "Azerbaijan developer projects",
     "open source Azerbaijan",
   ],
-  openGraph: {
-    title: "Open Source Showcase | Azerbaijan GitHub Community",
-    description: "Discover open-source projects built by Azerbaijan GitHub Community members.",
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Open Source Showcase | Azerbaijan GitHub Community",
-    description: "Discover open-source projects built by Azerbaijan GitHub Community members.",
-  },
 };
 
 export default async function ShowcasePage() {

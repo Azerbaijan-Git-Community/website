@@ -3,6 +3,19 @@ import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getPodiumData, getTableData } from "@/data/leaderboard/get";
 import { getMonthKey } from "@/lib/utils.server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Leaderboard",
+  description:
+    "Articles, tutorials, and insights from Azerbaijan GitHub Community members. Learn about web development, open source, and software engineering.",
+  keywords: [
+    "Azerbaijan developer blog",
+    "GitHub Azerbaijan articles",
+    "Azerbaijan tech community blog",
+    "developer tutorials Azerbaijan",
+  ],
+};
 
 export default async function LeaderboardPage() {
   "use cache";

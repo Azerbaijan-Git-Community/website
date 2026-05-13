@@ -8,7 +8,10 @@ import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Azerbaijan GitHub Community | 5,000,000 Commits",
+  title: {
+    default: "Azerbaijan GitHub Community | 5,000,000 Commits",
+    template: "%s | Azerbaijan GitHub Community",
+  },
   description:
     "Push the future of Azerbaijan. National open source & innovation growth program aiming for 5,000,000 GitHub pushes.",
   keywords: [
@@ -19,15 +22,11 @@ export const metadata: Metadata = {
     "AZ tech",
   ],
   openGraph: {
-    title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
-    description: "Uniting talent, expanding open-source, and building national innovation metrics.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Azerbaijan GitHub Community | 5,000,000 Pushes",
-    description: "Uniting talent, expanding open-source, and building national innovation metrics.",
   },
   robots: {
     index: true,

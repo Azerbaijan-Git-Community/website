@@ -4,7 +4,7 @@ import { BlogListClient } from "@/components/blog/blog-list-client";
 import { getBlogPosts } from "@/data/blog/get";
 
 export const metadata: Metadata = {
-  title: "Blog | Azerbaijan GitHub Community",
+  title: "Blog",
   description:
     "Articles, tutorials, and insights from Azerbaijan GitHub Community members. Learn about web development, open source, and software engineering.",
   keywords: [
@@ -13,17 +13,6 @@ export const metadata: Metadata = {
     "Azerbaijan tech community blog",
     "developer tutorials Azerbaijan",
   ],
-  openGraph: {
-    title: "Developer Blog | Azerbaijan GitHub Community",
-    description: "Articles and tutorials from Azerbaijan GitHub Community members.",
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Developer Blog | Azerbaijan GitHub Community",
-    description: "Articles and tutorials from Azerbaijan GitHub Community members.",
-  },
 };
 
 export default async function BlogPage() {

@@ -20,20 +20,9 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   if (!post) return {};
 
   return {
-    title: `${post.title} | Azerbaijan GitHub Community Blog`,
+    title: `${post.title}`,
     description: post.description,
     keywords: post.tags,
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      locale: "en_US",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-    },
   };
 }
 
