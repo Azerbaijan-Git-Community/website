@@ -8,12 +8,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Leaderboard",
   description:
-    "Articles, tutorials, and insights from Azerbaijan GitHub Community members. Learn about web development, open source, and software engineering.",
+    "Track top GitHub contributors from Azerbaijan. Rankings by commits, pull requests, and repositories — updated weekly and monthly.",
   keywords: [
-    "Azerbaijan developer blog",
-    "GitHub Azerbaijan articles",
-    "Azerbaijan tech community blog",
-    "developer tutorials Azerbaijan",
+    "Azerbaijan GitHub leaderboard",
+    "top GitHub contributors Azerbaijan",
+    "Azerbaijan developer rankings",
+    "GitHub contributions Azerbaijan",
+    "open source leaderboard Azerbaijan",
+    "Azerbaijan programmer stats",
   ],
 };
 
