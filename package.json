@@ -10,12 +10,11 @@
     "prisma:generate": "prisma generate",
     "checks": "node scripts/pr-checks.ts",
     "lint": "eslint",
-    "bootstrap": "sh .husky/post-merge",
+    "bootstrap": "pnpm i && pnpm install:skills && pnpm install:heroui_docs",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "install:skills": "pnpx skills@latest experimental_install",
-    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
-    "prepare": "husky"
+    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react --output AGENTS.md"
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "1.6.11",
@@ -57,7 +56,6 @@
     "eslint-config-next": "16.2.6",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
-    "husky": "9.1.7",
     "postcss-load-config": "6.0.1",
     "prettier": "3.8.3",
     "prettier-plugin-tailwindcss": "0.8.0",
