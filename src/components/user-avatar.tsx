@@ -19,9 +19,12 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
   };
   return (
     <Dropdown>
-      <Dropdown.Trigger aria-label="User menu" className="rounded-full">
-        <Avatar size="lg" className="size-14 cursor-pointer ring-2 ring-line transition-all hover:ring-blue">
-          <Avatar.Image src={image ?? undefined} alt={name ?? "User"} />
+      <Dropdown.Trigger aria-label="User menu" className="">
+        <Avatar
+          size="lg"
+          className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-all hover:ring-blue"
+        >
+          <Avatar.Image className="rounded-full" src={image ?? undefined} alt={name ?? "User"} />
           <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>
         </Avatar>
       </Dropdown.Trigger>
