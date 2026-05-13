@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getBlogPosts, type BlogPostsResponse } from "@/data/blog/get";
+import { type BlogPostsResponse, getBlogPosts } from "@/data/blog/get";
 import { BlogPostCard } from "./blog-card";
 
 interface BlogListClientProps {
