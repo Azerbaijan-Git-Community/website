@@ -12,6 +12,6 @@ export async function getShowcaseProjects(): Promise<ShowcaseProject[]> {
   cacheTag("showcase");
 
   return prisma.showcaseProject.findMany({
-    orderBy: { addedAt: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 }

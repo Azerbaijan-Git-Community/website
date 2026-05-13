@@ -37,13 +37,6 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   };
 }
 
-/**
- * Strips the frontmatter block from raw MDX so only the content body is compiled.
- */
-function stripFrontmatter(raw: string): string {
-  return raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
-}
-
 export async function generateStaticParams() {
   const slugs = await getAllBlogSlugs();
   return slugs.map((s) => ({ slug: s.slug }));
@@ -58,8 +51,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   const post = await getBlogPost(slug);
   if (!post) notFound();
 
-  const contentBody = stripFrontmatter(post.contentMdx);
-  const MDXContent = await compileMdx(contentBody, post.slug);
+  const MDXContent = await compileMdx(post.contentMdx, post.slug);
 
   return (
     <div className="min-h-screen pt-32 pb-24">

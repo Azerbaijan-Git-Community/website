@@ -20,7 +20,7 @@ export async function getBlogPosts(cursor?: string, limit = 12) {
       description: true,
       tags: true,
       coverImage: true,
-      authorId: true,
+      userId: true,
       readingTime: true,
       createdAt: true,
       author: { select: { name: true, image: true } },

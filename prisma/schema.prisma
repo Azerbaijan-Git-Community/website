@@ -133,8 +133,7 @@ model ShowcaseProject {
   banner           String?
   links            String[]
   website          String?
-  addedAt          DateTime
-  projectUpdatedAt DateTime
+  createdAt        DateTime @default(now())
   stars            Int      @default(0)
   forks            Int      @default(0)
   openIssues       Int      @default(0)
@@ -144,7 +143,7 @@ model ShowcaseProject {
   license          String?
   language         String?
   languageColor    String?
-  syncedAt         DateTime @updatedAt
+  updatedAt        DateTime @updatedAt
 
   @@map("showcase_project")
 }
@@ -156,14 +155,14 @@ model BlogPost {
   description String
   tags        String[]
   coverImage  String
-  authorId    Int
+  userId      String
   contentMdx  String
   readingTime Int      @default(0)
   contentSha  String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  author User @relation(fields: [authorId], references: [githubId], onDelete: Cascade)
+  author User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@map("blog_post")

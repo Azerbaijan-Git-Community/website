@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { syncShowcase } from "@/lib/sync-showcase";
+import { syncShowcase } from "@/lib/sync/sync-showcase";
 
 export async function POST(req: NextRequest) {
   const auth = req.headers.get("authorization");
