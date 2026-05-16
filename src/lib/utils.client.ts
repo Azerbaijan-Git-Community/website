@@ -19,3 +19,12 @@ export function getTimeLeft(lastSync: Date | null, SYNC_INTERVAL_MS: number): nu
   const next = new Date(lastSync).getTime() + SYNC_INTERVAL_MS;
   return Math.max(0, next - Date.now());
 }
+
+export function formatTime(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
