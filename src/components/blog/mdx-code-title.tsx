@@ -17,13 +17,13 @@ import {
   SiYaml,
 } from "react-icons/si";
 import { PiCheck, PiCopy, PiDatabase, PiTerminal } from "react-icons/pi";
-import { TbBrandReactNative } from "react-icons/tb";
+import { FaReact } from "react-icons/fa";
 
 const EXT_MAP: Record<string, React.ReactNode> = {
   ts: <SiTypescript />,
-  tsx: <TbBrandReactNative />,
+  tsx: <FaReact />,
   js: <SiJavascript />,
-  jsx: <TbBrandReactNative />,
+  jsx: <FaReact />,
   py: <SiPython />,
   go: <SiGo />,
   rs: <SiRust />,
@@ -71,7 +71,11 @@ export function MdxCodeTitle({ children, ...props }: Props) {
           {icon && <span className="flex items-center text-lg">{icon}</span>}
           {children}
         </span>
-        <button onClick={copy} aria-label="Copy code" className="rounded-md border border-white/10 bg-white/5 p-1.5 text-dim transition-colors hover:text-hi">
+        <button
+          onClick={copy}
+          aria-label="Copy code"
+          className="rounded-md border border-white/10 bg-white/5 p-1.5 text-dim transition-colors hover:text-hi"
+        >
           {copied ? <PiCheck size={14} /> : <PiCopy size={14} />}
         </button>
       </span>
