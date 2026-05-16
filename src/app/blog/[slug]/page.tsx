@@ -23,6 +23,9 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: `${post.title}`,
     description: post.description,
     keywords: post.tags,
+    openGraph: {
+      images: [{ url: post.coverImage, alt: post.title, width: 1200, height: 630 }],
+    },
   };
 }
 
