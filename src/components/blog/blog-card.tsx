@@ -20,7 +20,7 @@ export function BlogPostCard({ post }: { post: BlogPostListItem }) {
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
-          loading="lazy"
+          quality={100}
         />
       </div>
 
@@ -39,6 +39,7 @@ export function BlogPostCard({ post }: { post: BlogPostListItem }) {
               height={24}
               className="rounded-full"
               unoptimized
+              loading="lazy"
             />
             <span className="text-xs text-dim">{post.author.name}</span>
           </div>
