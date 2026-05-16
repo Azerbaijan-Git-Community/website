@@ -248,14 +248,15 @@ body {
   background: var(--color-overlay);
   color: var(--color-lo);
   font-family: var(--font-inter);
-  font-size: 0.8125rem;
+  font-size: 0.9rem;
   padding: 8px 16px;
   border: 1px solid var(--color-line);
   border-bottom: none;
   border-radius: 8px 8px 0 0;
 }
 
-[data-rehype-pretty-code-title] + pre {
+[data-rehype-pretty-code-title] + div > pre {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
+  margin-top: 0 !important;
 }

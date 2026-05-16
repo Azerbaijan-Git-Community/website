@@ -1,6 +1,14 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
-import type { AnchorHTMLAttributes, ImgHTMLAttributes } from "react";
+import {
+  Children,
+  isValidElement,
+  type AnchorHTMLAttributes,
+  type HTMLAttributes,
+  type ImgHTMLAttributes,
+} from "react";
+import { MdxCodeTitle } from "./mdx-code-title";
+import { MdxPre } from "./mdx-pre";
 
 function MdxImage({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) {
   if (!src || typeof src !== "string") return null;
@@ -11,14 +19,19 @@ function MdxImage({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) {
         src={src}
         alt={alt ?? ""}
         width={800}
-        height={450}
-        className="rounded-lg"
-        sizes="(max-width: 768px) 100vw, 800px"
-        loading="lazy"
+        height={600}
         unoptimized
+        className="max-w-full rounded-lg"
+        style={{ width: "auto", height: "auto" }}
       />
     </figure>
   );
+}
+
+function MdxParagraph({ children }: HTMLAttributes<HTMLParagraphElement>) {
+  const hasImage = Children.toArray(children).some((child) => isValidElement(child) && child.type === MdxImage);
+  if (hasImage) return <>{children}</>;
+  return <p>{children}</p>;
 }
 
 function MdxLink({ href, children, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement>) {
@@ -34,4 +47,7 @@ function MdxLink({ href, children, ...rest }: AnchorHTMLAttributes<HTMLAnchorEle
 export const mdxComponents: MDXComponents = {
   img: MdxImage,
   a: MdxLink,
+  p: MdxParagraph,
+  pre: MdxPre,
+  figcaption: MdxCodeTitle,
 };
