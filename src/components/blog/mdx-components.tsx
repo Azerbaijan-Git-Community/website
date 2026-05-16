@@ -1,11 +1,11 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import {
-  Children,
-  isValidElement,
   type AnchorHTMLAttributes,
+  Children,
   type HTMLAttributes,
   type ImgHTMLAttributes,
+  isValidElement,
 } from "react";
 import { MdxCodeTitle } from "./mdx-code-title";
 import { MdxPre } from "./mdx-pre";

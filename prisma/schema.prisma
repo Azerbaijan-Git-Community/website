@@ -20,6 +20,7 @@ model User {
   githubUsername String    @unique
   githubId       Int       @unique
   image          String
+  isBanned       Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   sessions       Session[]

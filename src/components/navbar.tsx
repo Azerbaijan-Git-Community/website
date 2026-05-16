@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { MobileMenu } from "./mobile-menu";
 import { SignInButton } from "./sign-in-button";
 import { UserAvatar } from "./user-avatar";
 
@@ -55,10 +56,11 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex w-26 flex-row items-center justify-center">
+        <div className="flex min-w-26 items-center gap-3">
           <Suspense fallback={<div className="size-14 animate-pulse rounded-full bg-surface" />}>
             <NavAuth />
           </Suspense>
+          <MobileMenu />
         </div>
       </div>
     </nav>

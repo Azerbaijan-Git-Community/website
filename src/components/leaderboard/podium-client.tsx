@@ -30,7 +30,7 @@ export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {PODIUM_ORDER.map((i) => (
           <PodiumCard
-            key={data[i]?.user.githubUsername}
+            key={data[i]?.user.githubUsername ?? `empty-${i}`}
             entry={data[i]}
             config={MEDAL_CONFIG[i]}
             mt={i !== 0 ? "md:mt-8" : undefined}

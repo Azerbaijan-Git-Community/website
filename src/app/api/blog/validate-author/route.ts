@@ -14,12 +14,19 @@ export async function GET(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { githubId: parseInt(githubId, 10) },
-    select: { id: true },
+    select: { id: true, isBanned: true },
   });
 
   if (!user) {
     return NextResponse.json(
       { exists: false, message: "You need to signup in website for publishing blog post" },
+      { status: 404 },
+    );
+  }
+
+  if (user.isBanned) {
+    return NextResponse.json(
+      { exists: false, message: "Your account has been banned from publishing blog posts" },
       { status: 404 },
     );
   }

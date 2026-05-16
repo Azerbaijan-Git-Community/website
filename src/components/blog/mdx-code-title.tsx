@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState, type HTMLAttributes } from "react";
+import { type HTMLAttributes, useRef, useState } from "react";
+import { FaReact } from "react-icons/fa";
+import { PiCheck, PiCopy, PiDatabase, PiTerminal } from "react-icons/pi";
 import {
   SiCss,
   SiDocker,
@@ -16,8 +18,6 @@ import {
   SiTypescript,
   SiYaml,
 } from "react-icons/si";
-import { PiCheck, PiCopy, PiDatabase, PiTerminal } from "react-icons/pi";
-import { FaReact } from "react-icons/fa";
 
 const EXT_MAP: Record<string, React.ReactNode> = {
   ts: <SiTypescript />,

@@ -37,18 +37,19 @@ export async function getTableData(): Promise<AllTableData> {
 
   const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({
-      where: { period: "WEEKLY", periodKey: getWeekKey() },
+      where: { period: "WEEKLY", periodKey: getWeekKey(), user: { isBanned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStats.findMany({
+      where: { user: { isBanned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStatsSnapshot.findMany({
-      where: { period: "MONTHLY" },
+      where: { period: "MONTHLY", user: { isBanned: false } },
       select: { ...entrySelect, periodKey: true },
       orderBy: { commits: "desc" },
     }),
@@ -64,6 +65,19 @@ export async function getTableData(): Promise<AllTableData> {
   }
 
   return { weekly, allTime, monthly };
+}
+
+export async function getLastSyncTime(): Promise<Date | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("leaderboard");
+
+  const latest = await prisma.githubStats.findFirst({
+    orderBy: { updatedAt: "desc" },
+    select: { updatedAt: true },
+  });
+
+  return latest?.updatedAt ?? null;
 }
 
 export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]>> {

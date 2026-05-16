@@ -6,11 +6,14 @@ import { PiCheck, PiCopy } from "react-icons/pi";
 export function MdxPre({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) {
   const ref = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
-  const [hasTitle, setHasTitle] = useState(false);
+  const [hasTitle, setHasTitle] = useState(true);
 
   useEffect(() => {
-    const prev = ref.current?.parentElement?.previousElementSibling;
-    setHasTitle(prev?.hasAttribute("data-rehype-pretty-code-title") ?? false);
+    const id = setTimeout(() => {
+      const prev = ref.current?.parentElement?.previousElementSibling;
+      setHasTitle(prev?.hasAttribute("data-rehype-pretty-code-title") ?? false);
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
   async function copy() {
