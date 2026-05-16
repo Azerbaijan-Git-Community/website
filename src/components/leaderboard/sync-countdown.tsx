@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { PiArrowsClockwise } from "react-icons/pi";
-import { formatTime, getTimeLeft } from "@/lib/utils.client";
+import { getTimeLeft } from "@/lib/utils.client";
 import { SyncCountdownClient } from "./sync-countdown-client";
 
 const SYNC_INTERVAL_MS = 60 * 60 * 1000;
@@ -18,7 +18,7 @@ export function SyncCountdown({ lastSync }: { lastSync: Date }) {
           ) : (
             <>
               Next sync in{" "}
-              <Suspense fallback={formatTime(timeLeftMs)}>
+              <Suspense fallback={"00:00"}>
                 <SyncCountdownClient lastSync={lastSync} />
               </Suspense>
             </>
