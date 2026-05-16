@@ -73,7 +73,14 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
           <div className="flex flex-wrap items-center gap-4 text-sm">
             {/* Author */}
             <div className="flex items-center gap-2">
-              <Image src={post.author.image} alt={post.author.name} width={32} height={32} className="rounded-full" />
+              <Image
+                src={post.author.image}
+                alt={post.author.name}
+                width={32}
+                height={32}
+                className="rounded-full"
+                unoptimized
+              />
               <div>
                 <span className="text-hi">{post.author.name}</span>
                 {post.author.githubUsername && (

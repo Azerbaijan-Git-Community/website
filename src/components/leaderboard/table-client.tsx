@@ -102,6 +102,7 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                               className="rounded-full ring-2 ring-line"
                               quality={100}
                               loading="lazy"
+                              unoptimized
                             />
                             <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
                               <span className="font-outfit font-semibold text-hi transition-colors hover:text-blue">
@@ -156,6 +157,7 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                       className="rounded-full ring-2 ring-line"
                       quality={100}
                       loading="lazy"
+                      unoptimized
                     />
                     <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
                       <h3 className="font-outfit text-lg font-bold text-hi transition-colors hover:text-blue">

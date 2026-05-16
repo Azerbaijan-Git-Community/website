@@ -1,9 +1,9 @@
+import { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getPodiumData, getTableData } from "@/data/leaderboard/get";
 import { getMonthKey } from "@/lib/utils.server";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Leaderboard",

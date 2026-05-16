@@ -32,7 +32,14 @@ export function BlogPostCard({ post }: { post: BlogPostListItem }) {
         {/* Footer */}
         <div className="mt-auto flex items-center justify-between border-t border-line pt-3">
           <div className="flex items-center gap-2">
-            <Image src={post.author.image} alt={post.author.name} width={24} height={24} className="rounded-full" />
+            <Image
+              src={post.author.image}
+              alt={post.author.name}
+              width={24}
+              height={24}
+              className="rounded-full"
+              unoptimized
+            />
             <span className="text-xs text-dim">{post.author.name}</span>
           </div>
 

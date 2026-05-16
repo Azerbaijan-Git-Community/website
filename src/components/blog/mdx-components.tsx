@@ -6,14 +6,18 @@ function MdxImage({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) {
   if (!src || typeof src !== "string") return null;
 
   return (
-    <Image
-      src={src}
-      alt={alt ?? ""}
-      width={800}
-      height={450}
-      className="my-6 rounded-lg"
-      sizes="(max-width: 768px) 100vw, 800px"
-    />
+    <figure className="my-8 flex justify-center">
+      <Image
+        src={src}
+        alt={alt ?? ""}
+        width={800}
+        height={450}
+        className="rounded-lg"
+        sizes="(max-width: 768px) 100vw, 800px"
+        loading="lazy"
+        unoptimized
+      />
+    </figure>
   );
 }
 

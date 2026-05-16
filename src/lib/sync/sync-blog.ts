@@ -74,9 +74,24 @@ function calculateReadingTime(content: string): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-/** Build the cover image URL for a post. Always `images/cover.png`. */
-function getCoverImageUrl(slug: string): string {
-  return `${RAW_BASE}/${slug}/images/cover.png`;
+const COVER_EXTS = ["png", "jpg", "jpeg", "webp", "svg"];
+
+/** Fetch the images directory and return the raw URL of the cover image. */
+async function fetchCoverImageUrl(slug: string): Promise<string> {
+  const res = await fetch(`https://api.github.com/repos/${BLOG_OWNER}/${BLOG_REPO}/contents/posts/${slug}/images`, {
+    headers: {
+      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch images directory for "${slug}": ${res.status}`);
+
+  const entries = (await res.json()) as GitHubDirEntry[];
+  const cover = entries.find((e) => e.type === "file" && COVER_EXTS.some((ext) => e.name === `cover.${ext}`));
+
+  if (!cover) throw new Error(`No cover image found in posts/${slug}/images/`);
+  return `${RAW_BASE}/${slug}/images/${cover.name}?sha=${cover.sha}`;
 }
 
 /** Fetch the posts directory listing from the blog repo. */
@@ -111,7 +126,7 @@ async function fetchPostContent(slug: string): Promise<string> {
  * changed, avoiding unnecessary API calls and preventing `updatedAt` from being
  * modified on unchanged posts.
  */
-export async function syncBlog(): Promise<{ synced: number; skipped: number; removed: number }> {
+export async function syncBlog(): Promise<{ synced: number; skipped: number; failed: string[] }> {
   // 1. Fetch directory listing with SHAs
   const dirs = await fetchPostDirs();
 
@@ -123,10 +138,8 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; rem
 
   // 3. Determine which posts need updating
   const toSync: Array<{ slug: string; sha: string }> = [];
-  const currentSlugs = new Set<string>();
 
   for (const dir of dirs) {
-    currentSlugs.add(dir.name);
     const existingSha = existingMap.get(dir.name);
     if (existingSha !== dir.sha) {
       toSync.push({ slug: dir.name, sha: dir.sha });
@@ -136,48 +149,50 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; rem
   const skipped = dirs.length - toSync.length;
 
   // 4. Fetch and upsert only changed/new posts
+  const failed: string[] = [];
+
   await Promise.all(
     toSync.map(async ({ slug, sha }) => {
-      const raw = await fetchPostContent(slug);
-      const { frontmatter, content } = parseFrontmatter(raw);
+      try {
+        const raw = await fetchPostContent(slug);
+        const { frontmatter, content } = parseFrontmatter(raw);
 
-      const user = await prisma.user.findUnique({
-        where: { githubId: frontmatter.author },
-        select: { id: true },
-      });
+        const user = await prisma.user.findUnique({
+          where: { githubId: frontmatter.author },
+          select: { id: true },
+        });
 
-      if (!user) {
-        console.warn(`Skipping post "${slug}": no user found with githubId ${frontmatter.author}`);
-        return;
+        if (!user) {
+          console.warn(`Skipping post "${slug}": no user found with githubId ${frontmatter.author}`);
+          failed.push(slug);
+          return;
+        }
+
+        const data = {
+          title: frontmatter.title,
+          description: frontmatter.description,
+          tags: frontmatter.tags,
+          coverImage: await fetchCoverImageUrl(slug),
+          userId: user.id,
+          contentMdx: content,
+          readingTime: calculateReadingTime(content),
+          contentSha: sha,
+        };
+
+        await prisma.blogPost.upsert({
+          where: { slug },
+          create: { slug, ...data },
+          update: data,
+        });
+      } catch (err) {
+        console.error(`Failed to sync post "${slug}":`, err);
+        failed.push(slug);
       }
-
-      const data = {
-        title: frontmatter.title,
-        description: frontmatter.description,
-        tags: frontmatter.tags,
-        coverImage: getCoverImageUrl(slug),
-        userId: user.id,
-        contentMdx: content,
-        readingTime: calculateReadingTime(content),
-        contentSha: sha,
-      };
-
-      await prisma.blogPost.upsert({
-        where: { slug },
-        create: { slug, ...data },
-        update: data,
-      });
     }),
   );
 
-  // 5. Remove posts that no longer exist in the repo
-  const toDelete = existing.filter((p) => !currentSlugs.has(p.slug)).map((p) => p.slug);
-  if (toDelete.length > 0) {
-    await prisma.blogPost.deleteMany({ where: { slug: { in: toDelete } } });
-  }
-
-  // 6. Invalidate cache
+  // 5. Invalidate cache
   revalidateTag("blog", { expire: 0 });
 
-  return { synced: toSync.length, skipped, removed: toDelete.length };
+  return { synced: toSync.length - failed.length, skipped, failed };
 }

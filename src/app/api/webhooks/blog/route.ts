@@ -12,6 +12,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     ...result,
-    message: `Synced ${result.synced}, skipped ${result.skipped}, removed ${result.removed}`,
+    message: `Synced ${result.synced}, skipped ${result.skipped}, failed ${result.failed.length}`,
   });
 }
