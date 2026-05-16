@@ -12,6 +12,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     ...result,
-    message: `Synced ${result.synced} projects, removed ${result.removed}`,
+    message: `Synced ${result.synced} projects, skipped ${result.skipped} unchanged`,
   });
 }

@@ -127,23 +127,24 @@ enum SnapshotPeriod {
 }
 
 model ShowcaseProject {
-  id               String   @id @default(uuid(7))
-  repo             String   @unique
-  submittedBy      String
-  banner           String?
-  links            String[]
-  website          String?
-  createdAt        DateTime @default(now())
-  stars            Int      @default(0)
-  forks            Int      @default(0)
-  openIssues       Int      @default(0)
-  openPRs          Int      @default(0)
-  description      String?
-  homepageUrl      String?
-  license          String?
-  language         String?
-  languageColor    String?
-  updatedAt        DateTime @updatedAt
+  id            String   @id @default(uuid(7))
+  repo          String   @unique
+  submittedBy   String
+  banner        String?
+  links         String[]
+  website       String?
+  createdAt     DateTime @default(now())
+  stars         Int      @default(0)
+  forks         Int      @default(0)
+  openIssues    Int      @default(0)
+  openPRs       Int      @default(0)
+  description   String?
+  homepageUrl   String?
+  license       String?
+  language      String?
+  languageColor String?
+  fileSha       String
+  updatedAt     DateTime @updatedAt
 
   @@map("showcase_project")
 }

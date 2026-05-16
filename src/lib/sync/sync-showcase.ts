@@ -15,6 +15,11 @@ interface ShowcaseYaml {
   website?: string;
 }
 
+interface ShowcaseFile {
+  yaml: ShowcaseYaml;
+  sha: string;
+}
+
 interface RepoGqlData {
   stargazerCount: number;
   forkCount: number;
@@ -26,7 +31,7 @@ interface RepoGqlData {
   primaryLanguage: { name: string; color: string } | null;
 }
 
-async function fetchRegistry(): Promise<ShowcaseYaml[]> {
+async function fetchRegistry(): Promise<ShowcaseFile[]> {
   const res = await fetch(`https://api.github.com/repos/${SHOWCASE_OWNER}/${SHOWCASE_REPO}/contents/projects`, {
     headers: {
       Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
@@ -36,19 +41,20 @@ async function fetchRegistry(): Promise<ShowcaseYaml[]> {
 
   if (!res.ok) throw new Error(`Failed to fetch showcase registry: ${res.status}`);
 
-  const files = (await res.json()) as Array<{ name: string; download_url: string }>;
+  const files = (await res.json()) as Array<{ name: string; sha: string; download_url: string }>;
   const yamlFiles = files.filter((f) => f.name.endsWith(".yaml"));
 
-  const projects = await Promise.all(
+  const results = await Promise.all(
     yamlFiles.map(async (file) => {
       const content = await fetch(file.download_url, {
         headers: { Authorization: `Bearer ${process.env.GH_STATS_TOKEN}` },
       }).then((r) => r.text());
-      return yaml.load(content, { schema: yaml.JSON_SCHEMA }) as ShowcaseYaml;
+      const parsed = yaml.load(content, { schema: yaml.JSON_SCHEMA }) as ShowcaseYaml;
+      return parsed?.repo ? { yaml: parsed, sha: file.sha } : null;
     }),
   );
 
-  return projects.filter((p) => p?.repo);
+  return results.filter((r): r is ShowcaseFile => r !== null);
 }
 
 function buildBatchQuery(repos: Array<{ owner: string; name: string }>): string {
@@ -83,62 +89,64 @@ async function fetchRepoBatch(repos: Array<{ owner: string; name: string }>): Pr
   return json?.data ?? {};
 }
 
-export async function syncShowcase(): Promise<{ synced: number; removed: number }> {
-  const projects = await fetchRegistry();
+export async function syncShowcase(): Promise<{ synced: number; skipped: number }> {
+  const allFiles = await fetchRegistry();
 
-  // Batch GraphQL queries for repo metadata
-  const repoSlugs = projects.map((p) => {
-    const [owner, name] = p.repo.split("/");
-    return { owner, name };
-  });
+  // Load existing SHA map from DB
+  const existing = await prisma.showcaseProject.findMany({ select: { repo: true, fileSha: true } });
+  const shaByRepo = new Map(existing.map((p) => [p.repo, p.fileSha]));
 
-  const allGqlData: Record<string, RepoGqlData> = {};
-  for (let i = 0; i < repoSlugs.length; i += BATCH_SIZE) {
-    const batch = repoSlugs.slice(i, i + BATCH_SIZE);
-    const batchData = await fetchRepoBatch(batch);
-    // Re-key with global indices
-    for (let j = 0; j < batch.length; j++) {
-      allGqlData[`r${i + j}`] = batchData[`r${j}`];
+  // Only process files whose SHA has changed (or are new)
+  const changedFiles = allFiles.filter((f) => shaByRepo.get(f.yaml.repo) !== f.sha);
+  const skipped = allFiles.length - changedFiles.length;
+
+  if (changedFiles.length > 0) {
+    // Batch GraphQL queries only for changed files
+    const repoSlugs = changedFiles.map((f) => {
+      const [owner, name] = f.yaml.repo.split("/");
+      return { owner, name };
+    });
+
+    const allGqlData: Record<string, RepoGqlData> = {};
+    for (let i = 0; i < repoSlugs.length; i += BATCH_SIZE) {
+      const batch = repoSlugs.slice(i, i + BATCH_SIZE);
+      const batchData = await fetchRepoBatch(batch);
+      for (let j = 0; j < batch.length; j++) {
+        allGqlData[`r${i + j}`] = batchData[`r${j}`];
+      }
     }
+
+    await Promise.all(
+      changedFiles.map(async (file, index) => {
+        const project = file.yaml;
+        const ghData = allGqlData[`r${index}`];
+        const shared = {
+          submittedBy: project.submittedBy,
+          banner: project.banner ?? null,
+          links: project.links ?? [],
+          website: project.website ?? null,
+          stars: ghData?.stargazerCount ?? 0,
+          forks: ghData?.forkCount ?? 0,
+          openIssues: ghData?.issues?.totalCount ?? 0,
+          openPRs: ghData?.pullRequests?.totalCount ?? 0,
+          description: ghData?.description ?? null,
+          homepageUrl: ghData?.homepageUrl ?? null,
+          license: ghData?.licenseInfo?.spdxId ?? null,
+          language: ghData?.primaryLanguage?.name ?? null,
+          languageColor: ghData?.primaryLanguage?.color ?? null,
+          fileSha: file.sha,
+        };
+
+        return prisma.showcaseProject.upsert({
+          where: { repo: project.repo },
+          create: { repo: project.repo, ...shared },
+          update: { ...shared },
+        });
+      }),
+    );
+
+    revalidateTag("showcase", { expire: 0 });
   }
 
-  // Upsert all projects
-  await Promise.all(
-    projects.map(async (project, index) => {
-      const ghData = allGqlData[`r${index}`];
-      const shared = {
-        submittedBy: project.submittedBy,
-        banner: project.banner ?? null,
-        links: project.links ?? [],
-        website: project.website ?? null,
-        stars: ghData?.stargazerCount ?? 0,
-        forks: ghData?.forkCount ?? 0,
-        openIssues: ghData?.issues?.totalCount ?? 0,
-        openPRs: ghData?.pullRequests?.totalCount ?? 0,
-        description: ghData?.description ?? null,
-        homepageUrl: ghData?.homepageUrl ?? null,
-        license: ghData?.licenseInfo?.spdxId ?? null,
-        language: ghData?.primaryLanguage?.name ?? null,
-        languageColor: ghData?.primaryLanguage?.color ?? null,
-      };
-
-      return prisma.showcaseProject.upsert({
-        where: { repo: project.repo },
-        create: { repo: project.repo, ...shared },
-        update: { ...shared },
-      });
-    }),
-  );
-
-  // Remove projects no longer in the registry
-  const repoSet = new Set(projects.map((p) => p.repo));
-  const existing = await prisma.showcaseProject.findMany({ select: { repo: true } });
-  const toDelete = existing.filter((p) => !repoSet.has(p.repo)).map((p) => p.repo);
-  if (toDelete.length > 0) {
-    await prisma.showcaseProject.deleteMany({ where: { repo: { in: toDelete } } });
-  }
-
-  revalidateTag("showcase", { expire: 0 });
-
-  return { synced: projects.length, removed: toDelete.length };
+  return { synced: changedFiles.length, skipped };
 }
