@@ -1,14 +1,16 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
-import { betterAuth } from "better-auth";
+import { betterAuth } from "better-auth/minimal";
 import { prisma } from "./prisma";
-import { dash } from "@better-auth/infra";
-import { sentinel } from "@better-auth/infra";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   appName: "Azerbaijan GitHub Community",
-  plugins: [dash(), sentinel()],
+  // plugins: [dash(), sentinel()],
+  experimental: { joins: true },
   advanced: {
+    database: {
+      generateId: false,
+    },
     ipAddress: {
       ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
     },

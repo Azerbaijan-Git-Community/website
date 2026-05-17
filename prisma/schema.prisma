@@ -13,7 +13,7 @@ datasource db {
 }
 
 model User {
-  id             String    @id
+  id             String    @id @default(uuid(7))
   name           String
   email          String
   emailVerified  Boolean   @default(false)
@@ -35,7 +35,7 @@ model User {
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid(7))
   expiresAt DateTime
   token     String
   createdAt DateTime @default(now())
@@ -47,11 +47,12 @@ model Session {
 
   @@unique([token])
   @@index([userId])
+  @@index([expiresAt])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(uuid(7))
   accountId             String
   providerId            String
   userId                String
@@ -67,11 +68,12 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@index([userId])
+  @@index([accountId, providerId])
   @@map("account")
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(uuid(7))
   identifier String
   value      String
   expiresAt  DateTime
@@ -83,7 +85,7 @@ model Verification {
 }
 
 model RateLimit {
-  id          String @id
+  id          String @id @default(uuid(7))
   key         String
   count       Int
   lastRequest BigInt
@@ -103,6 +105,8 @@ model GithubStats {
   followers     Int      @default(0)
   updatedAt     DateTime @updatedAt
 
+  @@index([commits(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
   @@map("github_stats")
 }
 
@@ -118,7 +122,8 @@ model GithubStatsSnapshot {
   updatedAt    DateTime       @updatedAt
 
   @@unique([userId, period, periodKey])
-  @@index([period, periodKey])
+  @@index([period, periodKey, commits(sort: Desc)])
+  @@index([period, commits(sort: Desc)])
   @@map("github_stats_snapshot")
 }
 
@@ -147,6 +152,7 @@ model ShowcaseProject {
   fileSha       String
   updatedAt     DateTime @updatedAt
 
+  @@index([createdAt(sort: Desc)])
   @@map("showcase_project")
 }
 
@@ -167,5 +173,6 @@ model BlogPost {
   author User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
+  @@index([userId])
   @@map("blog_post")
 }
