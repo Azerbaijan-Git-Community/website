@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
+import { Suspense } from "react";
+import { PiArrowsClockwise } from "react-icons/pi";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
 import { TableClient } from "@/components/leaderboard/table-client";
@@ -47,7 +49,22 @@ export default async function LeaderboardPage() {
           <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} />
         </div>
 
-        {lastSync && <SyncCountdown lastSync={lastSync} />}
+        {lastSync && (
+          <div className="mb-5 flex justify-center">
+            <div className="flex items-center gap-1.5 text-sm text-dim">
+              <Suspense
+                fallback={
+                  <>
+                    <PiArrowsClockwise size={14} />
+                    <span>Next sync in 00:00</span>
+                  </>
+                }
+              >
+                <SyncCountdown lastSync={lastSync} />
+              </Suspense>
+            </div>
+          </div>
+        )}
 
         <TableClient allData={tableData} currentMonthKey={currentMonthKey} />
       </div>

@@ -1,30 +1,31 @@
-import { Suspense } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { PiArrowsClockwise } from "react-icons/pi";
-import { getTimeLeft } from "@/lib/utils.client";
-import { SyncCountdownClient } from "./sync-countdown-client";
+import { formatTime, getTimeLeft } from "@/lib/utils.client";
 
 const SYNC_INTERVAL_MS = 60 * 60 * 1000;
 
 export function SyncCountdown({ lastSync }: { lastSync: Date }) {
-  const timeLeftMs = getTimeLeft(lastSync, SYNC_INTERVAL_MS);
+  const [timeLeft, setTimeLeft] = useState<number>(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
+
+  useEffect(() => {
+    const initial = setTimeout(() => {
+      setTimeLeft(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
+    }, 0);
+    const interval = setInterval(() => {
+      setTimeLeft(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
+    }, 1000);
+    return () => {
+      clearTimeout(initial);
+      clearInterval(interval);
+    };
+  }, [lastSync]);
 
   return (
-    <div className="mb-5 flex justify-center">
-      <div className="flex items-center gap-1.5 text-sm text-dim">
-        <PiArrowsClockwise size={14} className={timeLeftMs === 0 ? "animate-spin text-blue" : ""} />
-        <span>
-          {timeLeftMs === 0 ? (
-            "Syncing..."
-          ) : (
-            <>
-              Next sync in{" "}
-              <Suspense fallback={"00:00"}>
-                <SyncCountdownClient lastSync={lastSync} />
-              </Suspense>
-            </>
-          )}
-        </span>
-      </div>
-    </div>
+    <>
+      <PiArrowsClockwise size={14} className={timeLeft === 0 ? "animate-spin text-blue" : ""} />
+      <span>{timeLeft === 0 ? "Syncing..." : `Next sync in ${formatTime(timeLeft)}`}</span>{" "}
+    </>
   );
 }
