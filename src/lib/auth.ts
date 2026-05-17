@@ -30,7 +30,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24 * 15, // 15 days
     cookieCache: {
       enabled: true,
-      strategy: "compact",
+      strategy: "jwe",
       maxAge: 30 * 60, // 30 minutes
     },
   },
