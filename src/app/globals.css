@@ -66,6 +66,183 @@
   --color-icon-pink: #f778ba;
 }
 
+/* ── HeroUI Theme Override (GitHub Dark) ──────────────────────── */
+/*
+  Maps HeroUI's semantic CSS variables to the site's GitHub-dark design
+  tokens. Applied to .dark (the class on <body>) so it wins over
+  @heroui/styles which ships its overrides in @layer base.
+*/
+.dark,
+[data-theme="dark"] {
+  /* Backgrounds — matched to design token names */
+  --background: #0d1117; /* canvas */
+  --surface: #161b22;
+  --surface-foreground: #f0f6fc;
+  --overlay: #21262d;
+  --overlay-foreground: #f0f6fc;
+
+  /* Text */
+  --foreground: #f0f6fc; /* hi */
+  --muted: #8b949e; /* lo */
+
+  /* Accent → GitHub green (primary CTA) */
+  --accent: oklch(0.58 0.155 145);
+  /* Dark text on green matches the site's handwritten CTAs (text-black on bg-green) */
+  --accent-foreground: oklch(0.2103 0.0059 285.89);
+
+  /* Neutral surfaces (ghost buttons, tab panels, default chip)
+     Must be visibly LIGHTER than --overlay (#21262d) so that menu item
+     hover states (bg-default) actually show up against the popover bg. */
+  --default: #2d333b;
+  --default-foreground: #f0f6fc;
+
+  /* Borders & dividers */
+  --border: #30363d; /* line */
+  --separator: #30363d;
+
+  /* Links & keyboard focus ring */
+  --link: #58a6ff; /* blue */
+  --focus: #58a6ff;
+
+  /* Form fields — GitHub inputs have a visible 1 px border */
+  --field-background: #0d1117;
+  --field-foreground: #f0f6fc;
+  --field-placeholder: #8b949e;
+  --field-border: #30363d;
+  --field-border-width: 1px;
+
+  /* Segment (tab underline / pill) */
+  --segment: #21262d;
+  --segment-foreground: #f0f6fc;
+
+  /* Success — reuse GitHub green so it's consistent with the accent */
+  --success: oklch(0.58 0.155 145);
+  --success-foreground: #f0f6fc;
+
+  /* Scrollbar thumb */
+  --scrollbar: #30363d;
+
+  /* Radius — GitHub uses 6 px corners, not pill-shaped */
+  --radius: 0.375rem;
+  --field-radius: calc(var(--radius) * 1.5); /* ~9 px for inputs */
+}
+
+/* ── HeroUI Component Overrides ───────────────────────────────── */
+/*
+  All radius / font / border overrides live in @layer components so they
+  are resolved after @heroui/styles (which also uses @layer components) —
+  later registration = higher priority within the same layer.
+
+  Naming follows HeroUI's BEM convention:
+    .block  .block__element  .block--modifier
+*/
+@layer components {
+  /* ── Button ──────────────────────────────────────────────────────
+     Default: rounded-3xl pill shape, font-medium
+     Override: rounded-lg (6 px) + Outfit semibold — matches site CTAs
+  ----------------------------------------------------------------- */
+  .button {
+    @apply rounded-lg font-outfit font-semibold;
+  }
+
+  /* ── Card ────────────────────────────────────────────────────────
+     Default: border-radius min(32px, --radius-3xl), no border
+     Override: rounded-xl (9 px) + border-line + site shadow
+  ----------------------------------------------------------------- */
+  .card {
+    border-radius: var(--radius-2xl);
+    @apply border border-line shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+  }
+
+  /* ── Modal ───────────────────────────────────────────────────────
+     Default: border-radius min(32px, --radius-3xl), no border
+     Override: rounded-xl + border-line
+  ----------------------------------------------------------------- */
+  .modal__dialog {
+    border-radius: var(--radius-2xl);
+    @apply border border-line;
+  }
+
+  /* Icon badge inside modal — keep squarish */
+  .modal__icon {
+    @apply rounded-xl;
+  }
+
+  /* ── Alert Dialog ────────────────────────────────────────────────
+     Same treatment as modal
+  ----------------------------------------------------------------- */
+  .alert-dialog__dialog {
+    border-radius: var(--radius-2xl);
+    @apply border border-line;
+  }
+
+  /* ── Drawer ──────────────────────────────────────────────────────
+     Default: no border
+  ----------------------------------------------------------------- */
+  .drawer__dialog {
+    @apply border-line;
+  }
+
+  /* ── Dropdown / Select / Popover overlays ────────────────────────
+     Default: border-radius min(32px, --radius-3xl), no border
+     Override: rounded-xl (9 px) + border-line
+     The border colour uses the site's --line token bridged via
+     CSS variable so it stays in sync with --border.
+  ----------------------------------------------------------------- */
+  .dropdown__popover,
+  .select__popover,
+  .popover {
+    border-radius: var(--radius-lg);
+    @apply border border-line;
+  }
+
+  /* ── Tooltip ─────────────────────────────────────────────────────
+     Default: border-radius min(32px, --radius-xl) — still very round
+     Override: rounded-lg (6 px) + border-line, matches code blocks
+  ----------------------------------------------------------------- */
+  .tooltip {
+    border-radius: var(--radius-lg);
+    @apply border border-line;
+  }
+
+  /* ── List-box / Menu items ───────────────────────────────────────
+     Default: rounded-2xl (very round)
+     Override: rounded-md (~4.5 px) — GitHub dropdown item style
+  ----------------------------------------------------------------- */
+  .list-box-item,
+  .menu-item {
+    @apply rounded-md;
+  }
+
+  /* ── Tabs ────────────────────────────────────────────────────────
+     Default: list rounded-2.5×radius, tab rounded-3xl pill
+     Override: list rounded-lg container, tab rounded-md, Outfit font
+     Matches the period-selector pattern in the leaderboard page
+  ----------------------------------------------------------------- */
+  .tabs__list {
+    border-radius: var(--radius-lg);
+  }
+
+  .tabs__tab {
+    @apply rounded-md font-outfit;
+  }
+
+  /* Sliding indicator pill — keep slightly rounder than the tab */
+  .tabs__indicator {
+    border-radius: var(--radius-md);
+  }
+
+  /* ── Toast ───────────────────────────────────────────────────────
+     Default: border-radius min(32px, --radius-3xl), bg-surface, no border
+     Override: rounded-lg (6 px) + overlay bg + border-line
+  ----------------------------------------------------------------- */
+  .toast {
+    border-radius: var(--radius-lg);
+    @apply border border-line bg-overlay;
+  }
+
+}
+
 /* ── 2. Base ───────────────────────────────────────────────────── */
 html {
   scroll-behavior: auto !important;

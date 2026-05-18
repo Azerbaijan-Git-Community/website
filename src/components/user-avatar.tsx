@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Dropdown, Label } from "@heroui/react";
+import { Avatar, Dropdown } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { PiSignOutBold } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
@@ -17,9 +17,10 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
     await authClient.signOut();
     router.refresh();
   };
+
   return (
     <Dropdown>
-      <Dropdown.Trigger aria-label="User menu" className="">
+      <Dropdown.Trigger aria-label="User menu">
         <Avatar
           size="lg"
           className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-all hover:ring-blue"
@@ -28,18 +29,25 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
           <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>
         </Avatar>
       </Dropdown.Trigger>
+
       <Dropdown.Popover placement="bottom">
         <Dropdown.Menu
           onAction={(key) => {
-            console.log("Action key:", key);
-            if (key === "signout") {
-              handleSignOut();
-            }
+            if (key === "signout") handleSignOut();
           }}
         >
-          <Dropdown.Item id="signout" textValue="Sign out" variant="danger">
+          {/*
+           * No variant="danger" — that makes text permanently red which feels alarming.
+           * Instead: muted (lo) text normally, red text + subtle red tint on hover.
+           * Matches GitHub's own sign-out dropdown pattern.
+           */}
+          <Dropdown.Item
+            id="signout"
+            textValue="Sign out"
+            className="text-lo data-[hovered=true]:bg-[rgba(248,81,73,0.08)] data-[hovered=true]:text-danger"
+          >
             <PiSignOutBold />
-            <Label>Sign out</Label>
+            Sign out
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Popover>
