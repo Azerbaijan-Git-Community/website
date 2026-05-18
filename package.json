@@ -21,7 +21,7 @@
     "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react --output AGENTS.md"
   },
   "dependencies": {
-    "@better-auth/infra": "^0.2.8",
+    "@better-auth/infra": "0.2.8",
     "@better-auth/prisma-adapter": "1.6.11",
     "@heroui/react": "3.0.5",
     "@heroui/styles": "3.0.5",

@@ -37,19 +37,19 @@ export async function getTableData(): Promise<AllTableData> {
 
   const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({
-      where: { period: "WEEKLY", periodKey: getWeekKey(), user: { isBanned: false } },
+      where: { period: "WEEKLY", periodKey: getWeekKey(), user: { banned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStats.findMany({
-      where: { user: { isBanned: false } },
+      where: { user: { banned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
       take: 100,
     }),
     prisma.githubStatsSnapshot.findMany({
-      where: { period: "MONTHLY", user: { isBanned: false } },
+      where: { period: "MONTHLY", user: { banned: false } },
       select: { ...entrySelect, periodKey: true },
       orderBy: { commits: "desc" },
     }),

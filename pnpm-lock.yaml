@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@better-auth/infra':
-        specifier: ^0.2.8
+        specifier: 0.2.8
         version: 0.2.8(ceca7513d0db67a7385dc548d8a5fc6b)
       '@better-auth/prisma-adapter':
         specifier: 1.6.11

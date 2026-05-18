@@ -15,6 +15,7 @@ const serverEnvSchema = z.object({
   SHOWCASE_WEBHOOK_SECRET: z.string().min(3),
   BLOG_WEBHOOK_SECRET: z.string().min(3),
   AUTHOR_VALIDATE_SECRET: z.string().min(3),
+  BETTER_AUTH_API_KEY: z.string().min(3),
 });
 
 type ServerEnv = z.infer<typeof serverEnvSchema>;

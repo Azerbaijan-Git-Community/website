@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
   const weekRange = getWeekRange(now);
   const monthRange = getMonthRange(now);
 
-  const users = await prisma.user.findMany({ where: { isBanned: false }, select: { id: true, githubUsername: true } });
+  const users = await prisma.user.findMany({ where: { banned: false }, select: { id: true, githubUsername: true } });
 
   let synced = 0;
   let failed = 0;

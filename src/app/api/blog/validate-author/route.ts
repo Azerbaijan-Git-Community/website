@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { githubId: parseInt(githubId, 10) },
-    select: { id: true, isBanned: true },
+    select: { id: true, banned: true },
   });
 
   if (!user) {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  if (user.isBanned) {
+  if (user.banned) {
     return NextResponse.json(
       { exists: false, message: "Your account has been banned from publishing blog posts" },
       { status: 404 },
