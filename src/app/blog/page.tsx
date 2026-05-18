@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { BlogListClient } from "@/components/blog/blog-list-client";
 import { getBlogPosts } from "@/data/blog/get";
+import { BlogPostCard } from "@/components/blog/blog-card";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -45,7 +45,17 @@ export default async function BlogPage() {
           </p>
         </div>
 
-        <BlogListClient blogPosts={blogPosts} />
+        {blogPosts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <p className="text-lg text-lo">No blog posts yet. Be the first to contribute!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {blogPosts.map((post) => {
+              return <BlogPostCard key={post.id} post={post} />;
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,10 @@
-"use server";
-
+import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
-/** Paginated blog post list response. */
-export type BlogPostsResponse = Awaited<ReturnType<typeof getBlogPosts>>;
-export type BlogPostListItem = NonNullable<BlogPostsResponse["items"]>[number];
-/** Fetch a paginated list of blog posts (metadata only, no content). */
-export async function getBlogPosts(cursor?: string, limit = 12) {
+export type BlogPostItem = Awaited<ReturnType<typeof getBlogPosts>>[number];
+
+export async function getBlogPosts() {
   "use cache";
   cacheLife("weeks");
   cacheTag("blog");
@@ -26,21 +23,11 @@ export async function getBlogPosts(cursor?: string, limit = 12) {
       author: { select: { name: true, image: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: limit + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   });
 
-  const hasMore = posts.length > limit;
-  const items = hasMore ? posts.slice(0, limit) : posts;
-
-  return {
-    items,
-    hasMore,
-    nextCursor: hasMore ? items[items.length - 1].id : null,
-  };
+  return posts;
 }
 
-/** Fetch a single blog post by slug (includes full MDX content). */
 export async function getBlogPost(slug: string) {
   "use cache";
   cacheLife("weeks");
@@ -52,7 +39,6 @@ export async function getBlogPost(slug: string) {
   });
 }
 
-/** Fetch all blog post slugs for sitemap and generateStaticParams. */
 export async function getAllBlogSlugs() {
   "use cache";
   cacheLife("weeks");

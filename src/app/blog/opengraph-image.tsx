@@ -10,8 +10,8 @@ export const contentType = "image/png";
 export const revalidate = 86400;
 
 export default async function Image() {
-  const [fonts, data] = await Promise.all([getOgFonts(), getBlogPosts(undefined, 3)]);
-  const posts = data.items;
+  const [fonts, blogPosts] = await Promise.all([getOgFonts(), getBlogPosts()]);
+  const posts = blogPosts.slice(0, 3);
 
   return new ImageResponse(
     <div

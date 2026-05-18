@@ -44,9 +44,9 @@ export async function HeroSection() {
 
       <div className="pointer-events-none absolute inset-0 z-0">
         {/* Purple blob */}
-        <div className="blob blob-purple absolute -top-[10%] -right-[5%] h-[50vw] w-[50vw]" />
+        <div className="blob blob-purple absolute top-[-10%] right-[-5%] h-[50vw] w-[50vw]" />
         {/* Green blob */}
-        <div className="blob blob-green absolute -bottom-[20%] -left-[10%] h-[60vw] w-[60vw] [animation-delay:-10s]" />
+        <div className="blob blob-green absolute bottom-[-20%] left-[-10%] h-[60vw] w-[60vw] [animation-delay:-10s]" />
         {/* Grid overlay */}
         <div className="grid-overlay absolute inset-0" />
       </div>

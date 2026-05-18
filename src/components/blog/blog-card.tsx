@@ -1,27 +1,18 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { PiClock } from "react-icons/pi";
-import { BlogPostListItem } from "@/data/blog/get";
 import { formatDate } from "@/lib/utils.client";
+import { BlogPostItem } from "@/data/blog/get";
 
-export function BlogPostCard({ post }: { post: BlogPostListItem }) {
+export function BlogPostCard({ post }: { post: BlogPostItem }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
       className="glass flex flex-col overflow-hidden rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] transition-transform duration-150 ease-out hover:-translate-y-1.5"
     >
       {/* Cover image */}
-      <div className="relative h-44 w-full overflow-hidden bg-overlay">
-        <Image
-          src={post.coverImage}
-          alt={post.title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
-          quality={100}
-        />
+      <div className="relative h-44 w-full overflow-hidden">
+        <Image src={post.coverImage} alt={post.title} fill className="object-cover" quality={100} />
       </div>
 
       {/* Body */}

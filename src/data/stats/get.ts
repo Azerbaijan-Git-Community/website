@@ -1,8 +1,8 @@
-"use server";
-
+import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
+export type GithubStats = Awaited<ReturnType<typeof getGithubStats>>;
 export async function getGithubStats() {
   "use cache";
   cacheLife("weeks");

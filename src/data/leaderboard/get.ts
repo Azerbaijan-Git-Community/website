@@ -1,5 +1,4 @@
-"use server";
-
+import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getWeekKey } from "@/lib/utils.server";
@@ -69,7 +68,7 @@ export async function getTableData(): Promise<AllTableData> {
 
 export async function getLastSyncTime(): Promise<Date | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("weeks");
   cacheTag("leaderboard");
 
   const latest = await prisma.githubStats.findFirst({

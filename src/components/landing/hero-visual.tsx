@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { getGithubStats } from "@/data/stats/get";
+import { GithubStats } from "@/data/stats/get";
 
 const GOAL = 5_000_000;
 
@@ -28,7 +28,7 @@ function useCountUp(target: number, duration: number, active: boolean) {
   return value;
 }
 
-export function HeroVisual({ data }: { data: Awaited<ReturnType<typeof getGithubStats>> }) {
+export function HeroVisual({ data }: { data: GithubStats }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.3 });
 
