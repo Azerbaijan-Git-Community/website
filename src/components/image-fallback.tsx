@@ -19,7 +19,7 @@ export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackPro
       src={imgSrc}
       alt={alt}
       onError={() => {
-        if (isFinal.current) return;
+        if (isFinal.current || imgSrc === fallback) return;
         if (retryCount.current < 3) {
           retryCount.current += 1;
           const base = String(originalSrc.current);
