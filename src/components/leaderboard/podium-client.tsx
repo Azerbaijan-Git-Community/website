@@ -97,7 +97,7 @@ function PodiumCard({ entry, config, mt }: PodiumCardProps) {
           width={config.size}
           height={config.size}
           className={`rounded-full ring-4 ${config.ring}`}
-          quality={100}
+          unoptimized
           loading="eager"
         />
         <div
