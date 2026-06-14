@@ -11,6 +11,8 @@ const BATCH_SIZE = 10;
 type ContributionData = {
   totalCommitContributions: number;
   totalPullRequestContributions: number;
+  totalIssueContributions: number;
+  totalPullRequestReviewContributions: number;
 };
 
 type UserData = {
@@ -51,14 +53,20 @@ function buildBatchQuery(
       weekly: contributionsCollection(from: "${weekRange.from}", to: "${weekRange.to}") {
         totalCommitContributions
         totalPullRequestContributions
+        totalIssueContributions
+        totalPullRequestReviewContributions
       }
       monthly: contributionsCollection(from: "${monthRange.from}", to: "${monthRange.to}") {
         totalCommitContributions
         totalPullRequestContributions
+        totalIssueContributions
+        totalPullRequestReviewContributions
       }
       allTime: contributionsCollection {
         totalCommitContributions
         totalPullRequestContributions
+        totalIssueContributions
+        totalPullRequestReviewContributions
       }
       repositories { totalCount }
       followers { totalCount }
@@ -174,12 +182,16 @@ export async function POST(req: NextRequest) {
                 userId: id,
                 commits: allTime.totalCommitContributions,
                 pullRequests: allTime.totalPullRequestContributions,
+                issues: allTime.totalIssueContributions,
+                reviews: allTime.totalPullRequestReviewContributions,
                 repositories: repositories.totalCount,
                 followers: followers.totalCount,
               },
               update: {
                 commits: allTime.totalCommitContributions,
                 pullRequests: allTime.totalPullRequestContributions,
+                issues: allTime.totalIssueContributions,
+                reviews: allTime.totalPullRequestReviewContributions,
                 repositories: repositories.totalCount,
                 followers: followers.totalCount,
               },
@@ -192,10 +204,14 @@ export async function POST(req: NextRequest) {
                 periodKey: weekKey,
                 commits: weekly.totalCommitContributions,
                 pullRequests: weekly.totalPullRequestContributions,
+                issues: weekly.totalIssueContributions,
+                reviews: weekly.totalPullRequestReviewContributions,
               },
               update: {
                 commits: weekly.totalCommitContributions,
                 pullRequests: weekly.totalPullRequestContributions,
+                issues: weekly.totalIssueContributions,
+                reviews: weekly.totalPullRequestReviewContributions,
               },
             }),
             prisma.githubStatsSnapshot.upsert({
@@ -206,10 +222,14 @@ export async function POST(req: NextRequest) {
                 periodKey: monthKey,
                 commits: monthly.totalCommitContributions,
                 pullRequests: monthly.totalPullRequestContributions,
+                issues: monthly.totalIssueContributions,
+                reviews: monthly.totalPullRequestReviewContributions,
               },
               update: {
                 commits: monthly.totalCommitContributions,
                 pullRequests: monthly.totalPullRequestContributions,
+                issues: monthly.totalIssueContributions,
+                reviews: monthly.totalPullRequestReviewContributions,
               },
             }),
           ]);

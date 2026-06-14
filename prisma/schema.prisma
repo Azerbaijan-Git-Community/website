@@ -106,6 +106,8 @@ model GithubStats {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   commits       Int      @default(0)
   pullRequests  Int      @default(0)
+  issues        Int      @default(0)
+  reviews       Int      @default(0)
   repositories  Int      @default(0)
   contributions Int      @default(0)
   followers     Int      @default(0)
@@ -124,6 +126,8 @@ model GithubStatsSnapshot {
   periodKey    String
   commits      Int            @default(0)
   pullRequests Int            @default(0)
+  issues       Int            @default(0)
+  reviews      Int            @default(0)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 

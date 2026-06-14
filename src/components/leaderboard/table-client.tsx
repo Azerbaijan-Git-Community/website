@@ -57,17 +57,23 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="border-b border-line bg-[rgba(48,54,61,0.5)]">
-                  <th className="w-50 px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                  <th className="w-32 px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                     Rank
                   </th>
                   <th className="px-6 py-4 text-left font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                     Contributor
                   </th>
-                  <th className="w-60 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                  <th className="w-36 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                     Commits
                   </th>
-                  <th className="w-40 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo">
+                  <th className="w-28 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
                     PRs
+                  </th>
+                  <th className="w-28 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                    Issues
+                  </th>
+                  <th className="w-28 px-6 py-4 text-center font-outfit text-sm font-semibold tracking-wider text-lo uppercase">
+                    Reviews
                   </th>
                 </tr>
               </thead>
@@ -117,6 +123,12 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                         <td className="px-6 py-4 text-center font-mono text-lg text-lo">
                           {entry.pullRequests.toLocaleString()}
                         </td>
+                        <td className="px-6 py-4 text-center font-mono text-lg text-lo">
+                          {entry.issues.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 text-center font-mono text-lg text-lo">
+                          {entry.reviews.toLocaleString()}
+                        </td>
                       </motion.tr>
                     );
                   })}
@@ -165,14 +177,22 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
                       </h3>
                     </Link>
                   </div>
-                  <div className="flex justify-between gap-4">
-                    <div className="flex-1 rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
                       <div className="mb-1 text-xs tracking-wider text-lo uppercase">Commits</div>
                       <div className="font-mono text-xl font-bold text-lime">{entry.commits.toLocaleString()}</div>
                     </div>
-                    <div className="flex-1 rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
+                    <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
                       <div className="mb-1 text-xs tracking-wider text-lo uppercase">PRs</div>
                       <div className="font-mono text-xl font-bold text-lo">{entry.pullRequests.toLocaleString()}</div>
+                    </div>
+                    <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
+                      <div className="mb-1 text-xs tracking-wider text-lo uppercase">Issues</div>
+                      <div className="font-mono text-xl font-bold text-lo">{entry.issues.toLocaleString()}</div>
+                    </div>
+                    <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
+                      <div className="mb-1 text-xs tracking-wider text-lo uppercase">Reviews</div>
+                      <div className="font-mono text-xl font-bold text-lo">{entry.reviews.toLocaleString()}</div>
                     </div>
                   </div>
                 </motion.div>
