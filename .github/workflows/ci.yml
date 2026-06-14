@@ -20,6 +20,7 @@ env:
   GH_STATS_TOKEN: "nice_try"
   SHOWCASE_WEBHOOK_SECRET: "nice_try"
   BLOG_WEBHOOK_SECRET: "nice_try"
+  AUTHOR_VALIDATE_SECRET: "nice_try"
 
 jobs:
   quality:
