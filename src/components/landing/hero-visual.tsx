@@ -1,16 +1,16 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { LazyMotion, domAnimation, m as motion, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { GithubStats } from "@/data/stats/get";
 
 const GOAL = 5_000_000;
 
-function useCountUp(target: number, duration: number, active: boolean) {
+function useCountUp(target: number, duration: number, inView: boolean) {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!active) return;
+    if (!inView) return;
     let start: number | null = null;
 
     const step = (ts: number) => {
@@ -23,7 +23,7 @@ function useCountUp(target: number, duration: number, active: boolean) {
     };
 
     requestAnimationFrame(step);
-  }, [active, target, duration]);
+  }, [inView, target, duration]);
 
   return value;
 }
@@ -38,45 +38,49 @@ export function HeroVisual({ data }: { data: GithubStats }) {
   const progressPercentage = calculatedPercentage < 1 ? 1 : calculatedPercentage;
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
-    >
-      <div className="mb-6">
-        <h2 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h2>
-        <p className="text-sm text-lo">Growing GitHub Activity</p>
-      </div>
-
-      <div className="mb-3 flex justify-between">
-        <div className="flex flex-col">
-          <span className="mb-1 text-xs tracking-widest text-lo uppercase">Current</span>
-          <span className="font-outfit text-3xl leading-none font-extrabold">{current.toLocaleString()}</span>
+    <LazyMotion features={domAnimation}>
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30 }}
+        viewport={{ once: true, amount: 0.3 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+      >
+        <div className="mb-6">
+          <h2 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h2>
+          <p className="text-sm text-lo">Growing GitHub Activity</p>
         </div>
-        <div className="flex flex-col text-right">
-          <span className="mb-1 text-xs tracking-widest text-lo uppercase">Goal</span>
-          <span className="text-gradient font-outfit text-3xl leading-none font-extrabold">
-            {GOAL.toLocaleString()}
-          </span>
+
+        <div className="mb-3 flex justify-between">
+          <div className="flex flex-col">
+            <span className="mb-1 text-xs tracking-widest text-lo uppercase">Current</span>
+            <span className="font-outfit text-3xl leading-none font-extrabold">{current.toLocaleString()}</span>
+          </div>
+          <div className="flex flex-col text-right">
+            <span className="mb-1 text-xs tracking-widest text-lo uppercase">Goal</span>
+            <span className="text-gradient font-outfit text-3xl leading-none font-extrabold">
+              {GOAL.toLocaleString()}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div className="relative h-3 overflow-hidden rounded-full bg-overlay">
-        <motion.div
-          className="relative h-full rounded-full bg-linear-135 from-green to-lime"
-          initial={{ width: "0%" }}
-          animate={inView ? { width: `${progressPercentage}%` } : { width: "0%" }}
-          transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-        >
-          <div className="absolute top-0 right-0 bottom-0 w-5 bg-white opacity-50 blur-sm" />
-        </motion.div>
-      </div>
+        <div className="relative h-3 overflow-hidden rounded-full bg-overlay">
+          <motion.div
+            className="relative h-full rounded-full bg-linear-135 from-green to-lime"
+            initial={{ width: "0%" }}
+            whileInView={{ width: `${progressPercentage}%` }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+          >
+            <div className="absolute top-0 right-0 bottom-0 w-5 bg-white opacity-50 blur-sm" />
+          </motion.div>
+        </div>
 
-      <p className="mt-4 text-center text-sm text-lo">
-        Increasing GitHub activity directly increases national innovation output.
-      </p>
-    </motion.div>
+        <p className="mt-4 text-center text-sm text-lo">
+          Increasing GitHub activity directly increases national innovation output.
+        </p>
+      </motion.div>
+    </LazyMotion>
   );
 }

@@ -5,7 +5,9 @@ import { type LeaderboardPeriod } from "@/data/leaderboard/get";
 const TABS: { id: LeaderboardPeriod; label: string }[] = [
   { id: "weekly", label: "This Week" },
   { id: "monthly", label: "This Month" },
-  { id: "allTime", label: "All Time" },
+  // It turned out that the "all time" leaderboard is actually the last year, so I renamed it to avoid confusion
+  // Can't change the API response, so keeping the id as "allTime"
+  { id: "allTime", label: "Last Year" },
 ];
 
 type PeriodSelectorProps = {
@@ -20,6 +22,7 @@ export function PeriodSelector({ period, onTabChange }: PeriodSelectorProps) {
         {TABS.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => onTabChange(tab.id)}
             className={`rounded-md px-6 py-2 font-outfit font-semibold transition-all ${
               period === tab.id ? "bg-green text-white shadow-[0_0_15px_rgba(46,160,67,0.4)]" : "text-lo hover:text-hi"

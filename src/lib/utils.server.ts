@@ -1,4 +1,13 @@
 import "server-only";
+import { NextRequest } from "next/server";
+
+export function getBearerToken(req: NextRequest): string | null {
+  const authHeader = req.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return null;
+  }
+  return authHeader.substring(7).trim();
+}
 
 export function getMonthKey(date: Date = new Date()): string {
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;

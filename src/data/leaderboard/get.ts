@@ -11,6 +11,8 @@ export type LeaderboardEntry = GithubStatsSnapshotGetPayload<{
     userId: true;
     commits: true;
     pullRequests: true;
+    issues: true;
+    reviews: true;
     user: { select: typeof userSelect };
   };
 }>;
@@ -31,6 +33,8 @@ export async function getTableData(): Promise<AllTableData> {
     userId: true,
     commits: true,
     pullRequests: true,
+    issues: true,
+    reviews: true,
     user: { select: userSelect },
   } as const;
 

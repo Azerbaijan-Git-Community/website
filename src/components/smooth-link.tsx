@@ -2,35 +2,34 @@
 
 import { Route } from "next";
 import Link, { type LinkProps } from "next/link";
-import { useLinkStatus } from "next/link";
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import type { ComponentPropsWithoutRef } from "react";
 
 type SmoothLinkProps = LinkProps<Route> & ComponentPropsWithoutRef<"a"> & { scrollOffset?: number };
 
-function ScrollAfterNav({ hash, offset }: { hash: string; offset: number }) {
-  const { pending } = useLinkStatus();
-  const didScroll = useRef(true);
+function useSmoothHashScroll(offset: number) {
+  const pathname = usePathname();
+  const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
 
   useEffect(() => {
-    if (!pending && !didScroll.current) {
-      didScroll.current = true;
-      const elem = document.getElementById(hash);
-      if (elem) {
-        const top = elem.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-    }
-    if (pending) didScroll.current = false;
-  }, [pending, hash, offset]);
+    if (!hash) return;
 
-  return null;
+    const el = document.getElementById(hash);
+    if (!el) return;
+
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+
+    window.scrollTo({ top, behavior: "smooth" });
+  }, [pathname, hash, offset]);
 }
 
 export function SmoothLink({ href, onClick, scrollOffset = 70, ...props }: SmoothLinkProps) {
   const hrefStr = href.toString();
   const hashIndex = hrefStr.indexOf("#");
   const hash = hashIndex !== -1 ? hrefStr.substring(hashIndex + 1) : null;
+
+  useSmoothHashScroll(scrollOffset);
 
   return (
     <Link
@@ -62,7 +61,6 @@ export function SmoothLink({ href, onClick, scrollOffset = 70, ...props }: Smoot
       {...props}
     >
       {props.children}
-      {hash && <ScrollAfterNav hash={hash} offset={scrollOffset} />}
     </Link>
   );
 }

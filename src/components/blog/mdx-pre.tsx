@@ -31,6 +31,7 @@ export function MdxPre({ children, ...props }: React.HTMLAttributes<HTMLPreEleme
       {!hasTitle && (
         <button
           onClick={copy}
+          type="button"
           aria-label="Copy code"
           className="absolute top-3 right-3 rounded-md border border-white/10 bg-white/5 p-1.5 text-dim transition-colors hover:text-hi"
         >

@@ -90,10 +90,12 @@ async function fetchRepoBatch(repos: Array<{ owner: string; name: string }>): Pr
 }
 
 export async function syncShowcase(): Promise<{ synced: number; skipped: number }> {
-  const allFiles = await fetchRegistry();
+  const [allFiles, existing] = await Promise.all([
+    fetchRegistry(),
+    // Load existing SHA map from DB
+    prisma.showcaseProject.findMany({ select: { repo: true, fileSha: true } }),
+  ]);
 
-  // Load existing SHA map from DB
-  const existing = await prisma.showcaseProject.findMany({ select: { repo: true, fileSha: true } });
   const shaByRepo = new Map(existing.map((p) => [p.repo, p.fileSha]));
 
   // Only process files whose SHA has changed (or are new)
@@ -108,11 +110,22 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
     });
 
     const allGqlData: Record<string, RepoGqlData> = {};
+    const batches = [];
     for (let i = 0; i < repoSlugs.length; i += BATCH_SIZE) {
       const batch = repoSlugs.slice(i, i + BATCH_SIZE);
-      const batchData = await fetchRepoBatch(batch);
-      for (let j = 0; j < batch.length; j++) {
-        allGqlData[`r${i + j}`] = batchData[`r${j}`];
+      batches.push({ batch, offset: i });
+    }
+
+    const results = await Promise.all(
+      batches.map(async ({ batch, offset }) => {
+        const batchData = await fetchRepoBatch(batch);
+        return { batchData, offset };
+      }),
+    );
+
+    for (const { batchData, offset } of results) {
+      for (let j = 0; j < Object.keys(batchData).length; j++) {
+        allGqlData[`r${offset + j}`] = batchData[`r${j}`];
       }
     }
 

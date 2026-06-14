@@ -2,11 +2,12 @@ import "@/lib/env.server";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
+import { Toast } from "@heroui/react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { Providers } from "@/components/providers";
 import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
-import { Toast } from "@heroui/react";
 
 export const metadata: Metadata = {
   title: {
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Toast.Provider placement="bottom end" />
         <Navbar />
-        <main>{children}</main>
+        <Providers>
+          <main>{children}</main>
+        </Providers>
         <Footer />
         <Analytics />
         <SpeedInsights />

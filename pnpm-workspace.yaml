@@ -1,6 +1,14 @@
 allowBuilds:
   '@prisma/engines': true
+  msgpackr-extract: true
   prisma: true
   sharp: true
   unrs-resolver: true
 engineStrict: true
+minimumReleaseAge: 1440
+trustPolicy: "no-downgrade"
+trustPolicyExclude:
+  - effect@4.0.0-beta.70
+  - semver@6.3.1
+  - eslint-import-resolver-typescript@3.10.1
+  - "@effect/platform-node-shared@4.0.0-beta.70"

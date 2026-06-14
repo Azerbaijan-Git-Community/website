@@ -51,10 +51,10 @@ function parseFrontmatter(raw: string): { frontmatter: BlogFrontmatter; content:
   // Parse tags: [tag1, tag2, tag3]
   const tagsMatch = block.match(/tags:\s*\[([^\]]*)\]/);
   const tags = tagsMatch
-    ? tagsMatch[1]
-        .split(",")
-        .map((t) => t.trim().replace(/^["']|["']$/g, ""))
-        .filter(Boolean)
+    ? tagsMatch[1].split(",").flatMap((t) => {
+        const tag = t.trim().replace(/^["']|["']$/g, "");
+        return tag ? [tag] : [];
+      })
     : [];
 
   return {
@@ -128,12 +128,12 @@ async function fetchPostContent(slug: string): Promise<string> {
  */
 export async function syncBlog(): Promise<{ synced: number; skipped: number; failed: string[] }> {
   // 1. Fetch directory listing with SHAs
-  const dirs = await fetchPostDirs();
-
   // 2. Get existing posts from DB for SHA comparison
-  const existing = await prisma.blogPost.findMany({
-    select: { slug: true, contentSha: true },
-  });
+  const [dirs, existing] = await Promise.all([
+    fetchPostDirs(),
+    prisma.blogPost.findMany({ select: { slug: true, contentSha: true } }),
+  ]);
+
   const existingMap = new Map(existing.map((p) => [p.slug, p.contentSha]));
 
   // 3. Determine which posts need updating

@@ -4,22 +4,16 @@ import { useEffect, useState } from "react";
 import { PiArrowsClockwise } from "react-icons/pi";
 import { formatTime, getTimeLeft } from "@/lib/utils.client";
 
-const SYNC_INTERVAL_MS = 60 * 60 * 1000;
-
 export function SyncCountdown({ lastSync }: { lastSync: Date }) {
-  const [timeLeft, setTimeLeft] = useState<number>(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
+  const [timeLeft, setTimeLeft] = useState<number>(() => getTimeLeft(lastSync));
 
   useEffect(() => {
-    const initial = setTimeout(() => {
-      setTimeLeft(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
-    }, 0);
-    const interval = setInterval(() => {
-      setTimeLeft(getTimeLeft(lastSync, SYNC_INTERVAL_MS));
-    }, 1000);
-    return () => {
-      clearTimeout(initial);
-      clearInterval(interval);
-    };
+    const update = () => setTimeLeft(getTimeLeft(lastSync));
+    update(); // immediate sync on mount / lastSync change
+
+    const interval = setInterval(update, 1000);
+
+    return () => clearInterval(interval);
   }, [lastSync]);
 
   return (

@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isValidSecret } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
+import { getBearerToken } from "@/lib/utils.server";
 
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.AUTHOR_VALIDATE_SECRET}`) {
+  const providedSecret = getBearerToken(req);
+  if (!isValidSecret(providedSecret, process.env.AUTHOR_VALIDATE_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

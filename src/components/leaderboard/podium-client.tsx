@@ -15,7 +15,7 @@ type PodiumClientProps = {
 const PODIUM_ORDER = [1, 0, 2];
 
 export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
-  const [month, setMonth] = useState(currentMonthKey);
+  const [month, setMonth] = useState(() => currentMonthKey);
 
   const availableMonths = Object.keys(allData).sort().reverse();
   const data = allData[month]?.length
@@ -48,7 +48,7 @@ const MEDAL_CONFIG = [
     glow: "shadow-[0_0_25px_rgba(255,215,0,0.8)]",
     label: "Champion",
     size: 96,
-    badgeSize: "h-12 w-12 text-2xl",
+    badgeSize: "size-12 text-2xl",
     isFirst: true,
     icon: "🥇",
   },
@@ -58,9 +58,9 @@ const MEDAL_CONFIG = [
     glow: "shadow-[0_0_20px_rgba(192,192,192,0.6)]",
     label: "2nd Place",
     size: 80,
-    badgeSize: "h-10 w-10 text-xl",
+    badgeSize: "size-10 text-xl",
     isFirst: false,
-    icon: <FaMedal className="h-5 w-5" />,
+    icon: <FaMedal className="sizeyy-5" />,
   },
   {
     ring: "ring-[#CD7F32]",
@@ -68,7 +68,7 @@ const MEDAL_CONFIG = [
     glow: "shadow-[0_0_20px_rgba(205,127,50,0.6)]",
     label: "3rd Place",
     size: 80,
-    badgeSize: "h-10 w-10 text-xl",
+    badgeSize: "size-10 text-xl",
     isFirst: false,
     icon: "🥉",
   },

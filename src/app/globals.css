@@ -240,7 +240,6 @@
     border-radius: var(--radius-lg);
     @apply border border-line bg-overlay;
   }
-
 }
 
 /* ── 2. Base ───────────────────────────────────────────────────── */

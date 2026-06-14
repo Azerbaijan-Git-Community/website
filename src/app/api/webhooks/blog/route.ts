@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isValidSecret } from "@/lib/crypto";
 import { syncBlog } from "@/lib/sync/sync-blog";
+import { getBearerToken } from "@/lib/utils.server";
 
 export async function POST(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.BLOG_WEBHOOK_SECRET}`) {
+  const providedSecret = getBearerToken(req);
+  if (!isValidSecret(providedSecret, process.env.BLOG_WEBHOOK_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
