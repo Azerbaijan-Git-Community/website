@@ -2,6 +2,8 @@ import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
+import { serverEnv } from "@/lib/env.server";
+import { isValidSecret } from "@/lib/crypto";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const BATCH_SIZE = 10;
@@ -72,7 +74,7 @@ async function fetchGraphQL(query: string): Promise<{ data?: Record<string, unkn
   const res = await fetch(GITHUB_GRAPHQL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
+      Authorization: `Bearer ${serverEnv.GH_STATS_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ query }),
@@ -81,11 +83,13 @@ async function fetchGraphQL(query: string): Promise<{ data?: Record<string, unkn
   return res.json();
 }
 
-async function fetchBatch(
-  users: { id: string; githubUsername: string }[],
-  weekRange: { from: string; to: string },
-  monthRange: { from: string; to: string },
-): Promise<Record<string, UserData>> {
+type fetchBatchOptions = {
+  users: { id: string; githubUsername: string }[];
+  weekRange: { from: string; to: string };
+  monthRange: { from: string; to: string };
+};
+
+async function fetchBatch({ users, weekRange, monthRange }: fetchBatchOptions): Promise<Record<string, UserData>> {
   const json = await fetchGraphQL(buildBatchQuery(users, weekRange, monthRange));
   const result: Record<string, UserData> = {};
 
@@ -102,15 +106,27 @@ async function fetchBatch(
   const failedIndices = Array.from({ length: users.length }, (_, i) => i).filter((i) => !result[`u${i}`]);
 
   if (failedIndices.length > 0 && json.errors) {
-    console.warn(`Batch had ${failedIndices.length} failures, retrying individually...`);
+    console.error(`Batch had ${failedIndices.length} failures, retrying individually...`);
 
-    for (const i of failedIndices) {
-      const singleJson = await fetchGraphQL(buildBatchQuery([users[i]], weekRange, monthRange));
-      const d = singleJson.data?.u0 as UserData | undefined;
-      if (d?.weekly && d?.monthly && d?.allTime) {
-        result[`u${i}`] = d;
-      } else if (singleJson.errors) {
-        console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
+    const retryResults = await Promise.allSettled(
+      failedIndices.map(async (i) => {
+        const singleJson = await fetchGraphQL(buildBatchQuery([users[i]], weekRange, monthRange));
+        const d = singleJson.data?.u0 as UserData | undefined;
+
+        if (!d?.weekly || !d?.monthly || !d?.allTime) {
+          if (singleJson.errors) {
+            console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
+          }
+          return null;
+        }
+
+        return { index: i, data: d };
+      }),
+    );
+
+    for (const r of retryResults) {
+      if (r.status === "fulfilled" && r.value) {
+        result[`u${r.value.index}`] = r.value.data;
       }
     }
   }
@@ -120,7 +136,7 @@ async function fetchBatch(
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET) {
+  if (!isValidSecret(secret, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -139,7 +155,7 @@ export async function POST(req: NextRequest) {
     const batch = users.slice(i, i + BATCH_SIZE);
 
     try {
-      const data = await fetchBatch(batch, weekRange, monthRange);
+      const data = await fetchBatch({ users: batch, weekRange, monthRange });
 
       await Promise.allSettled(
         batch.map(async ({ id }, index) => {

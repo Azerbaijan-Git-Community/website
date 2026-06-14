@@ -20,6 +20,7 @@ export function PeriodSelector({ period, onTabChange }: PeriodSelectorProps) {
         {TABS.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => onTabChange(tab.id)}
             className={`rounded-md px-6 py-2 font-outfit font-semibold transition-all ${
               period === tab.id ? "bg-green text-white shadow-[0_0_15px_rgba(46,160,67,0.4)]" : "text-lo hover:text-hi"

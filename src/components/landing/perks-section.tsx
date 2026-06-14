@@ -67,9 +67,9 @@ export function PerksSection() {
           >
             <div className="glass overflow-hidden rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <div className="flex gap-2 border-b border-line bg-[rgba(48,54,61,0.5)] px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
-                <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
-                <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
+                <span className="size-3 rounded-full bg-[#ff5f56]" />
+                <span className="size-3 rounded-full bg-[#ffbd2e]" />
+                <span className="size-3 rounded-full bg-[#27c93f]" />
               </div>
               <div className="bg-overlay p-8">
                 <div className="mb-6 flex flex-wrap gap-2">

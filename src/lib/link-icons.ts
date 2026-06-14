@@ -74,7 +74,7 @@ const DOMAIN_ICONS: DomainIconEntry[] = [
   { domain: "ghcr.io", icon: PiGithubLogo, hoverClass: "hover:text-hi", label: "GitHub Container Registry" },
 ];
 
-export const FALLBACK_LINK_ICON: LinkIconDef = { icon: PiArrowSquareOut, hoverClass: "hover:text-hi", label: "Link" };
+const FALLBACK_LINK_ICON: LinkIconDef = { icon: PiArrowSquareOut, hoverClass: "hover:text-hi", label: "Link" };
 
 export function getLinkIcon(url: string): LinkIconDef {
   return DOMAIN_ICONS.find(({ domain }) => url.includes(domain)) ?? FALLBACK_LINK_ICON;

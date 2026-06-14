@@ -3,6 +3,7 @@ import { betterAuth } from "better-auth/minimal";
 import { prisma } from "./prisma";
 import { dash, sentinel } from "@better-auth/infra";
 import { admin } from "better-auth/plugins";
+import { serverEnv } from "./env.server";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -22,8 +23,8 @@ export const auth = betterAuth({
     },
   },
   secrets: [
-    { version: 2, value: process.env.BETTER_AUTH_SECRET_V2 },
-    { version: 1, value: process.env.BETTER_AUTH_SECRET_V1 },
+    { version: 2, value: serverEnv.BETTER_AUTH_SECRET_V2 },
+    { version: 1, value: serverEnv.BETTER_AUTH_SECRET_V1 },
   ],
   account: {
     accountLinking: {
@@ -46,8 +47,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: serverEnv.GITHUB_CLIENT_ID,
+      clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
       scope: ["read:user", "user:email"],
       overrideUserInfoOnSignIn: true,
       mapProfileToUser: (profile) => ({

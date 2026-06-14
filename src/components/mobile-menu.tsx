@@ -40,6 +40,7 @@ export function MobileMenu() {
     <div ref={containerRef} className="md:hidden">
       <button
         onClick={() => setOpen((o) => !o)}
+        type="button"
         className="flex items-center justify-center text-hi transition-colors hover:text-blue"
         aria-label={open ? "Close menu" : "Open menu"}
       >

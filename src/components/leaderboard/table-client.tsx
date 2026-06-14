@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { LazyMotion, m as motion, AnimatePresence, domAnimation } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -48,7 +48,7 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
   if (entries.length === 0) return <EmptyState />;
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <PeriodSelector period={period} onTabChange={setPeriod} />
       <div className="w-full">
         {/* Desktop */}
@@ -181,6 +181,6 @@ export function TableClient({ allData, currentMonthKey }: TableClientProps) {
           </AnimatePresence>
         </div>
       </div>
-    </>
+    </LazyMotion>
   );
 }

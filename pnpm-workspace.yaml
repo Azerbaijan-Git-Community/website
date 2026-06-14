@@ -1,6 +1,39 @@
 allowBuilds:
   '@prisma/engines': true
+  msgpackr-extract: true
   prisma: true
   sharp: true
   unrs-resolver: true
 engineStrict: true
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@better-auth/core@1.6.18'
+  - '@better-auth/drizzle-adapter@1.6.18'
+  - '@better-auth/kysely-adapter@1.6.18'
+  - '@better-auth/memory-adapter@1.6.18'
+  - '@better-auth/mongo-adapter@1.6.18'
+  - '@better-auth/prisma-adapter@1.6.18'
+  - '@better-auth/telemetry@1.6.18'
+  - '@tailwindcss/node@4.3.1'
+  - '@tailwindcss/oxide-android-arm64@4.3.1'
+  - '@tailwindcss/oxide-darwin-arm64@4.3.1'
+  - '@tailwindcss/oxide-darwin-x64@4.3.1'
+  - '@tailwindcss/oxide-freebsd-x64@4.3.1'
+  - '@tailwindcss/oxide-linux-arm-gnueabihf@4.3.1'
+  - '@tailwindcss/oxide-linux-arm64-gnu@4.3.1'
+  - '@tailwindcss/oxide-linux-arm64-musl@4.3.1'
+  - '@tailwindcss/oxide-linux-x64-gnu@4.3.1'
+  - '@tailwindcss/oxide-linux-x64-musl@4.3.1'
+  - '@tailwindcss/oxide-wasm32-wasi@4.3.1'
+  - '@tailwindcss/oxide-win32-arm64-msvc@4.3.1'
+  - '@tailwindcss/oxide-win32-x64-msvc@4.3.1'
+  - '@tailwindcss/oxide@4.3.1'
+  - '@tailwindcss/postcss@4.3.1'
+  - better-auth@1.6.18
+  - tailwindcss@4.3.1
+trustPolicy: "no-downgrade"
+trustPolicyExclude:
+  - effect@4.0.0-beta.70
+  - semver@6.3.1
+  - eslint-import-resolver-typescript@3.10.1
+  - "@effect/platform-node-shared@4.0.0-beta.70"

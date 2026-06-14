@@ -1,3 +1,5 @@
+import { SYNC_INTERVAL_MS } from "./constants";
+
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
@@ -14,7 +16,7 @@ export function formatMonthKey(key: string): string {
   });
 }
 
-export function getTimeLeft(lastSync: Date | null, SYNC_INTERVAL_MS: number): number {
+export function getTimeLeft(lastSync: Date | null): number {
   if (!lastSync) return 0;
   const next = new Date(lastSync).getTime() + SYNC_INTERVAL_MS;
   return Math.max(0, next - Date.now());

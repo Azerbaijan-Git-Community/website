@@ -12,7 +12,14 @@ export function BlogPostCard({ post }: { post: BlogPostItem }) {
     >
       {/* Cover image */}
       <div className="relative h-44 w-full overflow-hidden">
-        <Image src={post.coverImage} alt={post.title} fill className="object-cover" quality={100} />
+        <Image
+          src={post.coverImage}
+          alt={post.title}
+          fill
+          className="object-cover"
+          quality={100}
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
       </div>
 
       {/* Body */}

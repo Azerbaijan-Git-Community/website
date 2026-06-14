@@ -60,7 +60,7 @@ export function MdxCodeTitle({ children, ...props }: Props) {
 
   if (!isCodeTitle) return <figcaption {...props}>{children}</figcaption>;
 
-  const filename = typeof children === "string" ? children : "";
+  const filename = props["data-rehype-pretty-code-title"] ?? "";
   const ext = filename.includes(".") ? (filename.split(".").pop()?.toLowerCase() ?? "") : filename.toLowerCase();
   const icon = EXT_MAP[ext];
 
@@ -73,6 +73,7 @@ export function MdxCodeTitle({ children, ...props }: Props) {
         </span>
         <button
           onClick={copy}
+          type="button"
           aria-label="Copy code"
           className="rounded-md border border-white/10 bg-white/5 p-1.5 text-dim transition-colors hover:text-hi"
         >

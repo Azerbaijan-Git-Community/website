@@ -7,6 +7,7 @@ import { Navbar } from "@/components/navbar";
 import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
 import { Toast } from "@heroui/react";
+import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: {
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Toast.Provider placement="bottom end" />
         <Navbar />
-        <main>{children}</main>
+        <Providers>
+          <main>{children}</main>
+        </Providers>
         <Footer />
         <Analytics />
         <SpeedInsights />

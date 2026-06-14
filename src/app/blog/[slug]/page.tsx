@@ -59,7 +59,15 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
 
         {/* Cover image */}
         <div className="relative mb-8 aspect-2/1 w-full overflow-hidden rounded-xl">
-          <Image src={post.coverImage} alt={post.title} fill className="object-cover" priority quality={100} />
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            fill
+            className="object-cover"
+            priority
+            quality={100}
+            sizes="(max-width: 768px) 100vw, 768px"
+          />
         </div>
 
         {/* Post header */}
