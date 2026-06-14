@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PiClock } from "react-icons/pi";
-import { formatDate } from "@/lib/utils.client";
 import { BlogPostItem } from "@/data/blog/get";
+import { formatDate } from "@/lib/utils.client";
 
 export function BlogPostCard({ post }: { post: BlogPostItem }) {
   return (

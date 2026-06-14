@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getBlogPosts } from "@/data/blog/get";
 import { BlogPostCard } from "@/components/blog/blog-card";
+import { getBlogPosts } from "@/data/blog/get";
 
 export const metadata: Metadata = {
   title: "Blog",

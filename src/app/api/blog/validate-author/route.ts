@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isValidSecret } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
 import { getBearerToken } from "@/lib/utils.server";
-import { isValidSecret } from "@/lib/crypto";
 
 export async function GET(req: NextRequest) {
   const providedSecret = getBearerToken(req);

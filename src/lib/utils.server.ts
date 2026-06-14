@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server";
 import "server-only";
+import { NextRequest } from "next/server";
 
 export function getBearerToken(req: NextRequest): string | null {
   const authHeader = req.headers.get("authorization");

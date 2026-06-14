@@ -1,6 +1,6 @@
 "use client";
 
-import { LazyMotion, m as motion, AnimatePresence, domAnimation } from "motion/react";
+import { AnimatePresence, LazyMotion, domAnimation, m as motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

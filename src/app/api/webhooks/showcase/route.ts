@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { syncShowcase } from "@/lib/sync/sync-showcase";
 import { isValidSecret } from "@/lib/crypto";
+import { syncShowcase } from "@/lib/sync/sync-showcase";
 import { getBearerToken } from "@/lib/utils.server";
 
 export async function POST(req: NextRequest) {

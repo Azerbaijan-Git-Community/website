@@ -1,6 +1,6 @@
 "use client";
 
-import { LazyMotion, m as motion, domAnimation, useInView } from "motion/react";
+import { LazyMotion, domAnimation, m as motion, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { GithubStats } from "@/data/stats/get";
 

@@ -1,9 +1,9 @@
+import { serverEnv } from "@/lib/env.server";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { isValidSecret } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
-import { serverEnv } from "@/lib/env.server";
-import { isValidSecret } from "@/lib/crypto";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const BATCH_SIZE = 10;

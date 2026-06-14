@@ -1,9 +1,9 @@
+import { serverEnv } from "@/lib/env.server";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { SYNC_TARGETS, type SyncTarget } from "@/lib/constants";
 import { clientEnv } from "@/lib/env.client";
-import { serverEnv } from "@/lib/env.server";
 
 /**
  * Builds the outgoing request (URL + auth header) for a sync target, mirroring

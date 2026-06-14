@@ -1,10 +1,10 @@
 "use client";
 
 import { Button, toast } from "@heroui/react";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { PiGithubLogoBold } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 
 export function SignInButton() {
   const searchParams = useSearchParams();

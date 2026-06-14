@@ -1,9 +1,9 @@
+import { dash, sentinel } from "@better-auth/infra";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth/minimal";
-import { prisma } from "./prisma";
-import { dash, sentinel } from "@better-auth/infra";
 import { admin } from "better-auth/plugins";
 import { serverEnv } from "./env.server";
+import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),

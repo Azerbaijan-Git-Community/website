@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { syncBlog } from "@/lib/sync/sync-blog";
 import { isValidSecret } from "@/lib/crypto";
+import { syncBlog } from "@/lib/sync/sync-blog";
 import { getBearerToken } from "@/lib/utils.server";
 
 export async function POST(req: NextRequest) {
