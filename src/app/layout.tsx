@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
+import { ViewTransition } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Toast.Provider placement="bottom end" />
         <Navbar />
-        <main>{children}</main>
+        <main>
+          <ViewTransition>{children}</ViewTransition>
+        </main>
         <Footer />
         <Analytics />
         <SpeedInsights />
