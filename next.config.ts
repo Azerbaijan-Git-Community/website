@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
   typedRoutes: true,
+  experimental: {
+    viewTransition: true,
+  },
   images: {
     qualities: [75, 100],
     minimumCacheTTL: 2592000, // 30 days

@@ -1,4 +1,4 @@
-import yaml from "js-yaml";
+import { load as yamlLoad, JSON_SCHEMA as yamlJSON_SCHEMA } from "js-yaml";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
@@ -49,7 +49,7 @@ async function fetchRegistry(): Promise<ShowcaseFile[]> {
       const content = await fetch(file.download_url, {
         headers: { Authorization: `Bearer ${process.env.GH_STATS_TOKEN}` },
       }).then((r) => r.text());
-      const parsed = yaml.load(content, { schema: yaml.JSON_SCHEMA }) as ShowcaseYaml;
+      const parsed = yamlLoad(content, { schema: yamlJSON_SCHEMA }) as ShowcaseYaml;
       return parsed?.repo ? { yaml: parsed, sha: file.sha } : null;
     }),
   );
