@@ -1,15 +1,7 @@
-import { cacheLife, cacheTag } from "next/cache";
-import { getGithubStats } from "@/data/stats/get";
 import { SmoothLink } from "../smooth-link";
 import { HeroVisual } from "./hero-visual";
 
-export async function HeroSection() {
-  "use cache";
-  cacheLife("days");
-  cacheTag("github-stats");
-
-  const data = await getGithubStats();
-
+export function HeroSection() {
   return (
     <section id="hero" className="relative flex min-h-screen items-center overflow-hidden pt-44 pb-32">
       <div className="relative z-10 mx-auto grid w-full max-w-300 grid-cols-1 items-center gap-16 px-8 lg:grid-cols-2">
@@ -39,7 +31,7 @@ export async function HeroSection() {
           </div>
         </div>
 
-        <HeroVisual data={data} />
+        <HeroVisual />
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-0">
