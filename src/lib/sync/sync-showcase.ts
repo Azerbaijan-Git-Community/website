@@ -1,4 +1,4 @@
-import { load as yamlLoad, JSON_SCHEMA as yamlJSON_SCHEMA } from "js-yaml";
+import { JSON_SCHEMA as yamlJSON_SCHEMA, load as yamlLoad } from "js-yaml";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 

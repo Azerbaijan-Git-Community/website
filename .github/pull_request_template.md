@@ -14,7 +14,7 @@
 
 ## Checklist
 
-- [ ] Ran `pnpm checks` locally
+- [ ] Ran `pnpm check` locally
 - [ ] No hardcoded secrets or API keys
 - [ ] Tested on mobile and desktop
 - [ ] Schema changes reviewed and approved

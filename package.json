@@ -12,14 +12,13 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "prisma:generate": "prisma generate",
-    "checks": "node scripts/pr-checks.ts",
+    "check": "node scripts/pr-checks.ts",
     "lint": "eslint",
-    "bootstrap": "pnpm i && pnpm install:skills && pnpm install:heroui_docs",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
+    "bootstrap": "pnpm i && pnpm install:skills && pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
     "install:skills": "pnpx skills@latest experimental_install",
-    "install:heroui_docs": "pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
-    "doctor": "npx react-doctor@latest"
+    "doctor": "pnpx react-doctor@latest --verbose"
   },
   "dependencies": {
     "@better-auth/infra": "0.3.4",
@@ -64,7 +63,7 @@
     "prettier": "3.9.4",
     "prettier-plugin-tailwindcss": "0.8.0",
     "prisma": "7.8.0",
-    "react-doctor": "^0.5.4",
+    "react-doctor": "^0.7.1",
     "tailwindcss": "4.3.2",
     "typescript": "5.9.3"
   }

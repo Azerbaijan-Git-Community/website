@@ -16,7 +16,7 @@ Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and
 - `pnpm build` — generate Prisma client + Next.js production build
 - `pnpm lint` — run ESLint
 - `pnpm format:check` / `pnpm format:fix` — check/fix Prettier formatting
-- `pnpm checks` — run full PR check suite (tsc, prettier, eslint, next build)
+- `pnpm check` — run full PR check suite (tsc, prettier, eslint, next build)
 - `pnpm prisma:generate` — regenerate Prisma client after schema changes
 
 There are no tests in this project.
@@ -76,7 +76,7 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 - Prettier enforces 120-char line width, Tailwind class sorting, and organized imports (see `.prettierrc` for import order groups)
 - Path alias: `@/*` maps to `./src/*`
 - Dark theme by default (canvas background `#0d1117`)
-- Run `pnpm checks` before commits
+- Run `pnpm check` before commits
 
 ### Skill References
 

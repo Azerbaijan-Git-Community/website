@@ -64,7 +64,7 @@ git remote add upstream https://github.com/Azerbaijan-Git-Community/website.git
 ### Install Dependencies & Setup
 
 ```bash
-pnpm bootstrap
+pnpm bootstrap # It also includes AI skills
 ```
 
 This installs all dependencies, sets up additional tooling, and generates the Prisma client.
@@ -98,14 +98,15 @@ The site will be available at `http://localhost:3000`.
    ```
 
    Branch naming conventions:
-   | Prefix | Use case |
-   |--------|----------|
-   | `feat/` | New feature |
-   | `fix/` | Bug fix |
-   | `docs/` | Documentation changes |
-   | `style/` | Formatting, no logic change |
-   | `refactor/` | Code restructuring |
-   | `chore/` | Build tasks, dependencies |
+
+   | Prefix      | Use case                    |
+   | ----------- | --------------------------- |
+   | `feat/`     | New feature                 |
+   | `fix/`      | Bug fix                     |
+   | `docs/`     | Documentation changes       |
+   | `style/`    | Formatting, no logic change |
+   | `refactor/` | Code restructuring          |
+   | `chore/`    | Build tasks, dependencies   |
 
 3. **Make your changes** with clear, focused commits (see below).
 
