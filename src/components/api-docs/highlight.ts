@@ -1,8 +1,7 @@
 // Lightweight JSON syntax highlighter → returns safe HTML (input is escaped first).
 // Colors map to the site's theme tokens (keys=blue, strings=green, numbers=purple).
 
-const escapeHtml = (s: string): string =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escapeHtml = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 export function highlightJson(json: string): string {
   const escaped = escapeHtml(json);

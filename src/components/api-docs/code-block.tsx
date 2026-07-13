@@ -29,8 +29,7 @@ export function CodeBlock({ code, language, maxHeight }: CodeBlockProps) {
       codeTagProps={{
         style: {
           background: "transparent",
-          fontFamily:
-            'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
           textShadow: "none",
         },
       }}
