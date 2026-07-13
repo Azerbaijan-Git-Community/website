@@ -16,6 +16,10 @@ const serverEnvSchema = z.object({
   BLOG_WEBHOOK_SECRET: z.string().min(3),
   AUTHOR_VALIDATE_SECRET: z.string().min(3),
   BETTER_AUTH_API_KEY: z.string().min(3).optional(),
+  // Open Data API rate limiting (Upstash Redis). Optional: when unset, the API fails open
+  // (no rate limiting) so local dev and previews work without an Upstash account.
+  UPSTASH_REDIS_REST_URL: z.string().min(3).optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(3).optional(),
 });
 
 type ServerEnv = z.infer<typeof serverEnvSchema>;

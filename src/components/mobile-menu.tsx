@@ -11,6 +11,7 @@ const links: { href: Route; label: string }[] = [
   { href: "/blog", label: "Blog" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/showcase", label: "Showcase" },
+  { href: "/api-docs", label: "API" },
 ];
 
 export function MobileMenu() {

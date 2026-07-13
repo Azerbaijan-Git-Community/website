@@ -21,6 +21,8 @@ env:
   SHOWCASE_WEBHOOK_SECRET: "nice_try"
   BLOG_WEBHOOK_SECRET: "nice_try"
   AUTHOR_VALIDATE_SECRET: "nice_try"
+  UPSTASH_REDIS_REST_URL: nice_try
+  UPSTASH_REDIS_REST_TOKEN: "nice_try"
 
 jobs:
   quality:

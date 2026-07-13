@@ -1,5 +1,5 @@
-import { getGithubStats } from "@/data/stats/get";
 import { cacheLife, cacheTag } from "next/cache";
+import { getGithubStats } from "@/data/stats/get";
 
 const GOAL = 5_000_000;
 
