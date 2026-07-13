@@ -8,9 +8,8 @@ const DateTime = z.string().describe("ISO 8601 date-time");
 
 export const LeaderboardUserSchema = z.object({
   githubUsername: z.string(),
-  name: z.string(),
-  image: z.string(),
-  createdAt: DateTime.describe("When the user joined the community"),
+  name: z.string().describe("The user's display name"),
+  image: z.string().describe("URL of the user's avatar image from GitHub"),
 });
 
 export const LeaderboardEntrySchema = z.object({

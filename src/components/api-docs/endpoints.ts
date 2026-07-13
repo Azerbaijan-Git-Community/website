@@ -56,7 +56,6 @@ export const ENDPOINTS: EndpointDoc[] = [
         "githubUsername": "octocat",
         "name": "The Octocat",
         "image": "https://avatars.githubusercontent.com/u/583231",
-        "createdAt": "2025-01-02T10:00:00.000Z"
       }
     }
   ],
@@ -212,7 +211,6 @@ export const LeaderboardUserSchema = z.object({
   githubUsername: z.string(),
   name: z.string(),
   image: z.string(),
-  createdAt: DateTime,
 });
 
 export const LeaderboardEntrySchema = z.object({

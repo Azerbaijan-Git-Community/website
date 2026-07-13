@@ -23,7 +23,7 @@ export type AllTableData = {
   monthly: Record<string, LeaderboardEntry[]>;
 };
 
-const userSelect = { githubUsername: true, name: true, image: true, createdAt: true } as const;
+const userSelect = { githubUsername: true, name: true, image: true } as const;
 export async function getTableData(): Promise<AllTableData> {
   "use cache";
   cacheLife("weeks");

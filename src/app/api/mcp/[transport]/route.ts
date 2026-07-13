@@ -184,21 +184,10 @@ const handler = createMcpHandler(
         try {
           const post = await getBlogPost(slug);
           if (!post) return errorResult(`No blog post found with slug "${slug}".`);
-          // Mirror the DB row but drop the sync-bookkeeping `contentSha`.
-          return jsonResult({
-            id: post.id,
-            slug: post.slug,
-            title: post.title,
-            description: post.description,
-            tags: post.tags,
-            coverImage: post.coverImage,
-            userId: post.userId,
-            contentMdx: post.contentMdx,
-            readingTime: post.readingTime,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            author: post.author,
-          });
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { contentSha, ...result } = post;
+          return jsonResult(result);
         } catch (err) {
           console.error("[mcp] get_blog_post failed:", err);
           return errorResult("Failed to fetch the blog post. Please try again.");
