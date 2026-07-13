@@ -2,20 +2,12 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getWeekKey } from "@/lib/utils.server";
+import { Prisma } from "@/generated/prisma/client";
 import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 
 export type LeaderboardPeriod = "weekly" | "monthly" | "allTime";
 
-export type LeaderboardEntry = GithubStatsSnapshotGetPayload<{
-  select: {
-    userId: true;
-    commits: true;
-    pullRequests: true;
-    issues: true;
-    reviews: true;
-    user: { select: typeof userSelect };
-  };
-}>;
+export type LeaderboardEntry = GithubStatsSnapshotGetPayload<{ select: typeof entrySelect }>;
 
 export type AllTableData = {
   weekly: LeaderboardEntry[];
@@ -23,20 +15,20 @@ export type AllTableData = {
   monthly: Record<string, LeaderboardEntry[]>;
 };
 
-const userSelect = { githubUsername: true, name: true, image: true } as const;
+const userSelect = { githubUsername: true, name: true, image: true } satisfies Prisma.UserSelect;
+const entrySelect = {
+  userId: true,
+  commits: true,
+  pullRequests: true,
+  issues: true,
+  reviews: true,
+  user: { select: userSelect },
+} satisfies Prisma.GithubStatsSnapshotSelect;
+
 export async function getTableData(): Promise<AllTableData> {
   "use cache";
   cacheLife("weeks");
   cacheTag("leaderboard");
-
-  const entrySelect = {
-    userId: true,
-    commits: true,
-    pullRequests: true,
-    issues: true,
-    reviews: true,
-    user: { select: userSelect },
-  } as const;
 
   const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({

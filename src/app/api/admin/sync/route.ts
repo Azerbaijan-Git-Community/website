@@ -1,4 +1,5 @@
 import { serverEnv } from "@/lib/env.server";
+import z from "zod";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
@@ -37,8 +38,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = (await req.json().catch(() => null)) as { target?: string } | null;
-  const target = body?.target;
+  const body = z.strictObject({ target: z.string() }).safeParse(await req.json().catch(() => null));
+  if (!body.success) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const target = body.data.target;
 
   if (!target || !SYNC_TARGETS.includes(target as SyncTarget)) {
     return NextResponse.json({ error: "Invalid sync target" }, { status: 400 });
