@@ -9,6 +9,7 @@ export async function getGithubStats() {
   cacheTag("github-stats");
 
   const result = await prisma.githubStats.aggregate({
+    where: { user: { banned: false } },
     _sum: { commits: true, pullRequests: true, contributions: true },
     _count: { userId: true },
   });
