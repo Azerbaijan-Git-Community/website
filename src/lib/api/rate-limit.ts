@@ -62,7 +62,7 @@ export function getClientIp(req: NextRequest): string {
   return "unknown";
 }
 
-/** Check both the minute and monthly limits for an IP and produce standard headers. */
+/** Check both the minute and daily limits for an IP and produce standard headers. */
 export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
   const l = getLimiters();
   if (!l) return { ok: true, headers: {} };

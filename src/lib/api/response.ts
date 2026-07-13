@@ -13,6 +13,7 @@ const CORS_HEADERS: Record<string, string> = {
 const BASE_HEADERS: Record<string, string> = {
   ...CORS_HEADERS,
   "Cache-Control": "public, max-age=60",
+  "X-Content-Type-Options": "nosniff",
 };
 
 export type ApiMeta = {
