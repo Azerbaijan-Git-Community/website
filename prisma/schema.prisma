@@ -29,7 +29,7 @@ model User {
   statsSnapshots GithubStatsSnapshot[]
   blogPosts      BlogPost[]
 
-  role       String?
+  role       String
   banned     Boolean   @default(false)
   banReason  String?
   banExpires DateTime?
