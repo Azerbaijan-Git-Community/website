@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = z.strictObject({ target: z.string() }).safeParse(await req.json().catch(() => null));
+  const body = z.object({ target: z.string() }).safeParse(await req.json().catch(() => null));
   if (!body.success) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
