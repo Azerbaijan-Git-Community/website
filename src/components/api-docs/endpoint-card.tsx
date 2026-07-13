@@ -11,21 +11,14 @@ type RunResult = {
   status: number;
   ok: boolean;
   body: string;
-  timeMs: number | null;
-  live: boolean;
+  timeMs: number;
 };
 
 export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; baseUrl: string }) {
   const [values, setValues] = useState<Record<string, string>>(() =>
     Object.fromEntries((endpoint.params ?? []).map((p) => [p.name, p.example])),
   );
-  const [result, setResult] = useState<RunResult>({
-    status: 200,
-    ok: true,
-    body: endpoint.example,
-    timeMs: null,
-    live: false,
-  });
+  const [result, setResult] = useState<RunResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   const path = fillPath(endpoint.path, values);
@@ -45,14 +38,13 @@ export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; bas
       } catch {
         // Non-JSON response; show raw text.
       }
-      setResult({ status: res.status, ok: res.ok, body, timeMs: Math.round(performance.now() - start), live: true });
+      setResult({ status: res.status, ok: res.ok, body, timeMs: Math.round(performance.now() - start) });
     } catch (error) {
       setResult({
         status: 0,
         ok: false,
         body: error instanceof Error ? error.message : String(error),
         timeMs: Math.round(performance.now() - start),
-        live: true,
       });
     }
     setLoading(false);
@@ -105,27 +97,23 @@ export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; bas
         }
       />
 
-      <div className="glass mt-4 overflow-hidden rounded-xl">
-        <div className="flex items-center gap-3 border-b border-line bg-[rgba(48,54,61,0.5)] px-4 py-2">
-          {result.live ? (
-            <>
-              <span
-                className={`rounded-md px-2 py-0.5 font-mono text-xs font-bold ${
-                  result.ok ? "bg-[rgba(63,185,80,0.15)] text-lime" : "bg-[rgba(248,81,73,0.15)] text-[#f85149]"
-                }`}
-              >
-                {result.status || "ERR"}
-              </span>
-              {result.timeMs !== null && <span className="text-xs text-lo">{result.timeMs} ms</span>}
-            </>
-          ) : (
-            <span className="text-xs font-medium tracking-wider text-dim uppercase">Example response</span>
-          )}
+      {result && (
+        <div className="glass mt-4 overflow-hidden rounded-xl">
+          <div className="flex items-center gap-3 border-b border-line bg-[rgba(48,54,61,0.5)] px-4 py-2">
+            <span
+              className={`rounded-md px-2 py-0.5 font-mono text-xs font-bold ${
+                result.ok ? "bg-[rgba(63,185,80,0.15)] text-lime" : "bg-[rgba(248,81,73,0.15)] text-[#f85149]"
+              }`}
+            >
+              {result.status || "ERR"}
+            </span>
+            <span className="text-xs text-lo">{result.timeMs} ms</span>
+          </div>
+          <pre className="max-h-96 overflow-auto bg-overlay p-4 text-sm leading-relaxed">
+            <code className="font-mono text-hi" dangerouslySetInnerHTML={{ __html: highlightJson(result.body) }} />
+          </pre>
         </div>
-        <pre className="max-h-96 overflow-auto bg-overlay p-4 text-sm leading-relaxed">
-          <code className="font-mono text-hi" dangerouslySetInnerHTML={{ __html: highlightJson(result.body) }} />
-        </pre>
-      </div>
+      )}
     </section>
   );
 }

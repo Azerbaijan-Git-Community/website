@@ -1,11 +1,13 @@
+import { join } from "node:path";
 import { type Metadata } from "next";
 import { type ReactNode } from "react";
 import { PiClockCountdown, PiGaugeBold, PiLockOpen, PiPlugsConnected } from "react-icons/pi";
 import { CodeTerminal } from "@/components/api-docs/code-terminal";
 import { DocsSidebar } from "@/components/api-docs/docs-sidebar";
 import { EndpointCard } from "@/components/api-docs/endpoint-card";
-import { ENDPOINTS, ZOD_SCHEMA_SOURCE } from "@/components/api-docs/endpoints";
+import { ENDPOINTS } from "@/components/api-docs/endpoints";
 import { clientEnv } from "@/lib/env.client";
+import { readFileSync } from "node:fs";
 
 export const metadata: Metadata = {
   title: "API",
@@ -38,9 +40,15 @@ function InlineCode({ children }: { children: ReactNode }) {
   );
 }
 
+function getSchemasSource() {
+  const schemaSource = readFileSync(join(process.cwd(), "src/lib/api/schemas.ts"), "utf8");
+  return schemaSource;
+}
+
 export default function ApiDocsPage() {
   const baseUrl = clientEnv.NEXT_PUBLIC_BASE_URL.replace(/\/$/, "");
   const apiBase = `${baseUrl}/api/v1`;
+  const schemaSource = getSchemasSource();
 
   const highlights = [
     { Icon: PiLockOpen, title: "No API key", body: "Fully public, read-only open data. Just make the request." },
@@ -243,7 +251,7 @@ export default function ApiDocsPage() {
             <div className="space-y-4 border-t border-line pt-16">
               <h2 className="font-outfit text-3xl font-bold">Endpoints</h2>
               <p className="text-lo">
-                Every endpoint below has copy-pasteable snippets in 11 languages and a live “Run” button.
+                Every endpoint below has copy-pasteable snippets in 12 languages and a live “Run” button.
               </p>
             </div>
 
@@ -284,7 +292,7 @@ export default function ApiDocsPage() {
               <div className="not-prose">
                 <CodeTerminal
                   singleTab
-                  snippets={[{ id: "zod", label: "schemas.ts", lang: "typescript", code: ZOD_SCHEMA_SOURCE }]}
+                  snippets={[{ id: "zod", label: "schemas.ts", lang: "typescript", code: schemaSource }]}
                 />
               </div>
             </DocSection>

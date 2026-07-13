@@ -4,7 +4,7 @@ import z from "zod";
 // These mirror the database columns (dates are serialized to ISO 8601 strings in JSON).
 // They are the single source of truth for the generated OpenAPI document and the docs page.
 
-const DateTime = z.string().describe("ISO 8601 date-time");
+const DateTime = z.iso.datetime().describe("ISO 8601 date-time");
 
 export const LeaderboardUserSchema = z.object({
   githubUsername: z.string(),

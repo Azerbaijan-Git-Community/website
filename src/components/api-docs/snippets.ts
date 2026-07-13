@@ -1,5 +1,3 @@
-// Generates copy-pasteable request snippets in many languages for a given GET URL.
-
 export type Snippet = { id: string; label: string; lang: string; code: string };
 
 export function buildSnippets(url: string): Snippet[] {
@@ -81,10 +79,9 @@ func main() {
       id: "rust",
       label: "Rust",
       lang: "rust",
-      code: `// reqwest + tokio
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let body = reqwest::get("${url}").await?.text().await?;
+      code: `// First add the dependency: cargo add reqwest --features blocking
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let body = reqwest::blocking::get("${url}")?.text()?;
     println!("{}", body);
     Ok(())
 }`,
@@ -100,6 +97,23 @@ var client = HttpClient.newHttpClient();
 var request = HttpRequest.newBuilder(URI.create("${url}")).build();
 var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 System.out.println(response.body());`,
+    },
+    {
+      id: "c",
+      label: "C",
+      lang: "c",
+      code: `// libcurl
+#include <curl/curl.h>
+
+int main(void) {
+    CURL *curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "${url}");
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    return 0;
+}`,
     },
     {
       id: "csharp",
