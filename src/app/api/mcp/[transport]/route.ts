@@ -12,46 +12,43 @@ import {
   StatsSchema,
 } from "@/lib/api/schemas";
 import { getMonthKey } from "@/lib/utils.server";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types";
 
 // Public, key-less MCP server exposing the community's open data to AI assistants.
 // Tools mirror the REST API under /api/v1 and reuse the same cached data functions.
 
-// Returns both a text block and validated structured content. The JSON round-trip
-// serializes Date instances to ISO strings so they match the string-typed output schemas.
-function jsonResult(data: Record<string, unknown>) {
+function jsonResult<S extends z.ZodType>(schema: S, data: z.infer<S>): CallToolResult {
+  // For compatibility with older MCP clients, we return both text and structuredContent.
   const text = JSON.stringify(data, null, 2);
-  return {
-    content: [{ type: "text" as const, text }],
-    structuredContent: JSON.parse(text) as Record<string, unknown>,
-  };
+  return { content: [{ type: "text", text }], structuredContent: data as Record<string, unknown> };
 }
 
-function errorResult(message: string) {
-  return { content: [{ type: "text" as const, text: message }], isError: true };
+function errorResult(message: string): CallToolResult {
+  return { content: [{ type: "text", text: message }], isError: true };
 }
 
-const leaderboardOutputSchema = {
+const leaderboardOutputSchema = z.object({
   month: z.string(),
   count: z.number().int(),
   lastSyncedAt: z.string().nullable(),
   entries: z.array(LeaderboardEntrySchema),
-};
+});
 
-const allTimeOutputSchema = {
+const allTimeOutputSchema = z.object({
   count: z.number().int(),
   lastSyncedAt: z.string().nullable(),
   entries: z.array(LeaderboardEntrySchema),
-};
+});
 
-const blogListOutputSchema = {
+const blogListOutputSchema = z.object({
   count: z.number().int(),
   posts: z.array(BlogListItemSchema),
-};
+});
 
-const showcaseOutputSchema = {
+const showcaseOutputSchema = z.object({
   count: z.number().int(),
   projects: z.array(ShowcaseProjectSchema),
-};
+});
 
 const handler = createMcpHandler(
   (server) => {
@@ -62,12 +59,12 @@ const handler = createMcpHandler(
         description:
           "Returns aggregated community totals: total commits, total pull requests, number of users, and when the stats were last synced. These are the numbers shown on the site's home page hero.",
         inputSchema: {},
-        outputSchema: StatsSchema.shape,
+        outputSchema: StatsSchema,
       },
       async () => {
         try {
           const [stats, lastSync] = await Promise.all([getGithubStats(), getLastSyncTime()]);
-          return jsonResult({
+          return jsonResult(StatsSchema, {
             totalCommits: stats.totalCommits,
             totalPullRequests: stats.totalPullRequests,
             totalUsers: stats.totalUsers,
@@ -113,7 +110,7 @@ const handler = createMcpHandler(
           const monthKey =
             year !== undefined && month !== undefined ? `${year}-${String(month).padStart(2, "0")}` : getMonthKey();
           const entries = table.monthly[monthKey] ?? [];
-          return jsonResult({
+          return jsonResult(leaderboardOutputSchema, {
             month: monthKey,
             count: entries.length,
             lastSyncedAt: lastSync ? lastSync.toISOString() : null,
@@ -138,7 +135,7 @@ const handler = createMcpHandler(
       async () => {
         try {
           const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
-          return jsonResult({
+          return jsonResult(allTimeOutputSchema, {
             count: table.allTime.length,
             lastSyncedAt: lastSync ? lastSync.toISOString() : null,
             entries: table.allTime,
@@ -161,8 +158,8 @@ const handler = createMcpHandler(
       },
       async () => {
         try {
-          const posts = await getBlogPosts();
-          return jsonResult({ count: posts.length, posts });
+          const posts = (await getBlogPosts()).map((post) => ({ ...post, createdAt: post.createdAt.toISOString() }));
+          return jsonResult(blogListOutputSchema, { count: posts.length, posts });
         } catch (err) {
           console.error("[mcp] get_blog_posts failed:", err);
           return errorResult("Failed to fetch blog posts. Please try again.");
@@ -178,7 +175,7 @@ const handler = createMcpHandler(
         inputSchema: {
           slug: z.string().min(1).describe("The post's URL slug."),
         },
-        outputSchema: BlogPostSchema.shape,
+        outputSchema: BlogPostSchema,
       },
       async ({ slug }) => {
         try {
@@ -187,7 +184,11 @@ const handler = createMcpHandler(
 
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { contentSha, ...result } = post;
-          return jsonResult(result);
+          return jsonResult(BlogPostSchema, {
+            ...result,
+            updatedAt: result.updatedAt.toISOString(),
+            createdAt: result.createdAt.toISOString(),
+          });
         } catch (err) {
           console.error("[mcp] get_blog_post failed:", err);
           return errorResult("Failed to fetch the blog post. Please try again.");
@@ -209,8 +210,12 @@ const handler = createMcpHandler(
           const projects = await getShowcaseProjects();
           // Mirror the DB rows but drop the sync-bookkeeping `fileSha`.
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const data = projects.map(({ fileSha, ...p }) => p);
-          return jsonResult({ count: data.length, projects: data });
+          const data = projects.map(({ fileSha, updatedAt, createdAt, ...p }) => ({
+            ...p,
+            updatedAt: updatedAt.toISOString(),
+            createdAt: createdAt.toISOString(),
+          }));
+          return jsonResult(showcaseOutputSchema, { count: data.length, projects: data });
         } catch (err) {
           console.error("[mcp] get_showcase_projects failed:", err);
           return errorResult("Failed to fetch showcase projects. Please try again.");
