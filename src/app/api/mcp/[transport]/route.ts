@@ -4,6 +4,7 @@ import { getBlogPost, getBlogPosts } from "@/data/blog/get";
 import { getLastSyncTime, getTableData } from "@/data/leaderboard/get";
 import { getShowcaseProjects } from "@/data/showcase/get";
 import { getGithubStats } from "@/data/stats/get";
+import { checkRateLimit, getClientIp } from "@/lib/api/rate-limit";
 import {
   BlogListItemSchema,
   BlogPostSchema,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/api/schemas";
 import { getMonthKey } from "@/lib/utils.server";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types";
+import { NextResponse } from "next/server";
 
 // Public, key-less MCP server exposing the community's open data to AI assistants.
 // Tools mirror the REST API under /api/v1 and reuse the same cached data functions.
@@ -50,7 +52,7 @@ const showcaseOutputSchema = z.object({
   projects: z.array(ShowcaseProjectSchema),
 });
 
-const handler = createMcpHandler(
+const mcpHandler = createMcpHandler(
   (server) => {
     server.registerTool(
       "get_stats",
@@ -235,5 +237,17 @@ const handler = createMcpHandler(
     verboseLogs: false,
   },
 );
+
+// Apply the same per-IP rate limit as the REST API before handing off to the MCP handler.
+async function handler(req: Request): Promise<Response> {
+  const rl = await checkRateLimit(getClientIp(req));
+  if (!rl.ok) {
+    return new NextResponse(
+      JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32000, message: "Rate limit exceeded" } }),
+      { status: 429, headers: { "Content-Type": "application/json", ...rl.headers } },
+    );
+  }
+  return mcpHandler(req);
+}
 
 export { handler as GET, handler as POST };

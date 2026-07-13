@@ -2,7 +2,6 @@ import { serverEnv } from "@/lib/env.server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import "server-only";
-import type { NextRequest } from "next/server";
 
 // Per-IP limits for the public Open Data API.
 const MINUTE_LIMIT = 20;
@@ -53,8 +52,8 @@ function getLimiters(): Limiters | null {
 // by the caller, so it's preferred over the client-appendable `x-forwarded-for`.
 const IP_HEADERS = ["x-vercel-forwarded-for", "x-forwarded-for", "x-real-ip"] as const;
 
-/** Extract the caller's IP from proxy headers (first hop). */
-export function getClientIp(req: NextRequest): string {
+/** Extract the caller's IP from proxy headers (first hop). Accepts any `Request` (REST + MCP). */
+export function getClientIp(req: Request): string {
   for (const header of IP_HEADERS) {
     const first = req.headers.get(header)?.split(",")[0]?.trim();
     if (first) return first;
