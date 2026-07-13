@@ -62,9 +62,11 @@ export async function getTableData(): Promise<AllTableData> {
   const allTime = allTimeRaw as unknown as LeaderboardEntry[];
 
   const monthly: Record<string, LeaderboardEntry[]> = {};
-  for (const s of monthlyRaw) {
-    if (!monthly[s.periodKey]) monthly[s.periodKey] = [];
-    if (monthly[s.periodKey].length < 100) monthly[s.periodKey].push(s as unknown as LeaderboardEntry);
+  // `periodKey` is only used to bucket entries; it must not leak into the entry itself
+  // (it isn't part of LeaderboardEntry and breaks the API/MCP output schema).
+  for (const { periodKey, ...entry } of monthlyRaw) {
+    if (!monthly[periodKey]) monthly[periodKey] = [];
+    if (monthly[periodKey].length < 100) monthly[periodKey].push(entry as unknown as LeaderboardEntry);
   }
 
   return { weekly, allTime, monthly };

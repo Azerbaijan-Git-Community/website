@@ -84,7 +84,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     title: "Specific month",
     summary: "Top 100 contributors for a past month. Returns 404 if no data exists for that month.",
     params: [
-      { name: "year", example: "2026", description: "Four-digit year (2020–2100)." },
+      { name: "year", example: "2026", description: "Four-digit year (2026–2100)." },
       { name: "month", example: "07", description: "Month number, 1–12 (zero-padding optional)." },
     ],
     example: `{
@@ -189,6 +189,7 @@ export const KB_SECTIONS = [
   { id: "caching", label: "Caching" },
   { id: "errors", label: "Errors" },
   { id: "versioning", label: "Versioning" },
+  { id: "mcp", label: "MCP server" },
 ] as const;
 
 export type NavItem = { id: string; label: string };

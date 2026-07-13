@@ -204,23 +204,60 @@ export default function ApiDocsPage() {
               </p>
             </DocSection>
 
+            <DocSection id="mcp" title="MCP server">
+              <p>
+                For AI assistants (Claude, Cursor, and other Model Context Protocol clients) the same data is available
+                as an <strong className="text-hi">MCP server</strong>, so a chatbot can query the community directly. It
+                needs no key.
+              </p>
+              <p>
+                Endpoint: <InlineCode>{`${baseUrl}/api/mcp/mcp`}</InlineCode>. Add it to your client&apos;s config:
+              </p>
+              <div className="not-prose">
+                <CodeTerminal
+                  singleTab
+                  snippets={[
+                    {
+                      id: "mcp-config",
+                      label: "mcp.json",
+                      lang: "json",
+                      code: `{
+  "mcpServers": {
+    "azerbaijan-github-community": {
+      "url": "${baseUrl}/api/mcp/mcp"
+    }
+  }
+}`,
+                    },
+                  ]}
+                />
+              </div>
+              <p className="pt-2">
+                Tools: <InlineCode>get_stats</InlineCode>, <InlineCode>get_leaderboard</InlineCode>,{" "}
+                <InlineCode>get_all_time_leaderboard</InlineCode>, <InlineCode>get_blog_posts</InlineCode>,{" "}
+                <InlineCode>get_blog_post</InlineCode>, and <InlineCode>get_showcase_projects</InlineCode>.
+              </p>
+            </DocSection>
+
             {/* Endpoints */}
-            <div className="space-y-4">
+            <div className="space-y-4 border-t border-line pt-16">
               <h2 className="font-outfit text-3xl font-bold">Endpoints</h2>
               <p className="text-lo">
-                Every endpoint below has copy-pasteable snippets in 11 languages and a live “Try it” runner.
+                Every endpoint below has copy-pasteable snippets in 11 languages and a live “Run” button.
               </p>
             </div>
 
             {CATEGORIES.map((category) => (
-              <div key={category} className="space-y-12">
-                <h3 className="font-outfit text-sm font-semibold tracking-wider text-dim uppercase">{category}</h3>
-                {ENDPOINTS.map(
-                  (endpoint) =>
-                    endpoint.category === category && (
-                      <EndpointCard key={endpoint.id} endpoint={endpoint} baseUrl={baseUrl} />
-                    ),
-                )}
+              <div key={category}>
+                <h3 className="mb-6 font-outfit text-sm font-semibold tracking-wider text-dim uppercase">{category}</h3>
+                <div className="space-y-12">
+                  {ENDPOINTS.map(
+                    (endpoint) =>
+                      endpoint.category === category && (
+                        <EndpointCard key={endpoint.id} endpoint={endpoint} baseUrl={baseUrl} />
+                      ),
+                  )}
+                </div>
               </div>
             ))}
 
