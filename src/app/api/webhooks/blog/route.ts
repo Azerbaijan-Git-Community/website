@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { isValidSecret } from "@/lib/crypto";
 import { syncBlog } from "@/lib/sync/sync-blog";
 import { getBearerToken } from "@/lib/utils.server";

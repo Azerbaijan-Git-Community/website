@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { type Metadata } from "next";
 import { type ReactNode } from "react";
@@ -7,7 +8,6 @@ import { DocsSidebar } from "@/components/api-docs/docs-sidebar";
 import { EndpointCard } from "@/components/api-docs/endpoint-card";
 import { ENDPOINTS } from "@/components/api-docs/endpoints";
 import { clientEnv } from "@/lib/env.client";
-import { readFileSync } from "node:fs";
 
 export const metadata: Metadata = {
   title: "API",

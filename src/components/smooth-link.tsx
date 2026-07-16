@@ -1,6 +1,6 @@
 "use client";
 
-import { Route } from "next";
+import type { Route } from "next";
 import Link, { type LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";

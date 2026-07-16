@@ -1,4 +1,4 @@
-import { Children, HTMLAttributes, isValidElement } from "react";
+import { Children, type HTMLAttributes, isValidElement } from "react";
 import { MdxImage } from "./mdx-image";
 
 export function MdxParagraph({ children }: HTMLAttributes<HTMLParagraphElement>) {

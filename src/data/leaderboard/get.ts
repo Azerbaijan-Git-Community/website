@@ -1,9 +1,9 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import type { Prisma } from "@/generated/prisma/client";
+import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 import { prisma } from "@/lib/prisma";
 import { getWeekKey } from "@/lib/utils.server";
-import { Prisma } from "@/generated/prisma/client";
-import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 
 export type LeaderboardPeriod = "weekly" | "monthly" | "allTime";
 

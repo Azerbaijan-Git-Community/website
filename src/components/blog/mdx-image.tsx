@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ImgHTMLAttributes } from "react";
+import type { ImgHTMLAttributes } from "react";
 
 export function MdxImage({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) {
   if (!src || typeof src !== "string") return null;

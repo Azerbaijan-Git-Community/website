@@ -1,7 +1,7 @@
-import { serverEnv } from "@/lib/env.server";
+import "server-only";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import "server-only";
+import { serverEnv } from "@/lib/env.server";
 
 // Per-IP limits for the public Open Data API.
 const MINUTE_LIMIT = 20;

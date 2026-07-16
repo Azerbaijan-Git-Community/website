@@ -52,7 +52,7 @@ export default async function Image() {
                 tw="flex w-87.5 flex-col rounded-4xl border border-solid border-[rgba(240,246,252,0.1)] bg-[rgba(22,27,34,0.8)]"
               >
                 {/* Banner — 350×175 keeps ~2:1 aspect ratio of GitHub OG images */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {/* oxlint-disable-next-line next/no-img-element */}
                 <img
                   src={project.banner ?? ogFallback}
                   alt={project.repo}

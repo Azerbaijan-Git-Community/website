@@ -17,7 +17,7 @@ const PODIUM_ORDER = [1, 0, 2];
 export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
   const [month, setMonth] = useState(() => currentMonthKey);
 
-  const availableMonths = Object.keys(allData).sort().reverse();
+  const availableMonths = Object.keys(allData).toSorted().toReversed();
   const data = allData[month]?.length
     ? allData[month]
     : (allData[availableMonths.find((m) => m < month) ?? availableMonths[0]] ?? []);

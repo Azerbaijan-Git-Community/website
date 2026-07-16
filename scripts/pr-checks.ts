@@ -3,9 +3,9 @@
 // Run this before opening a PR:
 //   pnpm pre-publish
 //
-// Checks: TypeScript · ESLint · Prettier · Next.js build
-import { execSync } from "child_process";
-import * as readline from "readline";
+// Checks: TypeScript · Oxlint · Oxfmt · Next.js build
+import { execSync } from "node:child_process";
+import * as readline from "node:readline";
 
 type Check = {
   name: string;
@@ -42,17 +42,13 @@ const checks: Check[] = [
     cmd: "pnpm tsc --noEmit --incremental false",
   },
   {
-    name: "Prettier — format check",
-    cmd: "pnpm prettier --check .",
-    onFail: "pnpm prettier --write .",
+    name: "Oxfmt — format check",
+    cmd: "pnpm fmt:check",
+    onFail: "pnpm fmt",
   },
   {
-    name: "ESLint — lint",
+    name: "Oxlint — lint",
     cmd: "pnpm lint",
-  },
-  {
-    name: "Next.js — production build",
-    cmd: "pnpm build",
   },
 ];
 

@@ -1,4 +1,4 @@
-import { Route } from "next";
+import type { Route } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";

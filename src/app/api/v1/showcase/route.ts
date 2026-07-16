@@ -6,7 +6,7 @@ export const GET = withApi(async () => {
   const projects = await getShowcaseProjects();
 
   // Mirror the DB rows but drop the sync-bookkeeping `fileSha`.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // oxlint-disable-next-line no-unused-vars
   const data = projects.map(({ fileSha, ...p }) => p);
 
   return apiSuccess(data, { count: data.length });

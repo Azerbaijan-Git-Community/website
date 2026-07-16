@@ -14,9 +14,9 @@ Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and
 
 - `pnpm dev` — start dev server
 - `pnpm build` — generate Prisma client + Next.js production build
-- `pnpm lint` — run ESLint
-- `pnpm format:check` / `pnpm format:fix` — check/fix Prettier formatting
-- `pnpm check` — run full PR check suite (tsc, prettier, eslint, next build)
+- `pnpm lint` — run Oxlint
+- `pnpm fmt:check` / `pnpm fmt` — check/fix Oxfmt formatting
+- `pnpm check` — run full PR check suite (tsc, oxfmt, oxlint, next build)
 - `pnpm prisma:generate` — regenerate Prisma client after schema changes
 
 There are no tests in this project.
@@ -73,7 +73,7 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 - **State management**: prefer `useState` for local state. `nuqs` is installed for URL search param state if needed in the future — use it (not another package) when URL state is required.
 - **Composition over configuration**: prefer compound components, context providers, and explicit variants over boolean prop proliferation
 - **`cacheComponents`** and **React Compiler** are enabled in `next.config.ts` — follow `"use cache"` directive and compiler boundary rules, check AGENTS.md for nextjs docs.
-- Prettier enforces 120-char line width, Tailwind class sorting, and organized imports (see `.prettierrc` for import order groups)
+- Oxfmt enforces 120-char line width, Tailwind class sorting, and organized imports (see `oxfmt.config.ts` for import order groups)
 - Path alias: `@/*` maps to `./src/*`
 - Dark theme by default (canvas background `#0d1117`)
 - Run `pnpm check` before commits
@@ -81,6 +81,7 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 ### Skill References
 
 Read these before writing/editing components:
+
 - `.agents/skills/next-cache-components/SKILL.md` — caching, partial prerendering
 - `.agents/skills/heroui-react/SKILL.md` — HeroUI best practices
 - `.agents/skills/vercel-composition-patterns/AGENTS.md` — composition patterns
