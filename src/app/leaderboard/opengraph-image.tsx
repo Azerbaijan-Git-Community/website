@@ -21,7 +21,7 @@ export default async function Image() {
   const currentMonthKey = getMonthKey();
   const [fonts, podiumData] = await Promise.all([getOgFonts(), getPodiumData()]);
 
-  const months = Object.keys(podiumData).sort().reverse();
+  const months = Object.keys(podiumData).toSorted().toReversed();
   const month = podiumData[currentMonthKey]?.length
     ? currentMonthKey
     : (months.find((m) => m < currentMonthKey) ?? months[0] ?? currentMonthKey);
@@ -96,7 +96,7 @@ export default async function Image() {
                     overflow: "hidden",
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {/* oxlint-disable-next-line next/no-img-element */}
                   <img
                     src={entry.user.image}
                     alt={entry.user.githubUsername}

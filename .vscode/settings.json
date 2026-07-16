@@ -1,5 +1,6 @@
 {
-  "eslint.rules.customizations": [{ "rule": "prettier/*", "severity": "off" }],
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   }

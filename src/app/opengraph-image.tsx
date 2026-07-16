@@ -37,7 +37,7 @@ export default async function Image() {
       {/* Navbar */}
       <div tw="mb-6 flex w-full items-center justify-between">
         {/* Logo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* oxlint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} alt="Logo" height={36} style={{ filter: "invert(1)" }} />
 
         {/* Nav links */}

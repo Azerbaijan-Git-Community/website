@@ -51,8 +51,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Prettier
-        run: pnpm prettier --check .
+      - name: Format check
+        run: pnpm fmt:check
 
       - name: Type check
         run: pnpm tsc --noEmit

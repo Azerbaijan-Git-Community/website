@@ -4,7 +4,7 @@ import { AnimatePresence, LazyMotion, domAnimation, m as motion } from "motion/r
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { type AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
+import type { AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
 import { PeriodSelector } from "./period-selector";
 
 function getRankBadgeClass(rank: number): string {

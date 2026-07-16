@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes } from "react";
 
 export function MdxLink({ href, children, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement>) {
   const isExternal = href?.startsWith("http");

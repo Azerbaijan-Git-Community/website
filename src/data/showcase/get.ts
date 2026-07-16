@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
-import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject as PrismaShowcaseProject } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export type ShowcaseProject = PrismaShowcaseProject;
 

@@ -2,7 +2,7 @@
 
 import { Button, toast } from "@heroui/react";
 import { useState } from "react";
-import { IconType } from "react-icons";
+import type { IconType } from "react-icons";
 import {
   PiArrowsClockwise,
   PiCheckCircleBold,

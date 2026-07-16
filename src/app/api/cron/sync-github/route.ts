@@ -1,7 +1,7 @@
-import { serverEnv } from "@/lib/env.server";
 import { revalidateTag } from "next/cache";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { isValidSecret } from "@/lib/crypto";
+import { serverEnv } from "@/lib/env.server";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 

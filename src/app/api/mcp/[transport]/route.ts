@@ -1,4 +1,6 @@
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { createMcpHandler } from "mcp-handler";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getBlogPost, getBlogPosts } from "@/data/blog/get";
 import { getLastSyncTime, getTableData } from "@/data/leaderboard/get";
@@ -13,8 +15,6 @@ import {
   StatsSchema,
 } from "@/lib/api/schemas";
 import { getMonthKey } from "@/lib/utils.server";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types";
-import { NextResponse } from "next/server";
 
 // Public, key-less MCP server exposing the community's open data to AI assistants.
 // Tools mirror the REST API under /api/v1 and reuse the same cached data functions.
@@ -184,7 +184,7 @@ const mcpHandler = createMcpHandler(
           const post = await getBlogPost(slug);
           if (!post) return errorResult(`No blog post found with slug "${slug}".`);
 
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // oxlint-disable-next-line no-unused-vars
           const { contentSha, ...result } = post;
           return jsonResult(BlogPostSchema, {
             ...result,
@@ -211,7 +211,7 @@ const mcpHandler = createMcpHandler(
         try {
           const projects = await getShowcaseProjects();
           // Mirror the DB rows but drop the sync-bookkeeping `fileSha`.
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // oxlint-disable-next-line no-unused-vars
           const data = projects.map(({ fileSha, updatedAt, createdAt, ...p }) => ({
             ...p,
             updatedAt: updatedAt.toISOString(),

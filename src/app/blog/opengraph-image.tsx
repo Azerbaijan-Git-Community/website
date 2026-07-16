@@ -61,7 +61,7 @@ export default async function Image() {
                 width: 350,
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {/* oxlint-disable-next-line next/no-img-element */}
               <img
                 src={post.coverImage}
                 alt={post.title}

@@ -1,10 +1,10 @@
 import { evaluate } from "@mdx-js/mdx";
 import type { MDXModule } from "mdx/types";
+import * as jsxRuntime from "react/jsx-runtime";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypePrettyCode from "rehype-pretty-code";
+import { rehypePrettyCode } from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import * as jsxRuntime from "react/jsx-runtime";
 import { remarkRewriteImages } from "./mdx-plugins/remark-rewrite-images";
 
 /**
