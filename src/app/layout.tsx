@@ -3,7 +3,6 @@ import { Toast } from "@heroui/react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { ViewTransition } from "react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { inter, outfit } from "@/lib/fonts";
@@ -46,9 +45,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <Toast.Provider placement="bottom end" />
         <Navbar />
-        <main>
-          <ViewTransition>{children}</ViewTransition>
-        </main>
+        <main>{children}</main>
         <Footer />
         <Analytics />
         <SpeedInsights />
