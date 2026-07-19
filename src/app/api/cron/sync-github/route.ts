@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 5;
 
 type ContributionData = {
   totalCommitContributions: number;
