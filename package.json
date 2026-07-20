@@ -15,7 +15,7 @@
     "check": "node scripts/pr-checks.ts",
     "bootstrap": "pnpm i && pnpm install:skills && pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
     "install:skills": "pnpx skills@latest experimental_install",
-    "doctor": "react-doctor --verbose"
+    "react-doctor": "react-doctor --verbose"
   },
   "dependencies": {
     "@better-auth/infra": "0.3.6",
@@ -37,7 +37,7 @@
     "js-yaml": "5.2.1",
     "mcp-handler": "1.1.0",
     "motion": "12.42.2",
-    "next": "16.2.10",
+    "next": "16.3.0-preview.6",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-icons": "5.7.0",
@@ -50,7 +50,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.3.2",
+    "@tailwindcss/postcss": "4.3.3",
     "@types/js-yaml": "4.0.9",
     "@types/node": "24.12.4",
     "@types/react": "19.2.17",
@@ -61,9 +61,9 @@
     "oxlint": "1.74.0",
     "postcss-load-config": "6.0.1",
     "prisma": "7.8.0",
-    "react-doctor": "0.7.8",
-    "tailwindcss": "4.3.2",
-    "typescript": "5.9.3"
+    "react-doctor": "0.8.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=24",

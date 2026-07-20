@@ -50,8 +50,8 @@ export async function getTableData(): Promise<AllTableData> {
     }),
   ]);
 
-  const weekly = weeklyRaw as unknown as LeaderboardEntry[];
-  const allTime = allTimeRaw as unknown as LeaderboardEntry[];
+  const weekly = weeklyRaw;
+  const allTime = allTimeRaw;
 
   const monthly: Record<string, LeaderboardEntry[]> = {};
   // `periodKey` is only used to bucket entries; it must not leak into the entry itself

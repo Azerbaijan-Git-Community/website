@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     viewTransition: true,
+    useTypeScriptCli: true,
+    turbopackRustReactCompiler: true,
   },
   images: {
     qualities: [75, 100],

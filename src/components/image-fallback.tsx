@@ -2,6 +2,7 @@
 
 import Image, { type ImageProps } from "next/image";
 import { useRef, useState } from "react";
+import nextConfig from "@/../next.config";
 
 type ImageFallbackProps = ImageProps & {
   fallback: string;
@@ -18,6 +19,18 @@ export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackPro
       {...props}
       src={currentImgSrc}
       alt={alt}
+      unoptimized={
+        !nextConfig.images?.remotePatterns?.some((pattern) => {
+          if (typeof src === "string") {
+            try {
+              const url = new URL(src);
+              return url.hostname === pattern.hostname;
+            } catch {
+              return false;
+            }
+          }
+        })
+      }
       onError={() => {
         if (isFinal.current || currentImgSrc === fallback) return;
         if (retryCount.current < 3) {

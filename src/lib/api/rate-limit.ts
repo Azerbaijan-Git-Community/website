@@ -25,10 +25,6 @@ function getLimiters(): Limiters | null {
 
   const url = serverEnv.UPSTASH_REDIS_REST_URL;
   const token = serverEnv.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
-    limiters = null;
-    return null;
-  }
 
   const redis = new Redis({ url, token });
   limiters = {

@@ -184,12 +184,10 @@ const mcpHandler = createMcpHandler(
           const post = await getBlogPost(slug);
           if (!post) return errorResult(`No blog post found with slug "${slug}".`);
 
-          // oxlint-disable-next-line no-unused-vars
-          const { contentSha, ...result } = post;
           return jsonResult(BlogPostSchema, {
-            ...result,
-            updatedAt: result.updatedAt.toISOString(),
-            createdAt: result.createdAt.toISOString(),
+            ...post,
+            updatedAt: post.updatedAt.toISOString(),
+            createdAt: post.createdAt.toISOString(),
           });
         } catch (err) {
           console.error("[mcp] get_blog_post failed:", err);

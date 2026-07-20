@@ -24,7 +24,13 @@ const serverEnvSchema = z.object({
 
 type ServerEnv = z.infer<typeof serverEnvSchema>;
 
-export const serverEnv = serverEnvSchema.parse(process.env);
+const parsedEnv = serverEnvSchema.safeParse(process.env);
+
+if (!parsedEnv.success) {
+  throw new Error(z.prettifyError(parsedEnv.error));
+}
+
+export const serverEnv = parsedEnv.data;
 
 declare global {
   namespace NodeJS {

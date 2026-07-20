@@ -60,7 +60,7 @@ const MEDAL_CONFIG = [
     size: 80,
     badgeSize: "size-10 text-xl",
     isFirst: false,
-    icon: <FaMedal className="sizeyy-5" />,
+    icon: <FaMedal className="size-5" />,
   },
   {
     ring: "ring-[#CD7F32]",
@@ -75,7 +75,7 @@ const MEDAL_CONFIG = [
 ] as const;
 
 type PodiumCardProps = {
-  entry: LeaderboardEntry;
+  entry: LeaderboardEntry | undefined;
   config: (typeof MEDAL_CONFIG)[number];
   mt?: string;
 };
