@@ -26,8 +26,8 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
       };
     case "github":
       return {
-        url: `${base}/api/cron/sync-github`,
-        headers: { "x-cron-secret": serverEnv.CRON_SECRET },
+        url: `${base}/api/webhooks/github-stats`,
+        headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
   }
 }
