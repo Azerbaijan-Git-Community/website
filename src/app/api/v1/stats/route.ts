@@ -10,8 +10,8 @@ export const GET = withApi(async () => {
     totalCommits: stats.totalCommits,
     totalPullRequests: stats.totalPullRequests,
     totalUsers: stats.totalUsers,
-    lastSyncedAt: lastSync ? lastSync.toISOString() : null,
+    lastSyncedAt: lastSync?.toISOString() ?? null,
   });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

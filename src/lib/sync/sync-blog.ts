@@ -1,15 +1,11 @@
 import { revalidateTag } from "next/cache";
+import { GITHUB_ORG } from "@/lib/constants";
+import { type GhContentEntry, ghJson, ghText } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 
-const BLOG_OWNER = "Azerbaijan-Git-Community";
 const BLOG_REPO = "blog";
-const RAW_BASE = `https://raw.githubusercontent.com/${BLOG_OWNER}/${BLOG_REPO}/main/posts`;
-
-interface GitHubDirEntry {
-  name: string;
-  sha: string;
-  type: "dir" | "file";
-}
+const CONTENTS_BASE = `/repos/${GITHUB_ORG}/${BLOG_REPO}/contents/posts`;
+const RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_ORG}/${BLOG_REPO}/main/posts`;
 
 interface BlogFrontmatter {
   title: string;
@@ -78,16 +74,7 @@ const COVER_EXTS = ["png", "jpg", "jpeg", "webp", "svg"];
 
 /** Fetch the images directory and return the raw URL of the cover image. */
 async function fetchCoverImageUrl(slug: string): Promise<string> {
-  const res = await fetch(`https://api.github.com/repos/${BLOG_OWNER}/${BLOG_REPO}/contents/posts/${slug}/images`, {
-    headers: {
-      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
-  });
-
-  if (!res.ok) throw new Error(`Failed to fetch images directory for "${slug}": ${res.status}`);
-
-  const entries = (await res.json()) as GitHubDirEntry[];
+  const entries = await ghJson<GhContentEntry[]>(`${CONTENTS_BASE}/${slug}/images`);
   const cover = entries.find((e) => e.type === "file" && COVER_EXTS.some((ext) => e.name === `cover.${ext}`));
 
   if (!cover) throw new Error(`No cover image found in posts/${slug}/images/`);
@@ -95,28 +82,14 @@ async function fetchCoverImageUrl(slug: string): Promise<string> {
 }
 
 /** Fetch the posts directory listing from the blog repo. */
-async function fetchPostDirs(): Promise<GitHubDirEntry[]> {
-  const res = await fetch(`https://api.github.com/repos/${BLOG_OWNER}/${BLOG_REPO}/contents/posts`, {
-    headers: {
-      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
-  });
-
-  if (!res.ok) throw new Error(`Failed to fetch blog posts directory: ${res.status}`);
-
-  const entries = (await res.json()) as GitHubDirEntry[];
+async function fetchPostDirs(): Promise<GhContentEntry[]> {
+  const entries = await ghJson<GhContentEntry[]>(CONTENTS_BASE);
   return entries.filter((e) => e.type === "dir");
 }
 
 /** Fetch the raw index.mdx content for a given post slug. */
-async function fetchPostContent(slug: string): Promise<string> {
-  const res = await fetch(`${RAW_BASE}/${slug}/index.mdx`, {
-    headers: { Authorization: `Bearer ${process.env.GH_STATS_TOKEN}` },
-  });
-
-  if (!res.ok) throw new Error(`Failed to fetch post content for ${slug}: ${res.status}`);
-  return res.text();
+function fetchPostContent(slug: string): Promise<string> {
+  return ghText(`${RAW_BASE}/${slug}/index.mdx`);
 }
 
 /**

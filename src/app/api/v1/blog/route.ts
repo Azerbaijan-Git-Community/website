@@ -7,4 +7,4 @@ export const GET = withApi(async () => {
   return apiSuccess(posts, { count: posts.length });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

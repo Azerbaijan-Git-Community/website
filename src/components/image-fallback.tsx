@@ -8,6 +8,19 @@ type ImageFallbackProps = ImageProps & {
   fallback: string;
 };
 
+const OPTIMIZED_HOSTS = nextConfig.images?.remotePatterns?.map((pattern) => pattern.hostname) ?? [];
+
+function shouldOptimize(src: ImageProps["src"]): boolean {
+  // Static imports are bundled locally, so they're always safe to optimize.
+  if (typeof src !== "string") return true;
+  try {
+    return OPTIMIZED_HOSTS.includes(new URL(src).hostname);
+  } catch {
+    // Relative/malformed src: not a remote host we can vouch for.
+    return false;
+  }
+}
+
 export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackProps) {
   const [currentImgSrc, setCurrentImgSrc] = useState(() => src);
   const retryCount = useRef(0);
@@ -19,18 +32,7 @@ export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackPro
       {...props}
       src={currentImgSrc}
       alt={alt}
-      unoptimized={
-        !nextConfig.images?.remotePatterns?.some((pattern) => {
-          if (typeof src === "string") {
-            try {
-              const url = new URL(src);
-              return url.hostname === pattern.hostname;
-            } catch {
-              return false;
-            }
-          }
-        })
-      }
+      unoptimized={!shouldOptimize(currentImgSrc)}
       onError={() => {
         if (isFinal.current || currentImgSrc === fallback) return;
         if (retryCount.current < 3) {

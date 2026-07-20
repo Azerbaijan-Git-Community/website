@@ -28,8 +28,8 @@ export const GET = withApi<Ctx>(async (_req, ctx) => {
   return apiSuccess(entries, {
     month: monthKey,
     count: entries.length,
-    lastSyncedAt: lastSync ? lastSync.toISOString() : null,
+    lastSyncedAt: lastSync?.toISOString() ?? null,
   });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

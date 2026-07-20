@@ -38,18 +38,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = z.object({ target: z.string() }).safeParse(await req.json().catch(() => null));
+  const body = z.object({ target: z.enum(SYNC_TARGETS) }).safeParse(await req.json().catch(() => null));
   if (!body.success) {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  const target = body.data.target;
-
-  if (!target || !SYNC_TARGETS.includes(target as SyncTarget)) {
     return NextResponse.json({ error: "Invalid sync target" }, { status: 400 });
   }
 
-  const { url, headers: syncHeaders } = buildSyncRequest(target as SyncTarget);
+  const { url, headers: syncHeaders } = buildSyncRequest(body.data.target);
 
   const res = await fetch(url, {
     method: "POST",

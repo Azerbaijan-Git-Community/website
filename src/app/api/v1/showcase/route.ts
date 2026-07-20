@@ -4,12 +4,7 @@ import { withApi } from "@/lib/api/with-api";
 
 export const GET = withApi(async () => {
   const projects = await getShowcaseProjects();
-
-  // Mirror the DB rows but drop the sync-bookkeeping `fileSha`.
-  // oxlint-disable-next-line no-unused-vars
-  const data = projects.map(({ fileSha, ...p }) => p);
-
-  return apiSuccess(data, { count: data.length });
+  return apiSuccess(projects, { count: projects.length });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

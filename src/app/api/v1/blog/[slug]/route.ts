@@ -15,4 +15,4 @@ export const GET = withApi<Ctx>(async (_req, ctx) => {
   return apiSuccess(post);
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

@@ -29,6 +29,25 @@ function errorResult(message: string): CallToolResult {
   return { content: [{ type: "text", text: message }], isError: true };
 }
 
+/**
+ * Wraps a tool handler so an unexpected throw is logged server-side and surfaced to the
+ * client as a generic message. Keeps internals (stack traces, DB errors) out of responses
+ * and means every tool fails the same way without repeating a try/catch.
+ */
+function safeHandler<A extends unknown[]>(
+  toolName: string,
+  run: (...args: A) => Promise<CallToolResult>,
+): (...args: A) => Promise<CallToolResult> {
+  return async (...args) => {
+    try {
+      return await run(...args);
+    } catch (err) {
+      console.error(`[mcp] ${toolName} failed:`, err);
+      return errorResult(`${toolName} failed. Please try again.`);
+    }
+  };
+}
+
 const leaderboardOutputSchema = z.object({
   month: z.string(),
   count: z.number().int(),
@@ -63,20 +82,15 @@ const mcpHandler = createMcpHandler(
         inputSchema: {},
         outputSchema: StatsSchema,
       },
-      async () => {
-        try {
-          const [stats, lastSync] = await Promise.all([getGithubStats(), getLastSyncTime()]);
-          return jsonResult(StatsSchema, {
-            totalCommits: stats.totalCommits,
-            totalPullRequests: stats.totalPullRequests,
-            totalUsers: stats.totalUsers,
-            lastSyncedAt: lastSync ? lastSync.toISOString() : null,
-          });
-        } catch (err) {
-          console.error("[mcp] get_stats failed:", err);
-          return errorResult("Failed to fetch community stats. Please try again.");
-        }
-      },
+      safeHandler("get_stats", async () => {
+        const [stats, lastSync] = await Promise.all([getGithubStats(), getLastSyncTime()]);
+        return jsonResult(StatsSchema, {
+          totalCommits: stats.totalCommits,
+          totalPullRequests: stats.totalPullRequests,
+          totalUsers: stats.totalUsers,
+          lastSyncedAt: lastSync?.toISOString() ?? null,
+        });
+      }),
     );
 
     server.registerTool(
@@ -103,26 +117,21 @@ const mcpHandler = createMcpHandler(
         },
         outputSchema: leaderboardOutputSchema,
       },
-      async ({ year, month }) => {
+      safeHandler("get_leaderboard", async ({ year, month }: { year?: number; month?: number }) => {
         if ((year === undefined) !== (month === undefined)) {
           return errorResult("Provide both `year` and `month` for a specific month, or neither for the current month.");
         }
-        try {
-          const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
-          const monthKey =
-            year !== undefined && month !== undefined ? `${year}-${String(month).padStart(2, "0")}` : getMonthKey();
-          const entries = table.monthly[monthKey] ?? [];
-          return jsonResult(leaderboardOutputSchema, {
-            month: monthKey,
-            count: entries.length,
-            lastSyncedAt: lastSync ? lastSync.toISOString() : null,
-            entries,
-          });
-        } catch (err) {
-          console.error("[mcp] get_leaderboard failed:", err);
-          return errorResult("Failed to fetch the leaderboard. Please try again.");
-        }
-      },
+        const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
+        const monthKey =
+          year !== undefined && month !== undefined ? `${year}-${String(month).padStart(2, "0")}` : getMonthKey();
+        const entries = table.monthly[monthKey] ?? [];
+        return jsonResult(leaderboardOutputSchema, {
+          month: monthKey,
+          count: entries.length,
+          lastSyncedAt: lastSync?.toISOString() ?? null,
+          entries,
+        });
+      }),
     );
 
     server.registerTool(
@@ -134,19 +143,14 @@ const mcpHandler = createMcpHandler(
         inputSchema: {},
         outputSchema: allTimeOutputSchema,
       },
-      async () => {
-        try {
-          const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
-          return jsonResult(allTimeOutputSchema, {
-            count: table.allTime.length,
-            lastSyncedAt: lastSync ? lastSync.toISOString() : null,
-            entries: table.allTime,
-          });
-        } catch (err) {
-          console.error("[mcp] get_all_time_leaderboard failed:", err);
-          return errorResult("Failed to fetch the all-time leaderboard. Please try again.");
-        }
-      },
+      safeHandler("get_all_time_leaderboard", async () => {
+        const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
+        return jsonResult(allTimeOutputSchema, {
+          count: table.allTime.length,
+          lastSyncedAt: lastSync?.toISOString() ?? null,
+          entries: table.allTime,
+        });
+      }),
     );
 
     server.registerTool(
@@ -158,15 +162,10 @@ const mcpHandler = createMcpHandler(
         inputSchema: {},
         outputSchema: blogListOutputSchema,
       },
-      async () => {
-        try {
-          const posts = (await getBlogPosts()).map((post) => ({ ...post, createdAt: post.createdAt.toISOString() }));
-          return jsonResult(blogListOutputSchema, { count: posts.length, posts });
-        } catch (err) {
-          console.error("[mcp] get_blog_posts failed:", err);
-          return errorResult("Failed to fetch blog posts. Please try again.");
-        }
-      },
+      safeHandler("get_blog_posts", async () => {
+        const posts = (await getBlogPosts()).map((post) => ({ ...post, createdAt: post.createdAt.toISOString() }));
+        return jsonResult(blogListOutputSchema, { count: posts.length, posts });
+      }),
     );
 
     server.registerTool(
@@ -179,21 +178,16 @@ const mcpHandler = createMcpHandler(
         },
         outputSchema: BlogPostSchema,
       },
-      async ({ slug }) => {
-        try {
-          const post = await getBlogPost(slug);
-          if (!post) return errorResult(`No blog post found with slug "${slug}".`);
+      safeHandler("get_blog_post", async ({ slug }: { slug: string }) => {
+        const post = await getBlogPost(slug);
+        if (!post) return errorResult(`No blog post found with slug "${slug}".`);
 
-          return jsonResult(BlogPostSchema, {
-            ...post,
-            updatedAt: post.updatedAt.toISOString(),
-            createdAt: post.createdAt.toISOString(),
-          });
-        } catch (err) {
-          console.error("[mcp] get_blog_post failed:", err);
-          return errorResult("Failed to fetch the blog post. Please try again.");
-        }
-      },
+        return jsonResult(BlogPostSchema, {
+          ...post,
+          updatedAt: post.updatedAt.toISOString(),
+          createdAt: post.createdAt.toISOString(),
+        });
+      }),
     );
 
     server.registerTool(
@@ -205,22 +199,14 @@ const mcpHandler = createMcpHandler(
         inputSchema: {},
         outputSchema: showcaseOutputSchema,
       },
-      async () => {
-        try {
-          const projects = await getShowcaseProjects();
-          // Mirror the DB rows but drop the sync-bookkeeping `fileSha`.
-          // oxlint-disable-next-line no-unused-vars
-          const data = projects.map(({ fileSha, updatedAt, createdAt, ...p }) => ({
-            ...p,
-            updatedAt: updatedAt.toISOString(),
-            createdAt: createdAt.toISOString(),
-          }));
-          return jsonResult(showcaseOutputSchema, { count: data.length, projects: data });
-        } catch (err) {
-          console.error("[mcp] get_showcase_projects failed:", err);
-          return errorResult("Failed to fetch showcase projects. Please try again.");
-        }
-      },
+      safeHandler("get_showcase_projects", async () => {
+        const projects = (await getShowcaseProjects()).map((p) => ({
+          ...p,
+          updatedAt: p.updatedAt.toISOString(),
+          createdAt: p.createdAt.toISOString(),
+        }));
+        return jsonResult(showcaseOutputSchema, { count: projects.length, projects });
+      }),
     );
   },
   {

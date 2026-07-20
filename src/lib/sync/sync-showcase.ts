@@ -1,10 +1,10 @@
 import { JSON_SCHEMA as yamlJSON_SCHEMA, load as yamlLoad } from "js-yaml";
 import { revalidateTag } from "next/cache";
+import { GITHUB_ORG } from "@/lib/constants";
+import { type GhContentEntry, ghGraphQL, ghText, ghJson } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 
-const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const BATCH_SIZE = 50;
-const SHOWCASE_OWNER = "Azerbaijan-Git-Community";
 const SHOWCASE_REPO = "showcase";
 
 interface ShowcaseYaml {
@@ -32,23 +32,12 @@ interface RepoGqlData {
 }
 
 async function fetchRegistry(): Promise<ShowcaseFile[]> {
-  const res = await fetch(`https://api.github.com/repos/${SHOWCASE_OWNER}/${SHOWCASE_REPO}/contents/projects`, {
-    headers: {
-      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
-  });
-
-  if (!res.ok) throw new Error(`Failed to fetch showcase registry: ${res.status}`);
-
-  const files = (await res.json()) as Array<{ name: string; sha: string; download_url: string }>;
+  const files = await ghJson<GhContentEntry[]>(`/repos/${GITHUB_ORG}/${SHOWCASE_REPO}/contents/projects`);
   const yamlFiles = files.filter((f) => f.name.endsWith(".yaml"));
 
   const results = await Promise.all(
     yamlFiles.map(async (file) => {
-      const content = await fetch(file.download_url, {
-        headers: { Authorization: `Bearer ${process.env.GH_STATS_TOKEN}` },
-      }).then((r) => r.text());
+      const content = await ghText(file.download_url);
       const parsed = yamlLoad(content, { schema: yamlJSON_SCHEMA }) as ShowcaseYaml;
       return parsed?.repo ? { yaml: parsed, sha: file.sha } : null;
     }),
@@ -77,16 +66,8 @@ function buildBatchQuery(repos: Array<{ owner: string; name: string }>): string 
 }
 
 async function fetchRepoBatch(repos: Array<{ owner: string; name: string }>): Promise<Record<string, RepoGqlData>> {
-  const res = await fetch(GITHUB_GRAPHQL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.GH_STATS_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query: buildBatchQuery(repos) }),
-  });
-  const json = await res.json();
-  return json?.data ?? {};
+  const json = await ghGraphQL<Record<string, RepoGqlData>>(buildBatchQuery(repos));
+  return json.data ?? {};
 }
 
 export async function syncShowcase(): Promise<{ synced: number; skipped: number }> {
