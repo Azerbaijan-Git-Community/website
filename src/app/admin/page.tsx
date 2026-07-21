@@ -18,7 +18,7 @@ export default async function AdminPage() {
   if (!session?.user?.role || session?.user?.role !== "admin") notFound();
 
   return (
-    <div className="min-h-screen pt-28 pb-24">
+    <div className="min-h-svh pt-28 pb-24">
       <div className="mx-auto max-w-4xl px-6">
         {/* Console header */}
         <header className="mb-8 rounded-xl border border-line bg-[rgba(13,17,23,0.6)] p-5">

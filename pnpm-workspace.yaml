@@ -12,3 +12,18 @@ allowBuilds:
   prisma: true
   sharp: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - "@better-auth/infra@0.3.7"
+  - "@prisma/adapter-pg@7.9.0"
+  - "@prisma/client-runtime-utils@7.9.0"
+  - "@prisma/client@7.9.0"
+  - "@prisma/config@7.9.0"
+  - "@prisma/debug@7.9.0"
+  - "@prisma/driver-adapter-utils@7.9.0"
+  - "@prisma/engines@7.9.0"
+  - "@prisma/fetch-engine@7.9.0"
+  - "@prisma/get-platform@7.9.0"
+  - deslop-js@0.8.3
+  - oxlint-plugin-react-doctor@0.8.3
+  - prisma@7.9.0
+  - react-doctor@0.8.3

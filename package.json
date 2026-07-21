@@ -18,14 +18,14 @@
     "react-doctor": "react-doctor --verbose"
   },
   "dependencies": {
-    "@better-auth/infra": "0.3.6",
+    "@better-auth/infra": "0.3.7",
     "@better-auth/prisma-adapter": "1.6.23",
     "@heroui/react": "3.2.2",
     "@heroui/styles": "3.2.2",
     "@mdx-js/mdx": "3.1.1",
     "@modelcontextprotocol/sdk": "1.26.0",
-    "@prisma/adapter-pg": "7.8.0",
-    "@prisma/client": "7.8.0",
+    "@prisma/adapter-pg": "7.9.0",
+    "@prisma/client": "7.9.0",
     "@tailwindcss/typography": "0.5.20",
     "@types/mdx": "2.0.14",
     "@upstash/ratelimit": "2.0.8",
@@ -60,8 +60,8 @@
     "oxfmt": "0.59.0",
     "oxlint": "1.74.0",
     "postcss-load-config": "6.0.1",
-    "prisma": "7.8.0",
-    "react-doctor": "0.8.1",
+    "prisma": "7.9.0",
+    "react-doctor": "0.8.3",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2"
   },

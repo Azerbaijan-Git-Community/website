@@ -49,9 +49,14 @@ export async function ghText(url: string): Promise<string> {
 }
 
 /**
- * POST a GraphQL query. Returns the raw envelope rather than throwing, because partial
- * failures (some aliases resolved, others errored) are normal for the batched queries and
- * callers need to inspect `errors` to decide what to retry.
+ * POST a GraphQL query. A 200 is returned as the raw envelope rather than throwing, because
+ * partial failures (some aliases resolved, others errored) are normal for the batched queries
+ * and callers need to inspect `errors` to decide what to retry.
+ *
+ * Transport failures are different and do throw: a 401/403/5xx carries `{ message }` with
+ * neither `data` nor `errors`, which every caller would read as "all aliases failed, nothing
+ * to retry" — turning an expired token or a rate limit into a silent no-op that still reports
+ * a successful sync.
  */
 export async function ghGraphQL<T>(query: string): Promise<{ data?: T; errors?: unknown[] }> {
   const res = await fetch(GITHUB_GRAPHQL, {
@@ -59,5 +64,6 @@ export async function ghGraphQL<T>(query: string): Promise<{ data?: T; errors?: 
     headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ query }),
   });
+  if (!res.ok) throw requestFailed(GITHUB_GRAPHQL, res.status);
   return res.json();
 }

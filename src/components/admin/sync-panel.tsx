@@ -126,7 +126,7 @@ export function SyncPanel() {
               <Button
                 isDisabled={running !== null}
                 onClick={() => runSync(row.target)}
-                className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-xs font-semibold text-hi transition-all hover:border-lo hover:bg-overlay disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-xs font-semibold text-hi transition-[background-color,border-color,opacity] hover:border-lo hover:bg-overlay disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <PiArrowsClockwise className={`size-3.5 ${isRunning ? "animate-spin" : ""}`} />
                 {isRunning ? "Running…" : "Run"}

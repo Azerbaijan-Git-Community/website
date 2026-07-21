@@ -19,7 +19,7 @@ export function MonthSelector({ months, month, onMonthChange }: MonthSelectorPro
         onChange={(key) => onMonthChange(key as string)}
         className="w-full"
       >
-        <Select.Trigger className="glass w-full rounded-lg px-4 py-3 font-outfit text-base font-semibold text-hi transition-all hover:border-blue focus:ring-2 focus:ring-blue focus:outline-none">
+        <Select.Trigger className="glass w-full rounded-lg px-4 py-3 font-outfit text-base font-semibold text-hi transition-colors hover:border-blue focus:ring-2 focus:ring-blue focus:outline-none">
           <Select.Value />
           <Select.Indicator aria-label="Toggle month picker" className="size-4 text-lo">
             <PiCaretUpDownBold />

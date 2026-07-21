@@ -23,7 +23,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
       <Dropdown.Trigger aria-label="User menu">
         <Avatar
           size="lg"
-          className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-all hover:ring-blue"
+          className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-shadow hover:ring-blue"
         >
           <Avatar.Image className="rounded-full" src={image ?? undefined} alt={name ?? "User"} />
           <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>

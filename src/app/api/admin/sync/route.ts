@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: { ...syncHeaders, "Content-Type": "application/json" },
     cache: "no-store",
+    redirect: "manual",
   });
 
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;

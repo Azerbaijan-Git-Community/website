@@ -28,8 +28,6 @@ export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; bas
     setLoading(true);
     const start = performance.now();
     try {
-      // `no-store` ensures every click re-hits the endpoint instead of the browser reusing
-      // the short-lived (max-age=60) cached response.
       const res = await fetch(path, { headers: { Accept: "application/json" }, cache: "no-store" });
       const text = await res.text();
       let body = text;

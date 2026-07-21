@@ -46,7 +46,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   const MDXContent = await compileMdx(post.contentMdx, post.slug);
 
   return (
-    <div className="min-h-screen pt-32 pb-24">
+    <div className="min-h-svh pt-32 pb-24">
       <article className="mx-auto max-w-200 px-8">
         {/* Back link */}
         <Link

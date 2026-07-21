@@ -65,7 +65,7 @@ export function RoadmapSection() {
                 className="relative"
               >
                 <div
-                  className={`absolute top-0 left-5 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 transition-all md:left-1/2 ${
+                  className={`absolute top-0 left-5 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 transition-[background-color,border-color,box-shadow] md:left-1/2 ${
                     stage.highlight
                       ? "border-lime bg-lime shadow-[0_0_15px_rgba(63,185,80,0.6)]"
                       : "border-dim bg-surface"

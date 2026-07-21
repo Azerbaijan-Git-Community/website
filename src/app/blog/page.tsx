@@ -23,7 +23,7 @@ export default async function BlogPage() {
   const blogPosts = await getBlogPosts();
 
   return (
-    <div className="min-h-screen pt-32 pb-24">
+    <div className="min-h-svh pt-32 pb-24">
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
