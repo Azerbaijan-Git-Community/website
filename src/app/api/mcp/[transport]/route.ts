@@ -22,7 +22,7 @@ import { getMonthKey } from "@/lib/utils.server";
 function jsonResult<S extends z.ZodType>(schema: S, data: z.infer<S>): CallToolResult {
   // For compatibility with older MCP clients, we return both text and structuredContent.
   const text = JSON.stringify(data, null, 2);
-  return { content: [{ type: "text", text }], structuredContent: data as Record<string, unknown> };
+  return { content: [{ type: "text", text }], structuredContent: z.record(z.string(), z.unknown()).parse(data) };
 }
 
 function errorResult(message: string): CallToolResult {

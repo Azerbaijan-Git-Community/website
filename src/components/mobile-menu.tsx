@@ -19,9 +19,9 @@ export function MobileMenu() {
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (e.target instanceof Node && containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
     }

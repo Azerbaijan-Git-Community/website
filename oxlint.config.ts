@@ -5,6 +5,10 @@ export default defineConfig({
   categories: {
     suspicious: "warn",
   },
+  options: {
+    typeAware: true,
+    typeCheck: true,
+  },
   rules: {
     eqeqeq: "warn",
     "no-underscore-dangle": ["warn", { allow: ["_count", "_sum", "_avg", "_min", "_max"] }],

@@ -1,24 +1,29 @@
 import { revalidateTag } from "next/cache";
+import { z } from "zod";
 import { ghGraphQL } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 const BATCH_SIZE = 5;
 
-type ContributionData = {
-  totalCommitContributions: number;
-  totalPullRequestContributions: number;
-  totalIssueContributions: number;
-  totalPullRequestReviewContributions: number;
-};
+const ContributionDataSchema = z.object({
+  totalCommitContributions: z.number(),
+  totalPullRequestContributions: z.number(),
+  totalIssueContributions: z.number(),
+  totalPullRequestReviewContributions: z.number(),
+});
 
-type UserData = {
-  weekly: ContributionData;
-  monthly: ContributionData;
-  allTime: ContributionData;
-  repositories: { totalCount: number };
-  followers: { totalCount: number };
-};
+type ContributionData = z.infer<typeof ContributionDataSchema>;
+
+const UserDataSchema = z.object({
+  weekly: ContributionDataSchema,
+  monthly: ContributionDataSchema,
+  allTime: ContributionDataSchema,
+  repositories: z.object({ totalCount: z.number() }),
+  followers: z.object({ totalCount: z.number() }),
+});
+
+type UserData = z.infer<typeof UserDataSchema>;
 
 type SyncUser = { id: string; githubUsername: string };
 type Range = { from: string; to: string };

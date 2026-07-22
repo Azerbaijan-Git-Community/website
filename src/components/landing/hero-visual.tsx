@@ -17,6 +17,7 @@ export async function HeroVisual() {
     <div
       className="hero-visual glass rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
       style={
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         {
           "--target": current,
           "--progress": `${progressPercentage}%`,

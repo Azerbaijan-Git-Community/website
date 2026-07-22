@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import nextConfig from "@/../next.config";
 
 type ImageFallbackProps = ImageProps & {
+  src: string;
   fallback: string;
 };
 
@@ -37,7 +38,7 @@ export function ImageFallback({ fallback, src, alt, ...props }: ImageFallbackPro
         if (isFinal.current || currentImgSrc === fallback) return;
         if (retryCount.current < 3) {
           retryCount.current += 1;
-          const base = String(originalSrc.current);
+          const base = originalSrc.current;
           const sep = base.includes("?") ? "&" : "?";
           setCurrentImgSrc(`${base}${sep}_retry=${retryCount.current}`);
         } else {

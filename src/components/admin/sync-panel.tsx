@@ -12,6 +12,7 @@ import {
   PiXCircleBold,
 } from "react-icons/pi";
 import { type SyncTarget } from "@/lib/constants";
+import { ResponseSchema } from "@/lib/utils";
 
 type SyncRow = {
   target: SyncTarget;
@@ -53,7 +54,8 @@ export function SyncPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ target }),
       });
-      const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
+
+      const data = ResponseSchema.parse(await res.json().catch(() => ({})));
 
       if (!res.ok) {
         let message = data.error;

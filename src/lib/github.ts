@@ -39,7 +39,7 @@ async function ghGet(url: string, accept?: string): Promise<Response> {
 /** GET a path under api.github.com (e.g. `/repos/org/repo/contents/posts`) as JSON. */
 export async function ghJson<T>(path: string): Promise<T> {
   const res = await ghGet(`${GITHUB_API}${path}`, "application/vnd.github+json");
-  return res.json() as Promise<T>;
+  return res.json();
 }
 
 /** GET an absolute URL (raw.githubusercontent.com, a contents `download_url`, …) as text. */
@@ -58,6 +58,7 @@ export async function ghText(url: string): Promise<string> {
  * to retry" — turning an expired token or a rate limit into a silent no-op that still reports
  * a successful sync.
  */
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export async function ghGraphQL<T>(query: string): Promise<{ data?: T; errors?: unknown[] }> {
   const res = await fetch(GITHUB_GRAPHQL, {
     method: "POST",

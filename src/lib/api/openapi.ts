@@ -12,7 +12,7 @@ import {
 
 type JsonSchema = Record<string, unknown>;
 
-const toJson = (schema: z.ZodType): JsonSchema => z.toJSONSchema(schema, { target: "draft-2020-12" }) as JsonSchema;
+const toJson = (schema: z.ZodType): JsonSchema => z.toJSONSchema(schema, { target: "draft-2020-12" });
 
 const META_SCHEMA: JsonSchema = {
   type: "object",

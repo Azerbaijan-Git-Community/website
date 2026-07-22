@@ -1,10 +1,11 @@
 "use client";
 
+import type { Key } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
-import { type LeaderboardEntry } from "@/data/leaderboard/get";
+import type { LeaderboardEntry } from "@/data/leaderboard/get";
 import { MonthSelector } from "./month-selector";
 
 type PodiumClientProps = {
@@ -15,7 +16,7 @@ type PodiumClientProps = {
 const PODIUM_ORDER = [1, 0, 2];
 
 export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
-  const [month, setMonth] = useState(() => currentMonthKey);
+  const [month, setMonth] = useState<Key>(() => currentMonthKey);
 
   const availableMonths = Object.keys(allData).toSorted().toReversed();
   const data = allData[month]?.length

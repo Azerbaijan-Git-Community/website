@@ -1,5 +1,6 @@
 import { JSON_SCHEMA as yamlJSON_SCHEMA, load as yamlLoad } from "js-yaml";
 import { revalidateTag } from "next/cache";
+import { z } from "zod";
 import { GITHUB_ORG } from "@/lib/constants";
 import { type GhContentEntry, ghGraphQL, ghText, ghJson } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
@@ -7,20 +8,22 @@ import { prisma } from "@/lib/prisma";
 const BATCH_SIZE = 50;
 const SHOWCASE_REPO = "showcase";
 
-interface ShowcaseYaml {
-  repo: string;
-  submittedBy: string;
-  banner?: string;
-  links?: string[];
-  website?: string;
-}
+const showcaseYamlSchema = z.object({
+  repo: z.string(),
+  submittedBy: z.string(),
+  banner: z.string().optional(),
+  links: z.array(z.string()).optional(),
+  website: z.string().optional(),
+});
 
-interface ShowcaseFile {
+type ShowcaseYaml = z.infer<typeof showcaseYamlSchema>;
+
+type ShowcaseFile = {
   yaml: ShowcaseYaml;
   sha: string;
-}
+};
 
-interface RepoGqlData {
+type RepoGqlData = {
   stargazerCount: number;
   forkCount: number;
   issues: { totalCount: number };
@@ -29,7 +32,7 @@ interface RepoGqlData {
   homepageUrl: string | null;
   licenseInfo: { spdxId: string } | null;
   primaryLanguage: { name: string; color: string } | null;
-}
+};
 
 async function fetchRegistry(): Promise<ShowcaseFile[]> {
   const files = await ghJson<GhContentEntry[]>(`/repos/${GITHUB_ORG}/${SHOWCASE_REPO}/contents/projects`);
@@ -38,8 +41,8 @@ async function fetchRegistry(): Promise<ShowcaseFile[]> {
   const results = await Promise.all(
     yamlFiles.map(async (file) => {
       const content = await ghText(file.download_url);
-      const parsed = yamlLoad(content, { schema: yamlJSON_SCHEMA }) as ShowcaseYaml;
-      return parsed?.repo ? { yaml: parsed, sha: file.sha } : null;
+      const parsed = showcaseYamlSchema.safeParse(yamlLoad(content, { schema: yamlJSON_SCHEMA }));
+      return parsed.success && parsed.data.repo ? { yaml: parsed.data, sha: file.sha } : null;
     }),
   );
 

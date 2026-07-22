@@ -29,7 +29,7 @@ function mergeHeaders(extra?: Record<string, string>): Headers {
 }
 
 /** Success envelope: `{ data, meta? }`. */
-export function apiSuccess<T>(data: T, meta?: ApiMeta, extraHeaders?: Record<string, string>): NextResponse {
+export function apiSuccess(data: unknown, meta?: ApiMeta, extraHeaders?: Record<string, string>): NextResponse {
   const body = meta ? { data, meta } : { data };
   return NextResponse.json(body, { headers: mergeHeaders(extraHeaders) });
 }

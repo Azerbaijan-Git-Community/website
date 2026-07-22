@@ -37,7 +37,7 @@ export function Navbar() {
         </Link>
 
         {/* Nav links — hidden on mobile */}
-        <div className="hidden gap-8 md:flex">
+        <div className="hidden gap-10 md:flex">
           {navigationLinks.map((link) => (
             <Link
               key={link.href}

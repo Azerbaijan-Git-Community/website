@@ -1,6 +1,6 @@
 "use client";
 
-import { type LeaderboardPeriod } from "@/data/leaderboard/get";
+import type { LeaderboardPeriod } from "@/data/leaderboard/get";
 
 const TABS: { id: LeaderboardPeriod; label: string }[] = [
   { id: "weekly", label: "This Week" },

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   if (!post) return {};
 
   return {
-    title: `${post.title}`,
+    title: post.title,
     description: post.description,
     keywords: post.tags,
     openGraph: {

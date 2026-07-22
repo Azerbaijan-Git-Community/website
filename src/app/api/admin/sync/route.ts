@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { SYNC_TARGETS, type SyncTarget } from "@/lib/constants";
 import { clientEnv } from "@/lib/env.client";
 import { serverEnv } from "@/lib/env.server";
+import { ResponseSchema } from "@/lib/utils";
 
 /**
  * Builds the outgoing request (URL + auth header) for a sync target, mirroring
@@ -29,6 +30,8 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
         url: `${base}/api/webhooks/github-stats`,
         headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
+    default:
+      throw new Error(`Unknown sync target: ${String(target)}`);
   }
 }
 
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
     redirect: "manual",
   });
 
-  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  const data = ResponseSchema.parse(await res.json().catch(() => ({})));
 
   return NextResponse.json(data, { status: res.status });
 }

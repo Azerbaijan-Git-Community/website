@@ -32,8 +32,8 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
 
       <Dropdown.Popover placement="bottom">
         <Dropdown.Menu
-          onAction={(key) => {
-            if (key === "signout") handleSignOut();
+          onAction={async (key) => {
+            if (key === "signout") await handleSignOut();
           }}
         >
           {/*

@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Prisma } from "@/generated/prisma/client";
-import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
+import type { GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 import { prisma } from "@/lib/prisma";
 import { getWeekKey } from "@/lib/utils.server";
 
@@ -58,7 +58,7 @@ export async function getTableData(): Promise<AllTableData> {
   // (it isn't part of LeaderboardEntry and breaks the API/MCP output schema).
   for (const { periodKey, ...entry } of monthlyRaw) {
     if (!monthly[periodKey]) monthly[periodKey] = [];
-    if (monthly[periodKey].length < 100) monthly[periodKey].push(entry as unknown as LeaderboardEntry);
+    if (monthly[periodKey].length < 100) monthly[periodKey].push(entry);
   }
 
   return { weekly, allTime, monthly };
