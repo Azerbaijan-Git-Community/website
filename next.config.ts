@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
   typedRoutes: true,
-  partialPrefetching: true,
+  // partialPrefetching: true,
   experimental: {
     viewTransition: true,
     useTypeScriptCli: true,
