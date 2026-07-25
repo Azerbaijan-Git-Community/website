@@ -39,7 +39,7 @@ export default async function LeaderboardPage() {
             Monthly <span className="text-gradient">Leaderboard</span>
           </h1>
           <h2 className="mx-auto mb-6 max-w-2xl text-xl text-lo">
-            Celebrating our top contributors pushing Azerbaijan&apos;s open-source future forward.
+            Celebrating top contributors pushing Azerbaijan&apos;s open-source future forward.
           </h2>
         </div>
 
