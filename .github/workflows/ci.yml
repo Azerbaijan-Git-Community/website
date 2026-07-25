@@ -49,7 +49,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm next typegen
+        run: pnpm prisma generate && pnpm next typegen
 
       - name: Format check
         run: pnpm fmt:check
