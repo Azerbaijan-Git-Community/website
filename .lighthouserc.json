@@ -9,7 +9,8 @@
         "http://localhost:3000/showcase"
       ],
       "startServerCommand": "pnpm start",
-      "startServerReadyPattern": "Ready in"
+      "startServerReadyPattern": "Ready in",
+      "numberOfRuns": 1
     },
     "upload": {
       "target": "temporary-public-storage"
