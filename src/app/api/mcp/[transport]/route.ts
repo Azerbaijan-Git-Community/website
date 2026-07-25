@@ -3,7 +3,7 @@ import { createMcpHandler } from "mcp-handler";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getBlogPost, getBlogPosts } from "@/data/blog/get";
-import { getLastSyncTime, getTableData } from "@/data/leaderboard/get";
+import { getLastSyncTime, getTableData, getTableDataByMonth } from "@/data/leaderboard/get";
 import { getShowcaseProjects } from "@/data/showcase/get";
 import { getGithubStats } from "@/data/stats/get";
 import { checkRateLimit, getClientIp } from "@/lib/api/rate-limit";
@@ -98,7 +98,7 @@ const mcpHandler = createMcpHandler(
       {
         title: "Get monthly leaderboard",
         description:
-          "Returns the top 100 contributors (ranked by commits) for a given month. Omit both `year` and `month` for the current month, or provide both to fetch a specific past month. Returns an empty list if that month has no data.",
+          "Returns the top 50 contributors (ranked by commits) for a given month. Omit both `year` and `month` for the current month, or provide both to fetch a specific past month. Returns an empty list if that month has no data.",
         inputSchema: {
           year: z
             .number()
@@ -121,10 +121,9 @@ const mcpHandler = createMcpHandler(
         if ((year === undefined) !== (month === undefined)) {
           return errorResult("Provide both `year` and `month` for a specific month, or neither for the current month.");
         }
-        const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
         const monthKey =
           year !== undefined && month !== undefined ? `${year}-${String(month).padStart(2, "0")}` : getMonthKey();
-        const entries = table.monthly[monthKey] ?? [];
+        const [entries, lastSync] = await Promise.all([getTableDataByMonth(monthKey), getLastSyncTime()]);
         return jsonResult(leaderboardOutputSchema, {
           month: monthKey,
           count: entries.length,
@@ -139,7 +138,7 @@ const mcpHandler = createMcpHandler(
       {
         title: "Get all-time leaderboard",
         description:
-          "Returns the top 100 contributors ranked by all-time commits. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels it 'Last Year').",
+          "Returns the top 50 contributors ranked by all-time commits. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels it 'Last Year').",
         inputSchema: {},
         outputSchema: allTimeOutputSchema,
       },

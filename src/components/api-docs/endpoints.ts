@@ -33,7 +33,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     method: "GET",
     path: "/api/v1/leaderboard",
     title: "Current month",
-    summary: "Top 100 contributors for the current month, ranked by commits.",
+    summary: "Top 50 contributors for the current month, ranked by commits.",
   },
   {
     id: "leaderboard-all-time",
@@ -42,7 +42,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     path: "/api/v1/leaderboard/all-time",
     title: "All-time",
     summary:
-      "Top 100 contributors by all-time commits. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels it “Last Year”).",
+      "Top 50 contributors by all-time commits. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels it “Last Year”).",
   },
   {
     id: "leaderboard-month",
@@ -50,7 +50,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     method: "GET",
     path: "/api/v1/leaderboard/{year}/{month}",
     title: "Specific month",
-    summary: "Top 100 contributors for a past month. Returns 404 if no data exists for that month.",
+    summary: "Top 50 contributors for a past month. Returns 404 if no data exists for that month.",
     params: [
       { name: "year", example: "2026", description: "Four-digit year (2026–2100)." },
       { name: "month", example: "07", description: "Month number, 1–12 (zero-padding optional)." },
