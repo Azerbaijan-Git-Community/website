@@ -13,8 +13,6 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  // Only the community admin may view this page. Everyone else gets a 404 so the
-  // route's existence isn't even revealed.
   if (!session?.user?.role || session?.user?.role !== "admin") notFound();
 
   return (
