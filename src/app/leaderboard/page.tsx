@@ -6,7 +6,6 @@ import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getLastSyncTime, getPodiumData, getTableData } from "@/data/leaderboard/get";
-import { getMonthKey } from "@/lib/utils.server";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
@@ -27,7 +26,6 @@ export default async function LeaderboardPage() {
   cacheLife("days");
   cacheTag("leaderboard");
 
-  const currentMonthKey = getMonthKey();
   const [tableData, podiumData, lastSync] = await Promise.all([getTableData(), getPodiumData(), getLastSyncTime()]);
 
   return (
@@ -46,7 +44,7 @@ export default async function LeaderboardPage() {
         </div>
 
         <div className="mb-16">
-          <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} />
+          <PodiumClient allData={podiumData} />
         </div>
 
         {lastSync && (
@@ -66,7 +64,7 @@ export default async function LeaderboardPage() {
           </div>
         )}
 
-        <TableClient allData={tableData} currentMonthKey={currentMonthKey} />
+        <TableClient allData={tableData} />
       </div>
     </div>
   );

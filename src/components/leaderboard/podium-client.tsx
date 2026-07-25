@@ -6,17 +6,17 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
 import type { LeaderboardEntry } from "@/data/leaderboard/get";
+import { getLatestMonthKey } from "@/lib/utils.client";
 import { MonthSelector } from "./month-selector";
 
 type PodiumClientProps = {
   allData: Record<string, LeaderboardEntry[]>;
-  currentMonthKey: string;
 };
 
 const PODIUM_ORDER = [1, 0, 2];
 
-export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
-  const [month, setMonth] = useState<Key>(() => currentMonthKey);
+export function PodiumClient({ allData }: PodiumClientProps) {
+  const [month, setMonth] = useState<Key>(() => getLatestMonthKey(allData));
 
   const availableMonths = Object.keys(allData).toSorted().toReversed();
   const data = allData[month]?.length

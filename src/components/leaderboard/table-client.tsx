@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import type { AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
+import { getLatestMonthKey } from "@/lib/utils.client";
 import { PeriodSelector } from "./period-selector";
 
 function getRankBadgeClass(rank: number): string {
@@ -37,12 +38,12 @@ function EmptyState() {
 
 type TableClientProps = {
   allData: AllTableData;
-  currentMonthKey: string;
 };
 
-export function TableClient({ allData, currentMonthKey }: TableClientProps) {
+export function TableClient({ allData }: TableClientProps) {
   const [period, setPeriod] = useState<LeaderboardPeriod>("monthly");
 
+  const currentMonthKey = getLatestMonthKey(allData.monthly);
   const entries = period === "monthly" ? (allData.monthly[currentMonthKey] ?? []) : allData[period];
 
   if (entries.length === 0) return <EmptyState />;

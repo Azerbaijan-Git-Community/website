@@ -16,6 +16,14 @@ export function formatMonthKey(key: string): string {
   });
 }
 
+export function getLatestMonthKey(data: Record<string, unknown>): string {
+  let latest = "";
+  for (const key of Object.keys(data)) {
+    if (key > latest) latest = key;
+  }
+  return latest;
+}
+
 export function getTimeLeft(lastSync: Date | null): number {
   if (!lastSync) return 0;
   const next = new Date(lastSync).getTime() + SYNC_INTERVAL_MS;

@@ -1,8 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getPodiumData } from "@/data/leaderboard/get";
 import { getOgFonts } from "@/lib/og-fonts";
-import { formatMonthKey } from "@/lib/utils.client";
-import { getMonthKey } from "@/lib/utils.server";
+import { formatMonthKey, getLatestMonthKey } from "@/lib/utils.client";
 
 export const alt = "Monthly Leaderboard — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
@@ -17,13 +16,9 @@ const MEDAL_CONFIG = [
 ] as const;
 
 export default async function Image() {
-  const currentMonthKey = getMonthKey();
   const [fonts, podiumData] = await Promise.all([getOgFonts(), getPodiumData()]);
 
-  const months = Object.keys(podiumData).toSorted().toReversed();
-  const month = podiumData[currentMonthKey]?.length
-    ? currentMonthKey
-    : (months.find((m) => m < currentMonthKey) ?? months[0] ?? currentMonthKey);
+  const month = getLatestMonthKey(podiumData);
   const entries = podiumData[month] ?? [];
 
   return new ImageResponse(
