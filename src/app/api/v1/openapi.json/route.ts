@@ -13,4 +13,4 @@ export function GET() {
   });
 }
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

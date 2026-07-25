@@ -7,7 +7,6 @@ import { formatDate } from "@/lib/utils.client";
 export const alt = "Developer Blog — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const revalidate = 86400;
 
 export default async function Image() {
   const [fonts, blogPosts] = await Promise.all([getOgFonts(), getBlogPosts()]);
@@ -57,7 +56,7 @@ export default async function Image() {
                 flexDirection: "column",
                 background: "rgba(22, 27, 34, 0.8)",
                 border: "1px solid rgba(240, 246, 252, 0.1)",
-                borderRadius: 16,
+                borderRadius: 9,
                 width: 350,
               }}
             >
@@ -67,7 +66,7 @@ export default async function Image() {
                 alt={post.title}
                 width={350}
                 height={175}
-                style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, objectFit: "cover" }}
+                style={{ borderTopLeftRadius: 9, borderTopRightRadius: 9, objectFit: "cover" }}
               />
 
               <div tw="px-5 pt-4 pb-4" style={{ display: "flex", flexDirection: "column", gap: 10 }}>

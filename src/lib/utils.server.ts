@@ -1,4 +1,3 @@
-import "server-only";
 import type { NextRequest } from "next/server";
 
 export function getBearerToken(req: NextRequest): string | null {

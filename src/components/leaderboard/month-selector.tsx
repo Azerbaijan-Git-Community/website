@@ -1,25 +1,20 @@
 "use client";
 
-import { ListBox, Select } from "@heroui/react";
+import { type Key, ListBox, Select } from "@heroui/react";
 import { PiCaretUpDownBold } from "react-icons/pi";
 import { formatMonthKey } from "@/lib/utils.client";
 
 type MonthSelectorProps = {
   months: string[];
-  month: string;
-  onMonthChange: (monthKey: string) => void;
+  month: Key;
+  onMonthChange: (monthKey: Key) => void;
 };
 
 export function MonthSelector({ months, month, onMonthChange }: MonthSelectorProps) {
   return (
     <div className="mx-auto max-w-xs">
-      <Select
-        aria-label="Select month"
-        value={month}
-        onChange={(key) => onMonthChange(key as string)}
-        className="w-full"
-      >
-        <Select.Trigger className="glass w-full rounded-lg px-4 py-3 font-outfit text-base font-semibold text-hi transition-all hover:border-blue focus:ring-2 focus:ring-blue focus:outline-none">
+      <Select aria-label="Select month" value={month} onChange={(key) => onMonthChange(key!)} className="w-full">
+        <Select.Trigger className="glass w-full rounded-lg px-4 py-3 font-outfit text-base font-semibold text-hi transition-colors hover:border-blue focus:ring-2 focus:ring-blue focus:outline-none">
           <Select.Value />
           <Select.Indicator aria-label="Toggle month picker" className="size-4 text-lo">
             <PiCaretUpDownBold />

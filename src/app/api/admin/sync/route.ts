@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { SYNC_TARGETS, type SyncTarget } from "@/lib/constants";
 import { clientEnv } from "@/lib/env.client";
 import { serverEnv } from "@/lib/env.server";
+import { ResponseSchema } from "@/lib/utils";
 
 /**
  * Builds the outgoing request (URL + auth header) for a sync target, mirroring
@@ -26,9 +27,11 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
       };
     case "github":
       return {
-        url: `${base}/api/cron/sync-github`,
-        headers: { "x-cron-secret": serverEnv.CRON_SECRET },
+        url: `${base}/api/webhooks/github-stats`,
+        headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
+    default:
+      throw new Error(`Unknown sync target: ${String(target)}`);
   }
 }
 
@@ -38,26 +41,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = z.object({ target: z.string() }).safeParse(await req.json().catch(() => null));
+  const body = z.object({ target: z.enum(SYNC_TARGETS) }).safeParse(await req.json().catch(() => null));
   if (!body.success) {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  const target = body.data.target;
-
-  if (!target || !SYNC_TARGETS.includes(target as SyncTarget)) {
     return NextResponse.json({ error: "Invalid sync target" }, { status: 400 });
   }
 
-  const { url, headers: syncHeaders } = buildSyncRequest(target as SyncTarget);
+  const { url, headers: syncHeaders } = buildSyncRequest(body.data.target);
 
   const res = await fetch(url, {
     method: "POST",
     headers: { ...syncHeaders, "Content-Type": "application/json" },
     cache: "no-store",
+    redirect: "manual",
   });
 
-  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  const data = ResponseSchema.parse(await res.json().catch(() => ({})));
 
   return NextResponse.json(data, { status: res.status });
 }

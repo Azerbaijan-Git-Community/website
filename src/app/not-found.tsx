@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-6 pt-26 pb-24">
+    <div className="flex min-h-svh items-center justify-center px-6 pt-26 pb-24">
       <div className="w-full max-w-xl text-center">
         <h1 className="text-gradient font-outfit text-[clamp(5rem,18vw,11rem)] leading-none font-bold">404</h1>
 
@@ -38,14 +38,14 @@ export default function NotFound() {
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/"
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-blue to-purple px-6 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-blue to-purple px-6 text-sm font-semibold text-white transition-[transform,opacity] hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
           >
             <PiHouseBold className="size-4" />
             Back to home
           </Link>
           <Link
             href="/leaderboard"
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-surface px-6 text-sm font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-surface px-6 text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay sm:w-auto"
           >
             <PiArrowLeftBold className="size-4" />
             View leaderboard

@@ -49,7 +49,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build
+        run: pnpm prisma generate && pnpm next typegen
 
       - name: Format check
         run: pnpm fmt:check
@@ -89,4 +89,4 @@ jobs:
         run: pnpm build
 
       - name: Run Lighthouse CI
-        run: pnpm dlx @lhci/cli@0.15.x autorun
+        run: pnpx @lhci/cli@latest autorun

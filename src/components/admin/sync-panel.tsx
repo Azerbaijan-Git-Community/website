@@ -12,6 +12,7 @@ import {
   PiXCircleBold,
 } from "react-icons/pi";
 import { type SyncTarget } from "@/lib/constants";
+import { ResponseSchema } from "@/lib/utils";
 
 type SyncRow = {
   target: SyncTarget;
@@ -28,7 +29,7 @@ const ROWS: SyncRow[] = [
     target: "github",
     title: "GitHub Stats",
     method: "POST",
-    endpoint: "/api/cron/sync-github",
+    endpoint: "/api/webhooks/github-stats",
     icon: PiGithubLogoBold,
   },
   { target: "blog", title: "Blog", method: "POST", endpoint: "/api/webhooks/blog", icon: PiNewspaperBold },
@@ -53,7 +54,8 @@ export function SyncPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ target }),
       });
-      const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
+
+      const data = ResponseSchema.parse(await res.json().catch(() => ({})));
 
       if (!res.ok) {
         let message = data.error;
@@ -126,7 +128,7 @@ export function SyncPanel() {
               <Button
                 isDisabled={running !== null}
                 onClick={() => runSync(row.target)}
-                className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-xs font-semibold text-hi transition-all hover:border-lo hover:bg-overlay disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-xs font-semibold text-hi transition-[background-color,border-color,opacity] hover:border-lo hover:bg-overlay disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <PiArrowsClockwise className={`size-3.5 ${isRunning ? "animate-spin" : ""}`} />
                 {isRunning ? "Running…" : "Run"}

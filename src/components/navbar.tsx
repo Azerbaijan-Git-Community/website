@@ -1,19 +1,12 @@
-import type { Route } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { navigationLinks } from "@/lib/constants";
 import { MobileMenu } from "./mobile-menu";
 import { SignInButton } from "./sign-in-button";
 import { UserAvatar } from "./user-avatar";
-
-const links: { href: Route; label: string }[] = [
-  { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/showcase", label: "Showcase" },
-];
 
 async function NavAuth() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -44,8 +37,8 @@ export function Navbar() {
         </Link>
 
         {/* Nav links — hidden on mobile */}
-        <div className="hidden gap-8 md:flex">
-          {links.map((link) => (
+        <div className="hidden gap-10 md:flex">
+          {navigationLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}

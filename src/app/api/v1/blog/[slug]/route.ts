@@ -12,21 +12,7 @@ export const GET = withApi<Ctx>(async (_req, ctx) => {
     return apiError(404, "not_found", `No blog post with slug "${slug}".`);
   }
 
-  // Mirror the DB row but drop the sync-bookkeeping `contentSha`.
-  return apiSuccess({
-    id: post.id,
-    slug: post.slug,
-    title: post.title,
-    description: post.description,
-    tags: post.tags,
-    coverImage: post.coverImage,
-    userId: post.userId,
-    contentMdx: post.contentMdx,
-    readingTime: post.readingTime,
-    createdAt: post.createdAt,
-    updatedAt: post.updatedAt,
-    author: post.author,
-  });
+  return apiSuccess(post);
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

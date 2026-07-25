@@ -1,21 +1,22 @@
 "use client";
 
+import type { Key } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
-import { type LeaderboardEntry } from "@/data/leaderboard/get";
+import type { LeaderboardEntry } from "@/data/leaderboard/get";
+import { getLatestMonthKey } from "@/lib/utils.client";
 import { MonthSelector } from "./month-selector";
 
 type PodiumClientProps = {
   allData: Record<string, LeaderboardEntry[]>;
-  currentMonthKey: string;
 };
 
 const PODIUM_ORDER = [1, 0, 2];
 
-export function PodiumClient({ allData, currentMonthKey }: PodiumClientProps) {
-  const [month, setMonth] = useState(() => currentMonthKey);
+export function PodiumClient({ allData }: PodiumClientProps) {
+  const [month, setMonth] = useState<Key>(() => getLatestMonthKey(allData));
 
   const availableMonths = Object.keys(allData).toSorted().toReversed();
   const data = allData[month]?.length
@@ -60,7 +61,7 @@ const MEDAL_CONFIG = [
     size: 80,
     badgeSize: "size-10 text-xl",
     isFirst: false,
-    icon: <FaMedal className="sizeyy-5" />,
+    icon: <FaMedal className="size-5" />,
   },
   {
     ring: "ring-[#CD7F32]",
@@ -75,7 +76,7 @@ const MEDAL_CONFIG = [
 ] as const;
 
 type PodiumCardProps = {
-  entry: LeaderboardEntry;
+  entry: LeaderboardEntry | undefined;
   config: (typeof MEDAL_CONFIG)[number];
   mt?: string;
 };

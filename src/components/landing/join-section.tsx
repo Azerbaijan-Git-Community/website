@@ -25,7 +25,7 @@ export function JoinSection() {
               href="https://github.com/Azerbaijan-Git-Community"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-green px-8 py-4 text-lg font-semibold text-black transition-all hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_20px_rgba(46,160,67,0.5)]"
+              className="inline-flex items-center gap-2 rounded-md bg-green px-8 py-4 text-lg font-semibold text-black transition-[transform,background-color,box-shadow] hover:-translate-y-0.5 hover:bg-lime hover:shadow-[0_0_20px_rgba(46,160,67,0.5)]"
             >
               <PiGithubLogo size={22} />
               Join on GitHub
@@ -34,7 +34,7 @@ export function JoinSection() {
               href="https://t.me/github_azerbaijan"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
+              className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
             >
               <PiTelegramLogo size={22} />
               Telegram Community
@@ -43,7 +43,7 @@ export function JoinSection() {
               href="https://signal.group/#CjQKIKatOPCrxxviN5HqbFZAgYD0QLcINoanWPB-1ZTV7sjnEhAmLiVp40DtkfM2fw-cMJIo"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
+              className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
             >
               <SiSignal size={22} />
               Signal Community

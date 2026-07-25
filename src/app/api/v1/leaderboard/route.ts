@@ -1,18 +1,17 @@
-import { getLastSyncTime, getTableData } from "@/data/leaderboard/get";
+import { getLastSyncTime, getTableDataByMonth } from "@/data/leaderboard/get";
 import { apiSuccess, handleOptions } from "@/lib/api/response";
 import { withApi } from "@/lib/api/with-api";
 import { getMonthKey } from "@/lib/utils.server";
 
 export const GET = withApi(async () => {
-  const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
   const month = getMonthKey();
-  const entries = table.monthly[month] ?? [];
+  const [entries, lastSync] = await Promise.all([getTableDataByMonth(month), getLastSyncTime()]);
 
   return apiSuccess(entries, {
     month,
     count: entries.length,
-    lastSyncedAt: lastSync ? lastSync.toISOString() : null,
+    lastSyncedAt: lastSync?.toISOString() ?? null,
   });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

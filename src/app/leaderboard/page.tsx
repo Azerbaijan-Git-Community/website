@@ -6,7 +6,6 @@ import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getLastSyncTime, getPodiumData, getTableData } from "@/data/leaderboard/get";
-import { getMonthKey } from "@/lib/utils.server";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
@@ -27,11 +26,10 @@ export default async function LeaderboardPage() {
   cacheLife("days");
   cacheTag("leaderboard");
 
-  const currentMonthKey = getMonthKey();
   const [tableData, podiumData, lastSync] = await Promise.all([getTableData(), getPodiumData(), getLastSyncTime()]);
 
   return (
-    <div className="min-h-screen pt-32 pb-24">
+    <div className="min-h-svh pt-32 pb-24">
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
@@ -41,12 +39,12 @@ export default async function LeaderboardPage() {
             Monthly <span className="text-gradient">Leaderboard</span>
           </h1>
           <h2 className="mx-auto mb-6 max-w-2xl text-xl text-lo">
-            Celebrating our top contributors pushing Azerbaijan&apos;s open-source future forward.
+            Top 50 contributors pushing Azerbaijan&apos;s open-source future forward.
           </h2>
         </div>
 
         <div className="mb-16">
-          <PodiumClient allData={podiumData} currentMonthKey={currentMonthKey} />
+          <PodiumClient allData={podiumData} />
         </div>
 
         {lastSync && (
@@ -66,7 +64,7 @@ export default async function LeaderboardPage() {
           </div>
         )}
 
-        <TableClient allData={tableData} currentMonthKey={currentMonthKey} />
+        <TableClient allData={tableData} />
       </div>
     </div>
   );

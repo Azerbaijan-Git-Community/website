@@ -1,8 +1,10 @@
-export function ok<T = void>(data?: T): ActionResult<T> {
-  return { ok: true, data: data as T };
+export function ok(): ActionSuccess<undefined>;
+export function ok<T>(data: T): ActionSuccess<T>;
+export function ok<T>(data?: T): ActionSuccess<T | undefined> {
+  return { ok: true, data };
 }
 
-export function err(error: unknown): ActionResult<never> {
+export function err(error: unknown): ActionFailure {
   console.error(error);
 
   let message: string;
@@ -11,7 +13,7 @@ export function err(error: unknown): ActionResult<never> {
   } else if (error instanceof Error) {
     message = error.message;
   } else if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
-    message = String(error.message);
+    message = error.message;
   } else {
     message = "Something went wrong on our side.";
   }

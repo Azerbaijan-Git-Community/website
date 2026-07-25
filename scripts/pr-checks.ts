@@ -77,9 +77,13 @@ for (const check of checks) {
     console.log(`\n${GREEN}✔ PASSED: ${check.name}${RESET}\n`);
     passed++;
   } catch (err: unknown) {
-    // Collect stderr output, print it cleanly before prompt
     if (err && typeof err === "object" && "stderr" in err) {
-      errorOutput = String((err as { stderr: string }).stderr ?? "");
+      const { stderr } = err;
+      if (typeof stderr === "string") {
+        errorOutput = stderr;
+      } else if (Buffer.isBuffer(stderr)) {
+        errorOutput = stderr.toString("utf8");
+      }
     }
     if (errorOutput) process.stderr.write(errorOutput);
 

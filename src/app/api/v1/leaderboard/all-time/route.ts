@@ -7,8 +7,8 @@ export const GET = withApi(async () => {
 
   return apiSuccess(table.allTime, {
     count: table.allTime.length,
-    lastSyncedAt: lastSync ? lastSync.toISOString() : null,
+    lastSyncedAt: lastSync?.toISOString() ?? null,
   });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

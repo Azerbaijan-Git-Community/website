@@ -1,18 +1,10 @@
 "use client";
 
-import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PiList, PiX } from "react-icons/pi";
-
-const links: { href: Route; label: string }[] = [
-  { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/showcase", label: "Showcase" },
-  { href: "/api-docs", label: "API" },
-];
+import { navigationLinks } from "@/lib/constants";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -27,9 +19,9 @@ export function MobileMenu() {
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (e.target instanceof Node && containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
     }
@@ -50,10 +42,10 @@ export function MobileMenu() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-20 right-0 z-50 flex h-[calc(100dvh-80px)] w-64 flex-col border-l border-line bg-canvas transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-20 right-0 z-50 flex h-[calc(100svh-80px)] w-64 flex-col border-l border-line bg-canvas transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`}
       >
         <nav className="flex flex-col gap-1 p-4">
-          {links.map((link) => (
+          {navigationLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}

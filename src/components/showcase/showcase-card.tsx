@@ -44,7 +44,7 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
-          loading="lazy"
+          loading={[0, 1, 2].includes(index) ? "eager" : "lazy"}
         />
       </div>
 

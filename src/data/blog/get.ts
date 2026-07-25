@@ -36,6 +36,7 @@ export async function getBlogPost(slug: string) {
   return prisma.blogPost.findUnique({
     where: { slug },
     include: { author: { select: { name: true, image: true, githubUsername: true } } },
+    omit: { contentSha: true },
   });
 }
 

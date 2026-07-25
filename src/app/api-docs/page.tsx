@@ -58,7 +58,7 @@ export default function ApiDocsPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-32 pb-24">
+    <div className="min-h-svh pt-32 pb-24">
       <div className="mx-auto max-w-300 px-8">
         {/* Hero */}
         <header className="mb-12 text-center">

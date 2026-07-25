@@ -12,7 +12,7 @@ import {
 
 type JsonSchema = Record<string, unknown>;
 
-const toJson = (schema: z.ZodType): JsonSchema => z.toJSONSchema(schema, { target: "draft-2020-12" }) as JsonSchema;
+const toJson = (schema: z.ZodType): JsonSchema => z.toJSONSchema(schema, { target: "draft-2020-12" });
 
 const META_SCHEMA: JsonSchema = {
   type: "object",
@@ -74,11 +74,11 @@ export function buildOpenApiDocument(): JsonSchema {
       "/leaderboard": {
         get: {
           operationId: "getCurrentLeaderboard",
-          summary: "Current month leaderboard (top 100 by commits)",
+          summary: "Current month leaderboard (top 50 by commits)",
           tags: ["Leaderboard"],
           responses: {
             "200": {
-              description: "Top 100 contributors for the current month.",
+              description: "Top 50 contributors for the current month.",
               content: jsonContent(envelope({ type: "array", items: ref("LeaderboardEntry") })),
             },
             ...okResponses,
@@ -88,13 +88,13 @@ export function buildOpenApiDocument(): JsonSchema {
       "/leaderboard/all-time": {
         get: {
           operationId: "getAllTimeLeaderboard",
-          summary: "All-time leaderboard (top 100 by commits)",
+          summary: "All-time leaderboard (top 50 by commits)",
           description:
-            "Top 100 contributors by all-time commit count. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels this 'Last Year').",
+            "Top 50 contributors by all-time commit count. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels this 'Last Year').",
           tags: ["Leaderboard"],
           responses: {
             "200": {
-              description: "Top 100 all-time contributors.",
+              description: "Top 50 all-time contributors.",
               content: jsonContent(envelope({ type: "array", items: ref("LeaderboardEntry") })),
             },
             ...okResponses,
@@ -104,7 +104,7 @@ export function buildOpenApiDocument(): JsonSchema {
       "/leaderboard/{year}/{month}": {
         get: {
           operationId: "getMonthlyLeaderboard",
-          summary: "Historical month leaderboard (top 100 by commits)",
+          summary: "Historical month leaderboard (top 50 by commits)",
           tags: ["Leaderboard"],
           parameters: [
             { name: "year", in: "path", required: true, schema: { type: "integer", example: 2026 } },
@@ -117,7 +117,7 @@ export function buildOpenApiDocument(): JsonSchema {
           ],
           responses: {
             "200": {
-              description: "Top 100 contributors for the requested month.",
+              description: "Top 50 contributors for the requested month.",
               content: jsonContent(envelope({ type: "array", items: ref("LeaderboardEntry") })),
             },
             "400": errorResponse("Invalid year or month."),

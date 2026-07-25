@@ -1,5 +1,5 @@
 import z from "zod";
-import { getLastSyncTime, getTableData } from "@/data/leaderboard/get";
+import { getLastSyncTime, getTableDataByMonth } from "@/data/leaderboard/get";
 import { apiError, apiSuccess, handleOptions } from "@/lib/api/response";
 import { withApi } from "@/lib/api/with-api";
 
@@ -18,8 +18,7 @@ export const GET = withApi<Ctx>(async (_req, ctx) => {
   }
 
   const monthKey = `${parsed.data.year}-${String(parsed.data.month).padStart(2, "0")}`;
-  const [table, lastSync] = await Promise.all([getTableData(), getLastSyncTime()]);
-  const entries = table.monthly[monthKey];
+  const [entries, lastSync] = await Promise.all([getTableDataByMonth(monthKey), getLastSyncTime()]);
 
   if (!entries || entries.length === 0) {
     return apiError(404, "not_found", `No leaderboard data for ${monthKey}.`);
@@ -28,8 +27,8 @@ export const GET = withApi<Ctx>(async (_req, ctx) => {
   return apiSuccess(entries, {
     month: monthKey,
     count: entries.length,
-    lastSyncedAt: lastSync ? lastSync.toISOString() : null,
+    lastSyncedAt: lastSync?.toISOString() ?? null,
   });
 });
 
-export const OPTIONS = () => handleOptions();
+export { handleOptions as OPTIONS };

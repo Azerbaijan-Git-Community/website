@@ -37,13 +37,12 @@ function EmptyState() {
 
 type TableClientProps = {
   allData: AllTableData;
-  currentMonthKey: string;
 };
 
-export function TableClient({ allData, currentMonthKey }: TableClientProps) {
+export function TableClient({ allData }: TableClientProps) {
   const [period, setPeriod] = useState<LeaderboardPeriod>("monthly");
 
-  const entries = period === "monthly" ? (allData.monthly[currentMonthKey] ?? []) : allData[period];
+  const entries = allData[period];
 
   if (entries.length === 0) return <EmptyState />;
 

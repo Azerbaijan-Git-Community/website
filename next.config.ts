@@ -4,8 +4,12 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
   typedRoutes: true,
+  partialPrefetching: true,
   experimental: {
     viewTransition: true,
+    useTypeScriptCli: true,
+    // useOffline: true,
+    turbopackRustReactCompiler: true,
   },
   images: {
     qualities: [75, 100],

@@ -1,13 +1,11 @@
 import { ImageResponse } from "next/og";
 import { getPodiumData } from "@/data/leaderboard/get";
 import { getOgFonts } from "@/lib/og-fonts";
-import { formatMonthKey } from "@/lib/utils.client";
-import { getMonthKey } from "@/lib/utils.server";
+import { formatMonthKey, getLatestMonthKey } from "@/lib/utils.client";
 
 export const alt = "Monthly Leaderboard — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const revalidate = 3600;
 
 const PODIUM_ORDER = [1, 0, 2] as const;
 
@@ -18,13 +16,9 @@ const MEDAL_CONFIG = [
 ] as const;
 
 export default async function Image() {
-  const currentMonthKey = getMonthKey();
   const [fonts, podiumData] = await Promise.all([getOgFonts(), getPodiumData()]);
 
-  const months = Object.keys(podiumData).toSorted().toReversed();
-  const month = podiumData[currentMonthKey]?.length
-    ? currentMonthKey
-    : (months.find((m) => m < currentMonthKey) ?? months[0] ?? currentMonthKey);
+  const month = getLatestMonthKey(podiumData);
   const entries = podiumData[month] ?? [];
 
   return new ImageResponse(
@@ -72,7 +66,7 @@ export default async function Image() {
                 style={{
                   background: "rgba(22, 27, 34, 0.8)",
                   border: "1px solid rgba(240, 246, 252, 0.1)",
-                  borderRadius: 16,
+                  borderRadius: 9,
                   width: config.isFirst ? 340 : 300,
                   marginBottom: config.isFirst ? 0 : 24,
                   position: "relative",
@@ -137,7 +131,7 @@ export default async function Image() {
                   style={{
                     background: "rgba(13, 17, 23, 0.5)",
                     border: "1px solid #30363d",
-                    borderRadius: 12,
+                    borderRadius: 6,
                   }}
                 >
                   <div tw="mb-1 text-[12px] tracking-wider uppercase" style={{ fontFamily: "Inter", color: "#8b949e" }}>

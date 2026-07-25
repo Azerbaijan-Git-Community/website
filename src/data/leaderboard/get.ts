@@ -1,9 +1,9 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Prisma } from "@/generated/prisma/client";
-import { type GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
+import type { GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
 import { prisma } from "@/lib/prisma";
-import { getWeekKey } from "@/lib/utils.server";
+import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 export type LeaderboardPeriod = "weekly" | "monthly" | "allTime";
 
@@ -12,7 +12,7 @@ export type LeaderboardEntry = GithubStatsSnapshotGetPayload<{ select: typeof en
 export type AllTableData = {
   weekly: LeaderboardEntry[];
   allTime: LeaderboardEntry[];
-  monthly: Record<string, LeaderboardEntry[]>;
+  monthly: LeaderboardEntry[];
 };
 
 const userSelect = { githubUsername: true, name: true, image: true } satisfies Prisma.UserSelect;
@@ -22,6 +22,7 @@ const entrySelect = {
   pullRequests: true,
   issues: true,
   reviews: true,
+
   user: { select: userSelect },
 } satisfies Prisma.GithubStatsSnapshotSelect;
 
@@ -30,38 +31,37 @@ export async function getTableData(): Promise<AllTableData> {
   cacheLife("weeks");
   cacheTag("leaderboard");
 
-  const [weeklyRaw, allTimeRaw, monthlyRaw] = await Promise.all([
+  const [weekly, monthly, allTime] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({
       where: { period: "WEEKLY", periodKey: getWeekKey(), user: { banned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
-      take: 100,
+      take: 50,
     }),
+    getTableDataByMonth(getMonthKey()),
     prisma.githubStats.findMany({
       where: { user: { banned: false } },
       select: entrySelect,
       orderBy: { commits: "desc" },
-      take: 100,
-    }),
-    prisma.githubStatsSnapshot.findMany({
-      where: { period: "MONTHLY", user: { banned: false } },
-      select: { ...entrySelect, periodKey: true },
-      orderBy: { commits: "desc" },
+      take: 50,
     }),
   ]);
 
-  const weekly = weeklyRaw as unknown as LeaderboardEntry[];
-  const allTime = allTimeRaw as unknown as LeaderboardEntry[];
-
-  const monthly: Record<string, LeaderboardEntry[]> = {};
-  // `periodKey` is only used to bucket entries; it must not leak into the entry itself
-  // (it isn't part of LeaderboardEntry and breaks the API/MCP output schema).
-  for (const { periodKey, ...entry } of monthlyRaw) {
-    if (!monthly[periodKey]) monthly[periodKey] = [];
-    if (monthly[periodKey].length < 100) monthly[periodKey].push(entry as unknown as LeaderboardEntry);
-  }
-
   return { weekly, allTime, monthly };
+}
+
+/** Top 50 contributors for a specific month (`YYYY-MM`), ranked by commits. */
+export async function getTableDataByMonth(monthKey: string): Promise<LeaderboardEntry[]> {
+  "use cache";
+  cacheLife("weeks");
+  cacheTag("leaderboard");
+
+  return prisma.githubStatsSnapshot.findMany({
+    where: { period: "MONTHLY", periodKey: monthKey, user: { banned: false } },
+    select: entrySelect,
+    orderBy: { commits: "desc" },
+    take: 50,
+  });
 }
 
 export async function getLastSyncTime(): Promise<Date | null> {
@@ -82,10 +82,28 @@ export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]
   cacheLife("weeks");
   cacheTag("leaderboard");
 
-  const { monthly } = await getTableData();
+  const monthKeys = (
+    await prisma.githubStatsSnapshot.findMany({
+      where: { period: "MONTHLY", user: { banned: false } },
+      select: { periodKey: true },
+      distinct: ["periodKey"],
+    })
+  ).map((row) => row.periodKey);
+
+  const perMonth = await Promise.all(
+    monthKeys.map((periodKey) =>
+      prisma.githubStatsSnapshot.findMany({
+        where: { period: "MONTHLY", periodKey, user: { banned: false } },
+        select: entrySelect,
+        orderBy: { commits: "desc" },
+        take: 3,
+      }),
+    ),
+  );
+
   const podium: Record<string, LeaderboardEntry[]> = {};
-  for (const [key, entries] of Object.entries(monthly)) {
-    podium[key] = entries.slice(0, 3);
-  }
+  monthKeys.forEach((periodKey, i) => {
+    podium[periodKey] = perMonth[i];
+  });
   return podium;
 }

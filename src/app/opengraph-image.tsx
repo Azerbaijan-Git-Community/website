@@ -8,7 +8,6 @@ import { getOgFonts } from "@/lib/og-fonts";
 export const alt = "Azerbaijan GitHub Community — National 5-Year Target";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const revalidate = 3600;
 
 const GOAL = 5_000_000;
 
@@ -58,7 +57,7 @@ export default async function Image() {
           tw="flex items-center px-4 py-2"
           style={{
             border: "1px solid #30363d",
-            borderRadius: 10,
+            borderRadius: 4.5,
             background: "#161b22",
             gap: 8,
           }}
@@ -100,7 +99,7 @@ export default async function Image() {
             width: 500,
             background: "rgba(22, 27, 34, 0.8)",
             border: "1px solid rgba(240, 246, 252, 0.1)",
-            borderRadius: 16,
+            borderRadius: 9,
             padding: "32px 36px",
           }}
         >

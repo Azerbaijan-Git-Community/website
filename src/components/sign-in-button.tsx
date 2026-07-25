@@ -23,11 +23,11 @@ export function SignInButton() {
 
   return (
     <Button
-      onClick={() => {
+      onClick={async () => {
         const pathname = window.location.pathname;
-        authClient.signIn.social({ provider: "github", callbackURL: pathname });
+        await authClient.signIn.social({ provider: "github", callbackURL: pathname });
       }}
-      className="inline-flex h-full w-26 items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm font-semibold text-hi transition-all hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
+      className="inline-flex h-full w-26 items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
     >
       <PiGithubLogoBold className="size-4" />
       Sign in
