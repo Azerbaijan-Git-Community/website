@@ -1,0 +1,18 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/blog",
+        "http://localhost:3000/blog/hello-world",
+        "http://localhost:3000/leaderboard",
+        "http://localhost:3000/showcase"
+      ],
+      "startServerCommand": "pnpm start",
+      "startServerReadyPattern": "Ready in"
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

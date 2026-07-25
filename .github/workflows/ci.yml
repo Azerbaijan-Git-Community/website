@@ -89,4 +89,4 @@ jobs:
         run: pnpm build
 
       - name: Run Lighthouse CI
-        run: pnpm dlx @lhci/cli@0.15.x autorun
+        run: pnpx @lhci/cli@latest autorun
