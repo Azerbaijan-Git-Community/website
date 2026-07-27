@@ -443,24 +443,10 @@ body {
 }
 
 /* Hero Visual + Counter */
-@property --num {
-  syntax: "<integer>";
-  initial-value: 0;
-  inherits: false;
-}
-
 .hero-visual {
   opacity: 0;
   translate: 0 30px;
   animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.count {
-  counter-reset: n var(--num);
-  animation: countup 2.5s cubic-bezier(0.25, 1, 0.5, 1) both;
-}
-.count::after {
-  content: counter(n);
 }
 
 .progress {
@@ -474,11 +460,6 @@ body {
     translate: 0 0;
   }
 }
-@keyframes countup {
-  to {
-    --num: var(--target);
-  }
-}
 @keyframes progress-grow {
   to {
     width: var(--progress);
@@ -487,12 +468,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-visual,
-  .count,
   .progress {
     animation: none;
-  }
-  .count {
-    --num: var(--target);
   }
   .progress {
     width: var(--progress);

@@ -1,4 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
+import { HeroCounter } from "@/components/landing/hero-counter";
 import { getGithubStats } from "@/data/stats/get";
 
 const GOAL = 5_000_000;
@@ -19,7 +20,6 @@ export async function HeroVisual() {
       style={
         // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         {
-          "--target": current,
           "--progress": `${progressPercentage}%`,
         } as React.CSSProperties
       }
@@ -32,7 +32,7 @@ export async function HeroVisual() {
       <div className="mb-3 flex justify-between">
         <div className="flex flex-col">
           <span className="mb-1 text-xs tracking-widest text-lo uppercase">Current</span>
-          <span className="count font-outfit text-3xl leading-none font-extrabold" />
+          <HeroCounter target={current} />
         </div>
         <div className="flex flex-col text-right">
           <span className="mb-1 text-xs tracking-widest text-lo uppercase">Goal</span>
