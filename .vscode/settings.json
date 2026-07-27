@@ -3,6 +3,5 @@
   "editor.formatOnSave": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "js/ts.experimental.useTsgo": true
+  }
 }
