@@ -84,8 +84,8 @@ importers:
         specifier: 7.1.0
         version: 7.1.0
       rehype-pretty-code:
-        specifier: 0.14.4
-        version: 0.14.4(shiki@4.3.1)
+        specifier: 0.14.5
+        version: 0.14.5(shiki@4.3.1)
       rehype-slug:
         specifier: 6.0.0
         version: 6.0.0
@@ -117,9 +117,6 @@ importers:
       '@types/react-syntax-highlighter':
         specifier: 15.5.13
         version: 15.5.13
-      babel-plugin-react-compiler:
-        specifier: 1.0.0
-        version: 1.0.0
       oxfmt:
         specifier: 0.60.0
         version: 0.60.0
@@ -127,7 +124,7 @@ importers:
         specifier: 1.75.0
         version: 1.75.0(oxlint-tsgolint@7.0.2001)
       oxlint-tsgolint:
-        specifier: ^7.0.2001
+        specifier: 7.0.2001
         version: 7.0.2001
       postcss-load-config:
         specifier: 6.0.1
@@ -4031,8 +4028,8 @@ packages:
   rehype-parse@9.0.1:
     resolution: {integrity: sha512-ksCzCD0Fgfh7trPDxr2rSylbwq9iYDkSn8TCDmEJ49ljEUBxDVCzCHv7QNzZOfODanX4+bWQ4WZqLCRWYLfhag==}
 
-  rehype-pretty-code@0.14.4:
-    resolution: {integrity: sha512-FKPkiSnTqtJHKjCwfqfQs0tXSkmcq7K3jsryZI0rpazo2kWgSYw+sk18GAhxDzKdPk004WWWZ5yiZFEUQhN4Bg==}
+  rehype-pretty-code@0.14.5:
+    resolution: {integrity: sha512-+DhMMNMgOwmE0xu2RmagN63nR0GRObPIQ9TuoNdUYYIDcCr8nWXU1CJUG6yca7vg99Gp5d+62A/+ZvksmsQXjA==}
     engines: {node: '>=18'}
     peerDependencies:
       shiki: ^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
@@ -6299,6 +6296,7 @@ snapshots:
   babel-plugin-react-compiler@1.0.0:
     dependencies:
       '@babel/types': 7.29.7
+    optional: true
 
   bail@2.0.2: {}
 
@@ -8439,7 +8437,7 @@ snapshots:
       hast-util-from-html: 2.0.3
       unified: 11.0.5
 
-  rehype-pretty-code@0.14.4(shiki@4.3.1):
+  rehype-pretty-code@0.14.5(shiki@4.3.1):
     dependencies:
       '@types/hast': 3.0.5
       hast-util-to-string: 3.0.1

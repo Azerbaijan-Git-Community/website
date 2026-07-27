@@ -84,7 +84,7 @@ export const ENDPOINTS: EndpointDoc[] = [
 ];
 
 /** Path without the `/api/v1` prefix, for compact sidebar labels. */
-export function shortPath(path: string): string {
+function shortPath(path: string): string {
   return path.replace("/api/v1", "") || "/";
 }
 
@@ -93,7 +93,7 @@ export function fillPath(path: string, values: Record<string, string>): string {
   return path.replace(/\{(\w+)\}/g, (_, key: string) => encodeURIComponent(values[key] ?? `{${key}}`));
 }
 
-export const KB_SECTIONS = [
+const KB_SECTIONS = [
   { id: "introduction", label: "Introduction" },
   { id: "base-url", label: "Base URL" },
   { id: "authentication", label: "Authentication" },

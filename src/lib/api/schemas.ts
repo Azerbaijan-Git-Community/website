@@ -6,7 +6,7 @@ import z from "zod";
 
 const DateTime = z.iso.datetime().describe("ISO 8601 date-time");
 
-export const LeaderboardUserSchema = z.object({
+const LeaderboardUserSchema = z.object({
   githubUsername: z.string(),
   name: z.string().describe("The user's display name"),
   image: z.string().describe("URL of the user's avatar image from GitHub"),
