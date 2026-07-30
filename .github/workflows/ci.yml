@@ -26,7 +26,7 @@ env:
 
 jobs:
   quality:
-    name: Type & Lint
+    name: Checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -51,14 +51,8 @@ jobs:
       - name: Build
         run: pnpm prisma generate && pnpm next typegen
 
-      - name: Format check
-        run: pnpm fmt:check
-
-      - name: Type check
-        run: pnpm tsc --noEmit
-
-      - name: Lint
-        run: pnpm lint
+      - name: Checks
+        run: pnpm check
 
   lhci:
     name: Lighthouse
@@ -89,4 +83,4 @@ jobs:
         run: pnpm build
 
       - name: Run Lighthouse CI
-        run: pnpx @lhci/cli@latest autorun
+        run: pnpx @lhci/cli@0.15.x autorun

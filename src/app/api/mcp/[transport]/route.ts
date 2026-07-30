@@ -213,10 +213,6 @@ const mcpHandler = createMcpHandler(
       name: "az-git-community-mcp",
       version: "1.0.0",
     },
-  },
-  {
-    basePath: "/api/mcp",
-    maxDuration: 60,
     verboseLogs: false,
   },
 );
