@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Pre-publish check script
 // Run this before opening a PR:
-//   pnpm pre-publish
+//   pnpm check
 //
 // Checks: TypeScript · Oxlint · Oxfmt · Next.js build
 import { execSync } from "node:child_process";

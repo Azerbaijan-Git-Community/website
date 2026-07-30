@@ -1,4 +1,4 @@
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "mcp-handler";
 import { NextResponse } from "next/server";
 import { z } from "zod";
