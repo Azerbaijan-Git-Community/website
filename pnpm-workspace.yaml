@@ -13,4 +13,5 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
-  - mcp-handler@2.0.1
+  - mcp-handler@2.1.0
+  - greenly@1.0.1

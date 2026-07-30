@@ -51,14 +51,8 @@ jobs:
       - name: Build
         run: pnpm prisma generate && pnpm next typegen
 
-      - name: Format check
-        run: pnpm fmt:check
-
-      - name: Type check
-        run: pnpm tsc --noEmit
-
-      - name: Lint
-        run: pnpm lint
+      - name: Checks
+        run: pnpm check
 
   lhci:
     name: Lighthouse
