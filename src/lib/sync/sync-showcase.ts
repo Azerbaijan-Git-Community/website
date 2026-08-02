@@ -73,6 +73,51 @@ async function fetchRepoBatch(repos: Array<{ owner: string; name: string }>): Pr
   return json.data ?? {};
 }
 
+type RepoSlug = { owner: string; name: string };
+
+/**
+ * Fetches GitHub data for every repo across as many batched GraphQL queries as
+ * needed, keyed by `r${globalIndex}` so callers can align results with their
+ * input list by position.
+ */
+async function fetchRepoDataMap(repoSlugs: RepoSlug[]): Promise<Record<string, RepoGqlData>> {
+  const allGqlData: Record<string, RepoGqlData> = {};
+  const batches: Array<{ batch: RepoSlug[]; offset: number }> = [];
+  for (let i = 0; i < repoSlugs.length; i += BATCH_SIZE) {
+    batches.push({ batch: repoSlugs.slice(i, i + BATCH_SIZE), offset: i });
+  }
+
+  const results = await Promise.all(
+    batches.map(async ({ batch, offset }) => {
+      const batchData = await fetchRepoBatch(batch);
+      return { batchData, offset };
+    }),
+  );
+
+  for (const { batchData, offset } of results) {
+    for (let j = 0; j < Object.keys(batchData).length; j++) {
+      allGqlData[`r${offset + j}`] = batchData[`r${j}`];
+    }
+  }
+
+  return allGqlData;
+}
+
+/** GitHub-derived fields for a showcase project, extracted from a GraphQL repo payload. */
+function githubFields(ghData: RepoGqlData | undefined) {
+  return {
+    stars: ghData?.stargazerCount ?? 0,
+    forks: ghData?.forkCount ?? 0,
+    openIssues: ghData?.issues?.totalCount ?? 0,
+    openPRs: ghData?.pullRequests?.totalCount ?? 0,
+    description: ghData?.description ?? null,
+    homepageUrl: ghData?.homepageUrl ?? null,
+    license: ghData?.licenseInfo?.spdxId ?? null,
+    language: ghData?.primaryLanguage?.name ?? null,
+    languageColor: ghData?.primaryLanguage?.color ?? null,
+  };
+}
+
 export async function syncShowcase(): Promise<{ synced: number; skipped: number }> {
   const [allFiles, existing] = await Promise.all([
     fetchRegistry(),
@@ -88,49 +133,22 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
 
   if (changedFiles.length > 0) {
     // Batch GraphQL queries only for changed files
-    const repoSlugs = changedFiles.map((f) => {
-      const [owner, name] = f.yaml.repo.split("/");
-      return { owner, name };
-    });
-
-    const allGqlData: Record<string, RepoGqlData> = {};
-    const batches = [];
-    for (let i = 0; i < repoSlugs.length; i += BATCH_SIZE) {
-      const batch = repoSlugs.slice(i, i + BATCH_SIZE);
-      batches.push({ batch, offset: i });
-    }
-
-    const results = await Promise.all(
-      batches.map(async ({ batch, offset }) => {
-        const batchData = await fetchRepoBatch(batch);
-        return { batchData, offset };
+    const allGqlData = await fetchRepoDataMap(
+      changedFiles.map((f) => {
+        const [owner, name] = f.yaml.repo.split("/");
+        return { owner, name };
       }),
     );
-
-    for (const { batchData, offset } of results) {
-      for (let j = 0; j < Object.keys(batchData).length; j++) {
-        allGqlData[`r${offset + j}`] = batchData[`r${j}`];
-      }
-    }
 
     await Promise.all(
       changedFiles.map(async (file, index) => {
         const project = file.yaml;
-        const ghData = allGqlData[`r${index}`];
         const shared = {
           submittedBy: project.submittedBy,
           banner: project.banner ?? null,
           links: project.links ?? [],
           website: project.website ?? null,
-          stars: ghData?.stargazerCount ?? 0,
-          forks: ghData?.forkCount ?? 0,
-          openIssues: ghData?.issues?.totalCount ?? 0,
-          openPRs: ghData?.pullRequests?.totalCount ?? 0,
-          description: ghData?.description ?? null,
-          homepageUrl: ghData?.homepageUrl ?? null,
-          license: ghData?.licenseInfo?.spdxId ?? null,
-          language: ghData?.primaryLanguage?.name ?? null,
-          languageColor: ghData?.primaryLanguage?.color ?? null,
+          ...githubFields(allGqlData[`r${index}`]),
           fileSha: file.sha,
         };
 
@@ -146,4 +164,37 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
   }
 
   return { synced: changedFiles.length, skipped };
+}
+
+/**
+ * Refreshes GitHub-derived data (stars, forks, open issues/PRs, license,
+ * language, description, homepage) for every showcase project already in the
+ * database — regardless of whether its registry YAML changed. Registry-owned
+ * fields (submittedBy, banner, links, website, fileSha) are left untouched.
+ */
+export async function syncShowcaseData(): Promise<{ synced: number }> {
+  const projects = await prisma.showcaseProject.findMany({ select: { repo: true } });
+  if (projects.length === 0) {
+    return { synced: 0 };
+  }
+
+  const allGqlData = await fetchRepoDataMap(
+    projects.map((p) => {
+      const [owner, name] = p.repo.split("/");
+      return { owner, name };
+    }),
+  );
+
+  await Promise.all(
+    projects.map(async (project, index) =>
+      prisma.showcaseProject.update({
+        where: { repo: project.repo },
+        data: githubFields(allGqlData[`r${index}`]),
+      }),
+    ),
+  );
+
+  revalidateTag("showcase", { expire: 0 });
+
+  return { synced: projects.length };
 }

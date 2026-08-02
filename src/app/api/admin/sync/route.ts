@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { SYNC_TARGETS, type SyncTarget } from "@/lib/constants";
 import { clientEnv } from "@/lib/env.client";
 import { serverEnv } from "@/lib/env.server";
+import { syncShowcaseData } from "@/lib/sync/sync-showcase";
 import { ResponseSchema } from "@/lib/utils";
 
 /**
@@ -31,7 +32,7 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
         headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
     default:
-      throw new Error(`Unknown sync target: ${String(target)}`);
+      throw new Error(`Unknown sync target: ${target}`);
   }
 }
 
@@ -44,6 +45,11 @@ export async function POST(req: NextRequest) {
   const body = z.object({ target: z.enum(SYNC_TARGETS) }).safeParse(await req.json().catch(() => null));
   if (!body.success) {
     return NextResponse.json({ error: "Invalid sync target" }, { status: 400 });
+  }
+
+  if (body.data.target === "showcase-data") {
+    const result = await syncShowcaseData();
+    return NextResponse.json({ message: `Refreshed GitHub data for ${result.synced} projects` });
   }
 
   const { url, headers: syncHeaders } = buildSyncRequest(body.data.target);

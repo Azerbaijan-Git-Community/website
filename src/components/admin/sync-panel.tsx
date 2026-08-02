@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { IconType } from "react-icons";
 import {
   PiArrowsClockwise,
+  PiChartLineUpBold,
   PiCheckCircleBold,
   PiGithubLogoBold,
   PiNewspaperBold,
@@ -39,6 +40,13 @@ const ROWS: SyncRow[] = [
     method: "POST",
     endpoint: "/api/webhooks/showcase",
     icon: PiRocketLaunchBold,
+  },
+  {
+    target: "showcase-data",
+    title: "Showcase Data",
+    method: "POST",
+    endpoint: "/api/admin/sync",
+    icon: PiChartLineUpBold,
   },
 ];
 
