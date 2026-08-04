@@ -161,7 +161,7 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
       }),
     );
 
-    revalidateTag(cacheTags.showcase, { expire: 0 });
+    revalidateTag(cacheTags.showcase, "max");
   }
 
   return { synced: changedFiles.length, skipped };
@@ -195,7 +195,7 @@ export async function syncShowcaseData(): Promise<{ synced: number }> {
     ),
   );
 
-  revalidateTag(cacheTags.showcase, { expire: 0 });
+  revalidateTag(cacheTags.showcase, "max");
 
   return { synced: projects.length };
 }
