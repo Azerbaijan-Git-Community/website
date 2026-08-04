@@ -2,6 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Prisma } from "@/generated/prisma/client";
 import type { GithubStatsSnapshotGetPayload } from "@/generated/prisma/models";
+import { cacheTags } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
@@ -29,7 +30,7 @@ const entrySelect = {
 export async function getTableData(): Promise<AllTableData> {
   "use cache";
   cacheLife("max");
-  cacheTag("leaderboard");
+  cacheTag(cacheTags.leaderboard);
 
   const [weekly, monthly, allTime] = await Promise.all([
     prisma.githubStatsSnapshot.findMany({
@@ -54,7 +55,7 @@ export async function getTableData(): Promise<AllTableData> {
 export async function getTableDataByMonth(monthKey: string): Promise<LeaderboardEntry[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("leaderboard");
+  cacheTag(cacheTags.leaderboard);
 
   return prisma.githubStatsSnapshot.findMany({
     where: { period: "MONTHLY", periodKey: monthKey, user: { banned: false } },
@@ -67,7 +68,7 @@ export async function getTableDataByMonth(monthKey: string): Promise<Leaderboard
 export async function getLastSyncTime(): Promise<Date | null> {
   "use cache";
   cacheLife("max");
-  cacheTag("leaderboard");
+  cacheTag(cacheTags.leaderboard);
 
   const latest = await prisma.githubStats.findFirst({
     orderBy: { updatedAt: "desc" },
@@ -80,7 +81,7 @@ export async function getLastSyncTime(): Promise<Date | null> {
 export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]>> {
   "use cache";
   cacheLife("max");
-  cacheTag("leaderboard");
+  cacheTag(cacheTags.leaderboard);
 
   const monthKeys = (
     await prisma.githubStatsSnapshot.findMany({

@@ -1,6 +1,7 @@
 import { JSON_SCHEMA as yamlJSON_SCHEMA, load as yamlLoad } from "js-yaml";
 import { revalidateTag } from "next/cache";
 import { z } from "zod";
+import { cacheTags } from "@/lib/cache-tags";
 import { GITHUB_ORG } from "@/lib/constants";
 import { type GhContentEntry, ghGraphQL, ghText, ghJson } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
@@ -160,7 +161,7 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
       }),
     );
 
-    revalidateTag("showcase", { expire: 0 });
+    revalidateTag(cacheTags.showcase, { expire: 0 });
   }
 
   return { synced: changedFiles.length, skipped };
@@ -194,7 +195,7 @@ export async function syncShowcaseData(): Promise<{ synced: number }> {
     ),
   );
 
-  revalidateTag("showcase", { expire: 0 });
+  revalidateTag(cacheTags.showcase, { expire: 0 });
 
   return { synced: projects.length };
 }

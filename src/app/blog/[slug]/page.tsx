@@ -7,15 +7,16 @@ import { PiArrowLeft, PiCalendar } from "react-icons/pi";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { ReadingTimeBadge } from "@/components/blog/reading-time-badge";
 import { getAllBlogSlugs, getBlogPost } from "@/data/blog/get";
+import { cacheTags } from "@/lib/cache-tags";
 import { compileMdx } from "@/lib/compile-mdx";
 import { formatDate } from "@/lib/utils.client";
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
 
   const { slug } = await params;
+  cacheTag(cacheTags.blogPost(slug));
   const post = await getBlogPost(slug);
   if (!post) return {};
 
@@ -37,9 +38,9 @@ export async function generateStaticParams() {
 export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
 
   const { slug } = await params;
+  cacheTag(cacheTags.blogPost(slug));
   const post = await getBlogPost(slug);
   if (!post) notFound();
 

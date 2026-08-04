@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   partialPrefetching: true,
   experimental: {
+    useOffline: true,
     useTypeScriptCli: true,
-    // useOffline: true,
     turbopackRustReactCompiler: true,
   },
   images: {

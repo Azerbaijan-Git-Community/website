@@ -1,12 +1,13 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 export type GithubStats = Awaited<ReturnType<typeof getGithubStats>>;
 export async function getGithubStats() {
   "use cache";
   cacheLife("max");
-  cacheTag("github-stats");
+  cacheTag(cacheTags.leaderboard);
 
   const result = await prisma.githubStats.aggregate({
     where: { user: { banned: false } },

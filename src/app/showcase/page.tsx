@@ -3,6 +3,7 @@ import { cacheTag } from "next/cache";
 import { cacheLife } from "next/cache";
 import { ShowcaseCard } from "@/components/showcase/showcase-card";
 import { getShowcaseProjects } from "@/data/showcase/get";
+import { cacheTags } from "@/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "Showcase",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 export default async function ShowcasePage() {
   "use cache";
   cacheLife("max");
-  cacheTag("showcase");
+  cacheTag(cacheTags.showcase);
 
   const projects = await getShowcaseProjects();
 

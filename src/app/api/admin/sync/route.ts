@@ -28,7 +28,7 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
       };
     case "github":
       return {
-        url: `${base}/api/webhooks/github-stats`,
+        url: `${base}/api/webhooks/leaderboard`,
         headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
     default:

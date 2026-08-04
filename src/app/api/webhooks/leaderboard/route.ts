@@ -1,5 +1,5 @@
 import { webhookRoute } from "@/lib/api/webhook-route";
-import { syncGithubStats } from "@/lib/sync/sync-github-stats";
+import { syncGithubStats } from "@/lib/sync/sync-leaderboard";
 
 export const POST = webhookRoute({
   secret: process.env.CRON_SECRET,

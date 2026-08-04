@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { BlogPostCard } from "@/components/blog/blog-card";
 import { getBlogPosts } from "@/data/blog/get";
+import { cacheTags } from "@/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
+  cacheTag(cacheTags.blog);
 
   const blogPosts = await getBlogPosts();
 

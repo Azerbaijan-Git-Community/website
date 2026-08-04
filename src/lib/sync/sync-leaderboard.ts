@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { z } from "zod";
+import { cacheTags } from "@/lib/cache-tags";
 import { ghGraphQL } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
@@ -201,8 +202,7 @@ export async function syncGithubStats(): Promise<{ synced: number; failed: numbe
     }
   }
 
-  revalidateTag("github-stats", { expire: 0 });
-  revalidateTag("leaderboard", { expire: 0 });
+  revalidateTag(cacheTags.leaderboard, "max");
 
   return { synced, failed, total: users.length };
 }

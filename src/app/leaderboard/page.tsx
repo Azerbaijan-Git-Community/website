@@ -6,6 +6,7 @@ import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getLastSyncTime, getPodiumData, getTableData } from "@/data/leaderboard/get";
+import { cacheTags } from "@/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 export default async function LeaderboardPage() {
   "use cache";
   cacheLife("max");
-  cacheTag("leaderboard");
+  cacheTag(cacheTags.leaderboard);
 
   const [tableData, podiumData, lastSync] = await Promise.all([getTableData(), getPodiumData(), getLastSyncTime()]);
 

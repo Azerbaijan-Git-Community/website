@@ -14,6 +14,6 @@ jobs:
     steps:
       - name: Sync GitHub Stats
         run: |
-          response=$(curl -s -X POST "${{ secrets.APP_URL }}/api/webhooks/github-stats" \
+          response=$(curl -s -X POST "${{ secrets.APP_URL }}/api/webhooks/leaderboard" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
           echo "Response: $response"

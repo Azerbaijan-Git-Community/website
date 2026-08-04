@@ -43,7 +43,7 @@ There are no tests in this project.
 
 ### Data Flow
 
-1. **Stats sync** (`POST /api/webhooks/github-stats`): fetches GitHub GraphQL API for all users, upserts `GithubStats` (all-time) and `GithubStatsSnapshot` (weekly/monthly), then revalidates cache tags `github-stats` and `leaderboard`. Logic lives in `src/lib/sync/sync-github-stats.ts`; the route is a thin `webhookRoute()` wrapper like the blog and showcase webhooks. All three authenticate with `Authorization: Bearer <secret>`.
+1. **Stats sync** (`POST /api/webhooks/leaderboard`): fetches GitHub GraphQL API for all users, upserts `GithubStats` (all-time) and `GithubStatsSnapshot` (weekly/monthly), then revalidates cache tag `leaderboard` Logic lives in `src/lib/sync/sync-leaderboard.ts`; the route is a thin `webhookRoute()` wrapper like the blog and showcase webhooks. All three authenticate with `Authorization: Bearer <secret>`.
 2. **Leaderboard** (`src/data/leaderboard/get.ts`): server-cached queries return `AllTableData` (weekly, monthly, allTime arrays) and podium data (top 3 per month).
 3. **Stats** (`src/data/stats/get.ts`): aggregated community totals shown on the landing page hero.
 

@@ -1,4 +1,5 @@
 import { revalidateTag } from "next/cache";
+import { cacheTags } from "@/lib/cache-tags";
 import { GITHUB_ORG } from "@/lib/constants";
 import { type GhContentEntry, ghJson, ghText } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
@@ -164,8 +165,17 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; fai
     }),
   );
 
-  // 5. Invalidate cache
-  revalidateTag("blog", { expire: 0 });
+  // 5. Invalidate cache — only the posts that actually changed (each its own
+  //    page), plus the list views (blog page + sitemap) when at least one synced.
+  const failedSet = new Set(failed);
+  const syncedSlugs = toSync.filter(({ slug }) => !failedSet.has(slug));
 
-  return { synced: toSync.length - failed.length, skipped, failed };
+  for (const { slug } of syncedSlugs) {
+    revalidateTag(cacheTags.blogPost(slug), "max");
+  }
+  if (syncedSlugs.length > 0) {
+    revalidateTag(cacheTags.blog, "max");
+  }
+
+  return { synced: syncedSlugs.length, skipped, failed };
 }

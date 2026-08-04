@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getAllBlogSlugs } from "@/data/blog/get";
+import { cacheTags } from "@/lib/cache-tags";
 import { clientEnv } from "@/lib/env.client";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
+  cacheTag(cacheTags.blog);
   const baseUrl = clientEnv.NEXT_PUBLIC_BASE_URL;
 
   const blogSlugs = await getAllBlogSlugs();

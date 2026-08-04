@@ -30,7 +30,7 @@ const ROWS: SyncRow[] = [
     target: "github",
     title: "GitHub Stats",
     method: "POST",
-    endpoint: "/api/webhooks/github-stats",
+    endpoint: "/api/webhooks/leaderboard",
     icon: PiGithubLogoBold,
   },
   { target: "blog", title: "Blog", method: "POST", endpoint: "/api/webhooks/blog", icon: PiNewspaperBold },

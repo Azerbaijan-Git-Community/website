@@ -1,13 +1,14 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { HeroCounter } from "@/components/landing/hero-counter";
 import { getGithubStats } from "@/data/stats/get";
+import { cacheTags } from "@/lib/cache-tags";
 
 const GOAL = 5_000_000;
 
 export async function HeroVisual() {
   "use cache";
   cacheLife("max");
-  cacheTag("github-stats");
+  cacheTag(cacheTags.leaderboard);
 
   const data = await getGithubStats();
   const current = data?.totalCommits ?? 0;

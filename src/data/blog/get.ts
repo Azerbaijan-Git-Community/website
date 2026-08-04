@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 export type BlogPostItem = Awaited<ReturnType<typeof getBlogPosts>>[number];
@@ -7,7 +8,7 @@ export type BlogPostItem = Awaited<ReturnType<typeof getBlogPosts>>[number];
 export async function getBlogPosts() {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
+  cacheTag(cacheTags.blog);
 
   const posts = await prisma.blogPost.findMany({
     select: {
@@ -31,7 +32,7 @@ export async function getBlogPosts() {
 export async function getBlogPost(slug: string) {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
+  cacheTag(cacheTags.blogPost(slug));
 
   return prisma.blogPost.findUnique({
     where: { slug },
@@ -43,7 +44,7 @@ export async function getBlogPost(slug: string) {
 export async function getAllBlogSlugs() {
   "use cache";
   cacheLife("max");
-  cacheTag("blog");
+  cacheTag(cacheTags.blog);
 
   return prisma.blogPost.findMany({
     select: { slug: true, updatedAt: true },
