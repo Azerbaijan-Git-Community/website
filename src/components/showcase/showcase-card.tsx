@@ -22,12 +22,19 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
   const ogFallback = `https://opengraph.githubassets.com/1/${project.repo}`;
   const links = project.links ?? [];
 
+  // Only the top 3 cards animate in; the rest render immediately to avoid the
+  // laggy "wait for the card to scroll into view" feel further down the page.
+  const animateIn = index < 3;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] } }}
+      initial={animateIn ? { opacity: 0, y: 20 } : false}
+      whileInView={
+        animateIn
+          ? { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] } }
+          : undefined
+      }
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.15, delay: 0, ease: "easeOut" }}
       whileHover={{
         y: -5,
         boxShadow: `0 8px 32px rgba(0,0,0,0.2), 0 0 24px ${hexToRgba(project.languageColor, 0.3)}`,
