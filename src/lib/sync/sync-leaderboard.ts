@@ -167,7 +167,7 @@ function persistUser(userId: string, data: UserData, weekKey: string, monthKey: 
  * Fetch GitHub contribution stats for every non-banned user and upsert them into the
  * all-time table plus the weekly/monthly snapshot tables.
  */
-export async function syncGithubStats(): Promise<{ synced: number; failed: number; total: number }> {
+export async function syncLeaderboard(): Promise<{ synced: number; failed: number; total: number }> {
   const now = new Date();
   const weekKey = getWeekKey();
   const monthKey = getMonthKey();
