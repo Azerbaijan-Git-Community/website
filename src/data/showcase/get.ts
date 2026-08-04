@@ -6,7 +6,7 @@ export type ShowcaseProject = Awaited<ReturnType<typeof getShowcaseProjects>>[nu
 
 export async function getShowcaseProjects() {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("showcase");
 
   return prisma.showcaseProject.findMany({

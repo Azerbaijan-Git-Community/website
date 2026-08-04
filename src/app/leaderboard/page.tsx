@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default async function LeaderboardPage() {
   "use cache";
-  cacheLife("days");
+  cacheLife("max");
   cacheTag("leaderboard");
 
   const [tableData, podiumData, lastSync] = await Promise.all([getTableData(), getPodiumData(), getLastSyncTime()]);

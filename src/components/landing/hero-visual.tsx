@@ -6,7 +6,7 @@ const GOAL = 5_000_000;
 
 export async function HeroVisual() {
   "use cache";
-  cacheLife("days");
+  cacheLife("max");
   cacheTag("github-stats");
 
   const data = await getGithubStats();

@@ -12,7 +12,7 @@ import { formatDate } from "@/lib/utils.client";
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   const { slug } = await params;
@@ -36,7 +36,7 @@ export async function generateStaticParams() {
 
 export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   const { slug } = await params;

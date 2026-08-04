@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   const blogPosts = await getBlogPosts();

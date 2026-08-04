@@ -6,7 +6,7 @@ export type BlogPostItem = Awaited<ReturnType<typeof getBlogPosts>>[number];
 
 export async function getBlogPosts() {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   const posts = await prisma.blogPost.findMany({
@@ -30,7 +30,7 @@ export async function getBlogPosts() {
 
 export async function getBlogPost(slug: string) {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   return prisma.blogPost.findUnique({
@@ -42,7 +42,7 @@ export async function getBlogPost(slug: string) {
 
 export async function getAllBlogSlugs() {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("blog");
 
   return prisma.blogPost.findMany({

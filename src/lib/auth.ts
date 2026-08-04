@@ -38,7 +38,7 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       strategy: "jwe",
-      maxAge: 30 * 60, // 30 minutes
+      maxAge: 24 * 60 * 60, // 24 hours
     },
   },
   rateLimit: {

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function ShowcasePage() {
   "use cache";
-  cacheLife("weeks");
+  cacheLife("max");
   cacheTag("showcase");
 
   const projects = await getShowcaseProjects();
