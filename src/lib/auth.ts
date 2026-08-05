@@ -14,6 +14,9 @@ export const auth = betterAuth({
     dash(),
   ],
   experimental: { joins: true },
+  onAPIError: {
+    errorURL: "/auth/error",
+  },
   advanced: {
     database: {
       generateId: false,
