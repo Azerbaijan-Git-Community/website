@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   typedRoutes: true,
   partialPrefetching: true,
-  htmlLimitedBots: /.*/,
   experimental: {
     useOffline: true,
     useTypeScriptCli: true,
