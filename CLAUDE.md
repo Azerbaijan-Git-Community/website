@@ -14,9 +14,9 @@ Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and
 
 - `pnpm dev` — start dev server
 - `pnpm build` — generate Prisma client + Next.js production build
+- `pnpm check` — Always run this command to check for typechecking, lint and format.
 - `pnpm lint` — run Oxlint
 - `pnpm fmt:check` / `pnpm fmt` — check/fix Oxfmt formatting
-- `pnpm check` — run full PR check suite (tsc, oxfmt, oxlint, next build)
 - `pnpm prisma:generate` — regenerate Prisma client after schema changes
 
 There are no tests in this project.

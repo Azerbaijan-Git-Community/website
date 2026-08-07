@@ -12,19 +12,3 @@ allowBuilds:
   prisma: true
   sharp: true
   unrs-resolver: true
-minimumReleaseAgeExclude:
-  - "@better-auth/core@1.6.26"
-  - "@better-auth/drizzle-adapter@1.6.26"
-  - "@better-auth/kysely-adapter@1.6.26"
-  - "@better-auth/memory-adapter@1.6.26"
-  - "@better-auth/mongo-adapter@1.6.26"
-  - "@better-auth/prisma-adapter@1.6.26"
-  - "@better-auth/telemetry@1.6.26"
-  - better-auth@1.6.26
-  - deslop-js@0.9.5
-  - framer-motion@13.0.0
-  - motion-dom@13.0.0
-  - motion-utils@13.0.0
-  - motion@13.0.0
-  - oxlint-plugin-react-doctor@0.9.5
-  - react-doctor@0.9.5
