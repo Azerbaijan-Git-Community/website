@@ -12,6 +12,6 @@ export async function getShowcaseProjects() {
 
   return prisma.showcaseProject.findMany({
     omit: { fileSha: true },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   });
 }

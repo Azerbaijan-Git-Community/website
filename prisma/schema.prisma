@@ -133,7 +133,6 @@ model GithubStatsSnapshot {
 
   @@unique([userId, period, periodKey])
   @@index([period, periodKey, commits(sort: Desc)])
-  @@index([period, commits(sort: Desc)])
   @@map("github_stats_snapshot")
 }
 
