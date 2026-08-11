@@ -13,7 +13,8 @@ type PodiumClientProps = {
   allData: Record<string, LeaderboardEntry[]>;
 };
 
-const PODIUM_ORDER = [1, 0, 2];
+// Desktop podium layout (via CSS order): 2nd, 1st, 3rd. Mobile keeps natural DOM order: 1st, 2nd, 3rd.
+const PODIUM_MD_ORDER = ["md:order-2", "md:order-1", "md:order-3"] as const;
 
 export function PodiumClient({ allData }: PodiumClientProps) {
   const [month, setMonth] = useState<Key>(() => getLatestMonthKey(allData));
@@ -29,12 +30,12 @@ export function PodiumClient({ allData }: PodiumClientProps) {
         <MonthSelector months={availableMonths} month={month} onMonthChange={setMonth} />
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {PODIUM_ORDER.map((i) => (
+        {[0, 1, 2].map((i) => (
           <PodiumCard
             key={data[i]?.user.githubUsername ?? `empty-${i}`}
             entry={data[i]}
             config={MEDAL_CONFIG[i]}
-            mt={i !== 0 ? "md:mt-8" : undefined}
+            className={`${PODIUM_MD_ORDER[i]} ${i !== 0 ? "md:mt-8" : ""}`}
           />
         ))}
       </div>
@@ -78,14 +79,14 @@ const MEDAL_CONFIG = [
 type PodiumCardProps = {
   entry: LeaderboardEntry | undefined;
   config: (typeof MEDAL_CONFIG)[number];
-  mt?: string;
+  className?: string;
 };
 
-function PodiumCard({ entry, config, mt }: PodiumCardProps) {
+function PodiumCard({ entry, config, className }: PodiumCardProps) {
   if (!entry) return null;
   return (
     <div
-      className={`glass flex flex-col items-center rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ${mt ?? ""} ${
+      className={`glass flex flex-col items-center rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ${className ?? ""} ${
         config.isFirst
           ? "relative overflow-hidden before:absolute before:top-0 before:right-0 before:left-0 before:h-1 before:bg-linear-to-r before:from-blue before:to-purple"
           : ""
