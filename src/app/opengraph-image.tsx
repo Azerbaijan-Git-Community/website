@@ -9,7 +9,7 @@ export const alt = "Azerbaijan GitHub Community — National 5-Year Target";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const GOAL = 5_000_000;
+const GOAL = 500_000;
 
 export default async function Image() {
   const [fonts, stats, logoBuffer] = await Promise.all([

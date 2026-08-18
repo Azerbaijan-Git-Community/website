@@ -61,6 +61,7 @@ model Account {
   id                    String    @id @default(uuid(7))
   accountId             String
   providerId            String
+  issuer                String
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
@@ -73,6 +74,7 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  @@unique([issuer, accountId])
   @@index([userId])
   @@index([accountId, providerId])
   @@map("account")

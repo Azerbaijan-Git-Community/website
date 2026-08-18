@@ -13,13 +13,13 @@ export const auth = betterAuth({
     sentinel(),
     dash(),
   ],
-  experimental: { joins: true },
   onAPIError: {
     errorURL: "/auth/error",
   },
   advanced: {
     database: {
       generateId: false,
+      joins: true,
     },
     ipAddress: {
       ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
@@ -65,8 +65,8 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      githubUsername: { type: "string", required: false },
-      githubId: { type: "number", required: false },
+      githubUsername: { type: "string", required: true },
+      githubId: { type: "number", required: true },
     },
   },
 });
