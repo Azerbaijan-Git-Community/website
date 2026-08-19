@@ -2,7 +2,6 @@
 
 import type { Key } from "@heroui/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
 import type { LeaderboardEntry } from "@/data/leaderboard/get";
@@ -109,11 +108,16 @@ function PodiumCard({ entry, config, className }: PodiumCardProps) {
           {config.icon}
         </div>
       </div>
-      <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank" className="text-center">
+      <a
+        href={`https://github.com/${entry.user.githubUsername}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-center"
+      >
         <h3 className={`mb-1 font-outfit font-bold text-hi ${config.isFirst ? "text-2xl" : "text-xl"}`}>
           {entry.user.githubUsername}
         </h3>
-      </Link>
+      </a>
       <div className={`mb-3 text-sm ${config.isFirst ? "text-gradient font-semibold" : "text-lo"}`}>{config.label}</div>
       <div
         className={`w-full rounded-lg border border-line bg-[rgba(13,17,23,0.5)] text-center ${config.isFirst ? "p-4" : "p-3"}`}

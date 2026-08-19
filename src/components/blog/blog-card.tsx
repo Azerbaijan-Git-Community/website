@@ -8,6 +8,7 @@ export function BlogPostCard({ post }: { post: BlogPostItem }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
+      prefetch={true}
       className="glass flex flex-col overflow-hidden rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] transition-transform duration-150 ease-out hover:-translate-y-1.5"
     >
       {/* Cover image */}

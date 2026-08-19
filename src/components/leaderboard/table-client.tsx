@@ -2,7 +2,6 @@
 
 import { AnimatePresence, LazyMotion, domAnimation, m as motion } from "motion/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import type { AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
 import { PeriodSelector } from "./period-selector";
@@ -109,11 +108,15 @@ export function TableClient({ allData }: TableClientProps) {
                               loading="lazy"
                               unoptimized
                             />
-                            <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
+                            <a
+                              href={`https://github.com/${entry.user.githubUsername}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
                               <span className="font-outfit font-semibold text-hi transition-colors hover:text-blue">
                                 {entry.user.githubUsername}
                               </span>
-                            </Link>
+                            </a>
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center font-mono text-lg font-bold text-lime">
@@ -170,11 +173,15 @@ export function TableClient({ allData }: TableClientProps) {
                       loading="lazy"
                       unoptimized
                     />
-                    <Link href={`https://github.com/${entry.user.githubUsername}`} target="_blank">
+                    <a
+                      href={`https://github.com/${entry.user.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <h3 className="font-outfit text-lg font-bold text-hi transition-colors hover:text-blue">
                         {entry.user.githubUsername}
                       </h3>
-                    </Link>
+                    </a>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">
