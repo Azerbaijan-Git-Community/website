@@ -1,5 +1,5 @@
 import "server-only";
-import z from "zod";
+import { z } from "zod";
 import { clientEnv } from "@/lib/env.client";
 import {
   ApiErrorSchema,

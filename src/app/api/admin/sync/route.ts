@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import z from "zod";
+import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { SYNC_TARGETS, type SyncTarget } from "@/lib/constants";
 import { clientEnv } from "@/lib/env.client";

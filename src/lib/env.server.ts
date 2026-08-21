@@ -1,5 +1,5 @@
 import "server-only";
-import z from "zod";
+import { z } from "zod";
 import { clientEnvSchema } from "./env.client";
 
 const serverEnvSchema = z.object({

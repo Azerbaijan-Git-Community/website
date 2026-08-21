@@ -2,14 +2,12 @@
 
 import type { Route } from "next";
 import Link, { type LinkProps } from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import type { ComponentPropsWithoutRef } from "react";
 
 type SmoothLinkProps = LinkProps<Route> & ComponentPropsWithoutRef<"a"> & { scrollOffset?: number };
 
 function useSmoothHashScroll(offset: number) {
-  const pathname = usePathname();
   const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
 
   useEffect(() => {
@@ -21,7 +19,7 @@ function useSmoothHashScroll(offset: number) {
     const top = el.getBoundingClientRect().top + window.scrollY - offset;
 
     window.scrollTo({ top, behavior: "smooth" });
-  }, [pathname, hash, offset]);
+  }, [hash, offset]);
 }
 
 export function SmoothLink({ href, onClick, scrollOffset = 70, ...props }: SmoothLinkProps) {

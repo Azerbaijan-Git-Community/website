@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 // Zod schemas describing the JSON shapes returned by the Open Data API.
 // These mirror the database columns (dates are serialized to ISO 8601 strings in JSON).

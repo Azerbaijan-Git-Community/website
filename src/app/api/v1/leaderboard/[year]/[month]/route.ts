@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 import { getLastSyncTime, getTableDataByMonth } from "@/data/leaderboard/get";
 import { apiError, apiSuccess, handleOptions } from "@/lib/api/response";
 import { withApi } from "@/lib/api/with-api";
