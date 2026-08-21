@@ -9,7 +9,7 @@ import { Navbar } from "@/components/navbar";
 import { clientEnv } from "@/lib/env.client";
 import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
-import { organizationSchema } from "@/lib/structured-data";
+import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientEnv.NEXT_PUBLIC_BASE_URL),
@@ -19,13 +19,6 @@ export const metadata: Metadata = {
   },
   description:
     "Push the future of Azerbaijan. National open source & innovation growth program aiming for 500,000 GitHub pushes.",
-  keywords: [
-    "GitHub Azerbaijan",
-    "open source Azerbaijan",
-    "Azerbaijan developer community",
-    "GitHub Community",
-    "AZ tech",
-  ],
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -47,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
-        <JsonLd data={organizationSchema()} />
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <Toast.Provider placement="bottom end" />
         <Navbar />
         <main>{children}</main>

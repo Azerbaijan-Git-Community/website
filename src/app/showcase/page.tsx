@@ -1,21 +1,17 @@
 import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
 import { cacheLife } from "next/cache";
+import { JsonLd } from "@/components/json-ld";
 import { ShowcaseCard } from "@/components/showcase/showcase-card";
 import { getShowcaseProjects } from "@/data/showcase/get";
 import { cacheTags } from "@/lib/cache-tags";
 import { clientEnv } from "@/lib/env.client";
+import { collectionPageSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Showcase",
   description:
     "Open-source projects built by Azerbaijan GitHub Community members. Browse tools, libraries, and websites created by our developers.",
-  keywords: [
-    "Azerbaijan open source projects",
-    "GitHub Azerbaijan showcase",
-    "Azerbaijan developer projects",
-    "open source Azerbaijan",
-  ],
   alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/showcase` },
 };
 
@@ -28,6 +24,18 @@ export default async function ShowcasePage() {
 
   return (
     <div className="min-h-svh pt-32 pb-24">
+      <JsonLd
+        data={collectionPageSchema({
+          name: "Open Source Showcase",
+          description:
+            "Open-source projects built by Azerbaijan GitHub Community members. Browse tools, libraries, and websites created by our developers.",
+          path: "/showcase",
+          items: projects.map((project) => ({
+            name: project.repo,
+            url: `https://github.com/${project.repo}`,
+          })),
+        })}
+      />
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">

@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { BlogPostCard } from "@/components/blog/blog-card";
+import { JsonLd } from "@/components/json-ld";
 import { getBlogPosts } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
 import { clientEnv } from "@/lib/env.client";
+import { collectionPageSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Blog",
   description:
     "Articles, tutorials, and insights from Azerbaijan GitHub Community members. Learn about web development, open source, and software engineering.",
-  keywords: [
-    "Azerbaijan developer blog",
-    "GitHub Azerbaijan articles",
-    "Azerbaijan tech community blog",
-    "developer tutorials Azerbaijan",
-  ],
   alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog` },
 };
 
@@ -27,6 +23,18 @@ export default async function BlogPage() {
 
   return (
     <div className="min-h-svh pt-32 pb-24">
+      <JsonLd
+        data={collectionPageSchema({
+          name: "Developer Blog",
+          description:
+            "Articles, tutorials, and insights from Azerbaijan GitHub Community members. Learn about web development, open source, and software engineering.",
+          path: "/blog",
+          items: blogPosts.map((post) => ({
+            name: post.title,
+            url: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
+          })),
+        })}
+      />
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">

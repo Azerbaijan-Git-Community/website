@@ -26,7 +26,7 @@ export async function HeroVisual() {
       }
     >
       <div className="mb-6">
-        <h2 className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</h2>
+        <p className="mb-1 font-outfit text-xl font-bold">National 5-Year Target</p>
         <p className="text-sm text-lo">Growing GitHub Activity</p>
       </div>
 

@@ -13,14 +13,6 @@ export const metadata: Metadata = {
   title: "API",
   description:
     "Open Data API for the Azerbaijan GitHub Community. Public, key-less, read-only access to contribution stats, the leaderboard, blog posts, and showcase projects. Build TUIs, bots, and dashboards on our data.",
-  keywords: [
-    "Azerbaijan GitHub Community API",
-    "open data API",
-    "developer API",
-    "leaderboard API",
-    "GitHub stats API Azerbaijan",
-    "REST API",
-  ],
   alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/api-docs` },
 };
 
@@ -69,10 +61,10 @@ export default function ApiDocsPage() {
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Build on our <span className="text-gradient">data</span>
           </h1>
-          <h2 className="mx-auto max-w-2xl text-xl text-lo">
+          <p className="mx-auto max-w-2xl text-xl text-lo">
             A public, key-less REST API for the community&apos;s contribution stats, leaderboard, blog, and showcase.
             Wire it into your TUI, bot, or dashboard.
-          </h2>
+          </p>
         </header>
 
         {/* Highlights */}

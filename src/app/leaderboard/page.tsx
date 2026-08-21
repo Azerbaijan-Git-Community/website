@@ -13,14 +13,6 @@ export const metadata: Metadata = {
   title: "Leaderboard",
   description:
     "Track top GitHub contributors from Azerbaijan. Rankings by commits, pull requests, and repositories — updated weekly and monthly.",
-  keywords: [
-    "Azerbaijan GitHub leaderboard",
-    "top GitHub contributors Azerbaijan",
-    "Azerbaijan developer rankings",
-    "GitHub contributions Azerbaijan",
-    "open source leaderboard Azerbaijan",
-    "Azerbaijan programmer stats",
-  ],
   alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/leaderboard` },
 };
 
@@ -41,9 +33,9 @@ export default async function LeaderboardPage() {
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Monthly <span className="text-gradient">Leaderboard</span>
           </h1>
-          <h2 className="mx-auto mb-6 max-w-2xl text-xl text-lo">
+          <p className="mx-auto mb-6 max-w-2xl text-xl text-lo">
             Top 50 contributors pushing Azerbaijan&apos;s open-source future forward.
-          </h2>
+          </p>
         </div>
 
         <div className="mb-16">

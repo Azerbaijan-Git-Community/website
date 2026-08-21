@@ -31,6 +31,47 @@ export function organizationSchema() {
   };
 }
 
+/** Site-wide WebSite schema, anchoring the brand entity. */
+export function websiteSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: ORG_NAME,
+    url: baseUrl,
+    description: ORG_DESCRIPTION,
+    publisher: organizationNode,
+  };
+}
+
+type CollectionInput = {
+  name: string;
+  description: string;
+  path: string;
+  items: { name: string; url: string }[];
+};
+
+/** CollectionPage + ItemList schema for a listing page (blog, showcase). */
+export function collectionPageSchema({ name, description, path, items }: CollectionInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: `${baseUrl}${path}`,
+    isPartOf: { "@type": "WebSite", name: ORG_NAME, url: baseUrl },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: items.length,
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        url: item.url,
+      })),
+    },
+  };
+}
+
 type BlogPostingInput = {
   slug: string;
   title: string;
