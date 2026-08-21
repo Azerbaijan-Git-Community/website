@@ -6,11 +6,13 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
+import { clientEnv } from "@/lib/env.client";
 import { inter, outfit } from "@/lib/fonts";
-import { organizationSchema } from "@/lib/structured-data";
 import "./globals.css";
+import { organizationSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(clientEnv.NEXT_PUBLIC_BASE_URL),
   title: {
     default: "Azerbaijan GitHub Community | 500,000 Commits",
     template: "%s | Azerbaijan GitHub Community",
