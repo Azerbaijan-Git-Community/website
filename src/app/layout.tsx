@@ -4,17 +4,19 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
+import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
 import { inter, outfit } from "@/lib/fonts";
+import { organizationSchema } from "@/lib/structured-data";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Azerbaijan GitHub Community | 5,000,000 Commits",
+    default: "Azerbaijan GitHub Community | 500,000 Commits",
     template: "%s | Azerbaijan GitHub Community",
   },
   description:
-    "Push the future of Azerbaijan. National open source & innovation growth program aiming for 5,000,000 GitHub pushes.",
+    "Push the future of Azerbaijan. National open source & innovation growth program aiming for 500,000 GitHub pushes.",
   keywords: [
     "GitHub Azerbaijan",
     "open source Azerbaijan",
@@ -43,6 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
+        <JsonLd data={organizationSchema()} />
         <Toast.Provider placement="bottom end" />
         <Navbar />
         <main>{children}</main>

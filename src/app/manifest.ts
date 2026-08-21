@@ -5,11 +5,11 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Azerbaijan GitHub Community",
     short_name: "AzGit",
     description:
-      "Push the future of Azerbaijan. National open source & innovation growth program aiming for 5,000,000 GitHub pushes.",
+      "Push the future of Azerbaijan. National open source & innovation growth program aiming for 500,000 GitHub pushes.",
     start_url: "/",
     display: "standalone",
-    background_color: "#000000",
-    theme_color: "#000000",
+    background_color: "#0d1117",
+    theme_color: "#0d1117",
     icons: [
       {
         src: "/icon.png",

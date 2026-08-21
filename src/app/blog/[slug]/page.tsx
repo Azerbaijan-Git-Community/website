@@ -6,9 +6,12 @@ import { notFound } from "next/navigation";
 import { PiArrowLeft, PiCalendar } from "react-icons/pi";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { ReadingTimeBadge } from "@/components/blog/reading-time-badge";
+import { JsonLd } from "@/components/json-ld";
 import { getAllBlogSlugs, getBlogPost } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
 import { compileMdx } from "@/lib/compile-mdx";
+import { clientEnv } from "@/lib/env.client";
+import { blogPostingSchema, breadcrumbSchema } from "@/lib/structured-data";
 import { formatDate } from "@/lib/utils.client";
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
@@ -24,7 +27,12 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.title,
     description: post.description,
     keywords: post.tags,
+    alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}` },
     openGraph: {
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      authors: [post.author.name],
       images: [{ url: post.coverImage, alt: post.title, width: 1200, height: 630 }],
     },
   };
@@ -48,6 +56,16 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
 
   return (
     <div className="min-h-svh pt-32 pb-24">
+      <JsonLd
+        data={[
+          blogPostingSchema(post),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
       <article className="mx-auto max-w-200 px-8">
         {/* Back link */}
         <Link

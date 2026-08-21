@@ -7,6 +7,7 @@ import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
 import { TableClient } from "@/components/leaderboard/table-client";
 import { getLastSyncTime, getPodiumData, getTableData } from "@/data/leaderboard/get";
 import { cacheTags } from "@/lib/cache-tags";
+import { clientEnv } from "@/lib/env.client";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     "open source leaderboard Azerbaijan",
     "Azerbaijan programmer stats",
   ],
+  alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/leaderboard` },
 };
 
 export default async function LeaderboardPage() {

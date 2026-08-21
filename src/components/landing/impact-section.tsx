@@ -46,7 +46,7 @@ export function ImpactSection() {
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-16 text-center">
           <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">National Impact Goals</h2>
-          <p className="mx-auto max-w-xl text-xl text-lo">How 5,000,000 pushes will transform the nation.</p>
+          <p className="mx-auto max-w-xl text-xl text-lo">How 500,000 pushes will transform the nation.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

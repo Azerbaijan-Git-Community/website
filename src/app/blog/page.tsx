@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { BlogPostCard } from "@/components/blog/blog-card";
 import { getBlogPosts } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
+import { clientEnv } from "@/lib/env.client";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     "Azerbaijan tech community blog",
     "developer tutorials Azerbaijan",
   ],
+  alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog` },
 };
 
 export default async function BlogPage() {

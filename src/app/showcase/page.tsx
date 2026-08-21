@@ -4,6 +4,7 @@ import { cacheLife } from "next/cache";
 import { ShowcaseCard } from "@/components/showcase/showcase-card";
 import { getShowcaseProjects } from "@/data/showcase/get";
 import { cacheTags } from "@/lib/cache-tags";
+import { clientEnv } from "@/lib/env.client";
 
 export const metadata: Metadata = {
   title: "Showcase",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     "Azerbaijan developer projects",
     "open source Azerbaijan",
   ],
+  alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/showcase` },
 };
 
 export default async function ShowcasePage() {

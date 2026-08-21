@@ -28,7 +28,7 @@ const stages = [
   {
     label: "Stage 5",
     title: "The Goal Achieved",
-    body: "5,000,000 pushes and a strong GII improvement.",
+    body: "500,000 pushes and a strong GII improvement.",
     highlight: true,
   },
 ];
@@ -41,7 +41,7 @@ export function RoadmapSection() {
           Strategic Plan
         </span>
         <h2 className="mb-2 font-outfit text-[2.5rem] font-bold">
-          The Path to <span className="text-gradient">5,000,000</span>
+          The Path to <span className="text-gradient">500,000</span>
         </h2>
         <p className="mx-auto mb-16 max-w-xl text-xl text-lo">
           A structured 5-stage national movement for digital transformation.

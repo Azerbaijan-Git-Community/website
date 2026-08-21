@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     "GitHub stats API Azerbaijan",
     "REST API",
   ],
+  alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/api-docs` },
 };
 
 const CATEGORIES = ["Stats", "Leaderboard", "Blog", "Showcase"] as const;
