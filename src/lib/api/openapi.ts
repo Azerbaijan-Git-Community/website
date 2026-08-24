@@ -90,7 +90,7 @@ export function buildOpenApiDocument(): JsonSchema {
           operationId: "getAllTimeLeaderboard",
           summary: "All-time leaderboard (top 50 by commits)",
           description:
-            "Top 50 contributors by all-time commit count. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels this 'Last Year').",
+            "Top 50 contributors by commit count in the current calendar year. Note: GitHub's contribution window is capped at one year, so this counts the current year only (Jan 1 → Dec 31) and resets every January; the site labels this tab with the year (e.g. '2026').",
           tags: ["Leaderboard"],
           responses: {
             "200": {

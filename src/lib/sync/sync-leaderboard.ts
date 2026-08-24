@@ -57,13 +57,28 @@ function getMonthRange(date: Date): Range {
   return { from, to };
 }
 
+/**
+ * Current calendar year, Jan 1 00:00:00 → Dec 31 23:59:59 (UTC).
+ *
+ * The "allTime" leaderboard is a single-request-per-user contribution count, and GitHub caps
+ * `contributionsCollection` at a one-year range. Using a fixed calendar year (rather than the
+ * default trailing-365-day window) keeps the number stable — a past day never slides out — and
+ * it resets naturally every Jan 1. GitHub accepts the future `to`; it counts only up to now.
+ */
+function getYearRange(date: Date): Range {
+  const year = date.getUTCFullYear();
+  const from = new Date(Date.UTC(year, 0, 1, 0, 0, 0, 0)).toISOString();
+  const to = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 0)).toISOString();
+  return { from, to };
+}
+
 const CONTRIBUTION_FIELDS = `
   totalCommitContributions
   totalPullRequestContributions
   totalIssueContributions
   totalPullRequestReviewContributions`;
 
-function buildBatchQuery(users: SyncUser[], weekRange: Range, monthRange: Range): string {
+function buildBatchQuery(users: SyncUser[], weekRange: Range, monthRange: Range, yearRange: Range): string {
   const aliases = users
     .map(
       (u, i) => `
@@ -72,7 +87,7 @@ function buildBatchQuery(users: SyncUser[], weekRange: Range, monthRange: Range)
       }
       monthly: contributionsCollection(from: "${monthRange.from}", to: "${monthRange.to}") {${CONTRIBUTION_FIELDS}
       }
-      allTime: contributionsCollection {${CONTRIBUTION_FIELDS}
+      allTime: contributionsCollection(from: "${yearRange.from}", to: "${yearRange.to}") {${CONTRIBUTION_FIELDS}
       }
       repositories { totalCount }
       followers { totalCount }
@@ -88,10 +103,17 @@ function isComplete(d: UserData | undefined): d is UserData {
   return Boolean(d?.weekly && d?.monthly && d?.allTime);
 }
 
-type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range };
+type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range; yearRange: Range };
 
-async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): Promise<Record<string, UserData>> {
-  const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
+async function fetchBatch({
+  users,
+  weekRange,
+  monthRange,
+  yearRange,
+}: FetchBatchOptions): Promise<Record<string, UserData>> {
+  const json = await ghGraphQL<Record<string, UserData | undefined>>(
+    buildBatchQuery(users, weekRange, monthRange, yearRange),
+  );
   const result: Record<string, UserData> = {};
 
   // Collect successfully fetched users
@@ -109,7 +131,7 @@ async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): 
     const retryResults = await Promise.allSettled(
       failedIndices.map(async (i) => {
         const singleJson = await ghGraphQL<Record<string, UserData | undefined>>(
-          buildBatchQuery([users[i]], weekRange, monthRange),
+          buildBatchQuery([users[i]], weekRange, monthRange, yearRange),
         );
         const d = singleJson.data?.u0;
 
@@ -173,6 +195,7 @@ export async function syncLeaderboard(): Promise<{ synced: number; failed: numbe
   const monthKey = getMonthKey();
   const weekRange = getWeekRange(now);
   const monthRange = getMonthRange(now);
+  const yearRange = getYearRange(now);
 
   const users = await prisma.user.findMany({ where: { banned: false }, select: { id: true, githubUsername: true } });
 
@@ -183,7 +206,7 @@ export async function syncLeaderboard(): Promise<{ synced: number; failed: numbe
     const batch = users.slice(i, i + BATCH_SIZE);
 
     try {
-      const data = await fetchBatch({ users: batch, weekRange, monthRange });
+      const data = await fetchBatch({ users: batch, weekRange, monthRange, yearRange });
 
       await Promise.allSettled(
         batch.map(async ({ id }, index) => {

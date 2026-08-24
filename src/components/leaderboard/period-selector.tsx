@@ -2,12 +2,17 @@
 
 import type { LeaderboardPeriod } from "@/data/leaderboard/get";
 
+// Captured once at module load, not during render — reading the clock inside render would bake the
+// value into the Cache Components prerender. Refreshes on any reload/redeploy, which is well within
+// the resolution we need: the "allTime" window only rolls over to the new year at the next sync.
+const CURRENT_YEAR = new Date().getUTCFullYear();
+
+// The "allTime" period is synced as a fixed calendar-year window (Jan 1 → Dec 31), so it reads as
+// the current year and resets every January. Keeping the id as "allTime" to avoid breaking the API.
 const TABS: { id: LeaderboardPeriod; label: string }[] = [
   { id: "weekly", label: "This Week" },
   { id: "monthly", label: "This Month" },
-  // It turned out that the "all time" leaderboard is actually the last year, so I renamed it to avoid confusion
-  // Can't change the API response, so keeping the id as "allTime"
-  { id: "allTime", label: "Last Year" },
+  { id: "allTime", label: String(CURRENT_YEAR) },
 ];
 
 type PeriodSelectorProps = {

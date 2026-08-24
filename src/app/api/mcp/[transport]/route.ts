@@ -138,7 +138,7 @@ const mcpHandler = createMcpHandler(
       {
         title: "Get all-time leaderboard",
         description:
-          "Returns the top 50 contributors ranked by all-time commits. Note: GitHub's contribution window means this reflects roughly the last 12 months (the site labels it 'Last Year').",
+          "Returns the top 50 contributors ranked by commits in the current calendar year. Note: GitHub's contribution window is capped at one year, so this counts the current year only (Jan 1 → Dec 31) and resets every January; the site labels this tab with the year (e.g. '2026').",
         inputSchema: {},
         outputSchema: allTimeOutputSchema,
       },
