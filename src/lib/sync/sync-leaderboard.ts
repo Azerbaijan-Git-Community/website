@@ -7,6 +7,13 @@ import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 const BATCH_SIZE = 5;
 
+/** Spacing between batches so bursts don't trip GitHub's GraphQL secondary rate limit (403). */
+const BATCH_DELAY_MS = 1000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const ContributionDataSchema = z.object({
   totalCommitContributions: z.number(),
   totalPullRequestContributions: z.number(),
@@ -106,27 +113,23 @@ async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): 
   if (failedIndices.length > 0 && json.errors) {
     console.error(`Batch had ${failedIndices.length} failures, retrying individually...`);
 
-    const retryResults = await Promise.allSettled(
-      failedIndices.map(async (i) => {
+    // Retry serially with the same spacing as the main loop: firing the retries concurrently is
+    // itself a burst that can trip GitHub's secondary rate limit on top of whatever failed the batch.
+    for (const i of failedIndices) {
+      await sleep(BATCH_DELAY_MS);
+      try {
         const singleJson = await ghGraphQL<Record<string, UserData | undefined>>(
           buildBatchQuery([users[i]], weekRange, monthRange),
         );
         const d = singleJson.data?.u0;
 
-        if (!isComplete(d)) {
-          if (singleJson.errors) {
-            console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
-          }
-          return null;
+        if (isComplete(d)) {
+          result[`u${i}`] = d;
+        } else if (singleJson.errors) {
+          console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
         }
-
-        return { index: i, data: d };
-      }),
-    );
-
-    for (const r of retryResults) {
-      if (r.status === "fulfilled" && r.value) {
-        result[`u${r.value.index}`] = r.value.data;
+      } catch (error) {
+        console.error(`Failed to fetch user ${users[i].githubUsername}:`, error);
       }
     }
   }
@@ -187,6 +190,9 @@ export async function syncLeaderboard(): Promise<{
   for (let i = 0; i < users.length; i += BATCH_SIZE) {
     const batch = users.slice(i, i + BATCH_SIZE);
 
+    // Space batches apart so the burst never trips GitHub's secondary rate limit.
+    if (i > 0) await sleep(BATCH_DELAY_MS);
+
     try {
       const data = await fetchBatch({ users: batch, weekRange, monthRange });
 
@@ -209,10 +215,7 @@ export async function syncLeaderboard(): Promise<{
         }),
       );
     } catch (error) {
-      console.error(
-        `[sync-leaderboard] Batch failed for [${batch.map((u) => u.githubUsername).join(", ")}]:`,
-        error,
-      );
+      console.error(`[sync-leaderboard] Batch failed for [${batch.map((u) => u.githubUsername).join(", ")}]:`, error);
       for (const u of batch) failedUsers.push(u.githubUsername);
     }
   }
