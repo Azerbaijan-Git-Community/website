@@ -167,7 +167,12 @@ function persistUser(userId: string, data: UserData, weekKey: string, monthKey: 
  * Fetch GitHub contribution stats for every non-banned user and upsert them into the
  * all-time table plus the weekly/monthly snapshot tables.
  */
-export async function syncLeaderboard(): Promise<{ synced: number; failed: number; total: number }> {
+export async function syncLeaderboard(): Promise<{
+  synced: number;
+  failed: number;
+  total: number;
+  failedUsers: string[];
+}> {
   const now = new Date();
   const weekKey = getWeekKey();
   const monthKey = getMonthKey();
@@ -177,7 +182,7 @@ export async function syncLeaderboard(): Promise<{ synced: number; failed: numbe
   const users = await prisma.user.findMany({ where: { banned: false }, select: { id: true, githubUsername: true } });
 
   let synced = 0;
-  let failed = 0;
+  const failedUsers: string[] = [];
 
   for (let i = 0; i < users.length; i += BATCH_SIZE) {
     const batch = users.slice(i, i + BATCH_SIZE);
@@ -186,23 +191,37 @@ export async function syncLeaderboard(): Promise<{ synced: number; failed: numbe
       const data = await fetchBatch({ users: batch, weekRange, monthRange });
 
       await Promise.allSettled(
-        batch.map(async ({ id }, index) => {
+        batch.map(async ({ id, githubUsername }, index) => {
           const userData = data[`u${index}`];
           if (!userData) {
-            failed++;
+            console.error(`[sync-leaderboard] No data fetched for ${githubUsername}`);
+            failedUsers.push(githubUsername);
             return;
           }
 
-          await persistUser(id, userData, weekKey, monthKey);
-          synced++;
+          try {
+            await persistUser(id, userData, weekKey, monthKey);
+            synced++;
+          } catch (error) {
+            console.error(`[sync-leaderboard] Failed to persist ${githubUsername}:`, error);
+            failedUsers.push(githubUsername);
+          }
         }),
       );
-    } catch {
-      failed += batch.length;
+    } catch (error) {
+      console.error(
+        `[sync-leaderboard] Batch failed for [${batch.map((u) => u.githubUsername).join(", ")}]:`,
+        error,
+      );
+      for (const u of batch) failedUsers.push(u.githubUsername);
     }
+  }
+
+  if (failedUsers.length > 0) {
+    console.error(`[sync-leaderboard] ${failedUsers.length} user(s) failed to sync: ${failedUsers.join(", ")}`);
   }
 
   revalidateTag(cacheTags.leaderboard, "max");
 
-  return { synced, failed, total: users.length };
+  return { synced, failed: failedUsers.length, total: users.length, failedUsers };
 }
