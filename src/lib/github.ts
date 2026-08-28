@@ -24,15 +24,23 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
  * post or project failed, so it carries the context a prose message would have repeated.
  * Reddened for the dev terminal only; escape codes are noise in production log aggregators.
  */
-function requestFailed(url: string, status: number): Error {
+async function requestFailed(url: string, res: Response): Promise<Error> {
   const { host, pathname } = new URL(url);
-  const message = `${host}${pathname} -> ${status}`;
+  const body = await res.text().catch(() => "");
+  const parts = [
+    `${host}${pathname} -> ${res.status}`,
+    body && `body: ${body.slice(0, 500)}`,
+    res.headers.get("retry-after") && `retry-after: ${res.headers.get("retry-after")}s`,
+    res.headers.get("x-ratelimit-remaining") && `ratelimit-remaining: ${res.headers.get("x-ratelimit-remaining")}`,
+    res.headers.get("x-ratelimit-reset") && `ratelimit-reset: ${res.headers.get("x-ratelimit-reset")}`,
+  ].filter(Boolean);
+  const message = parts.join(" | ");
   return new Error(process.env.NODE_ENV === "production" ? message : `\x1b[31m${message}\x1b[0m`);
 }
 
 async function ghGet(url: string, accept?: string): Promise<Response> {
   const res = await fetch(url, { headers: authHeaders(accept ? { Accept: accept } : undefined) });
-  if (!res.ok) throw requestFailed(url, res.status);
+  if (!res.ok) throw await requestFailed(url, res);
   return res;
 }
 
@@ -65,6 +73,6 @@ export async function ghGraphQL<T>(query: string): Promise<{ data?: T; errors?: 
     headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ query }),
   });
-  if (!res.ok) throw requestFailed(GITHUB_GRAPHQL, res.status);
+  if (!res.ok) throw await requestFailed(GITHUB_GRAPHQL, res);
   return res.json();
 }
