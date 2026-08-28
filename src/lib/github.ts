@@ -1,8 +1,7 @@
 import "server-only";
 import { serverEnv } from "@/lib/env.server";
 
-// Thin wrapper over the GitHub REST + GraphQL APIs. Every sync goes through here so the
-// token, headers, and error handling are defined once.
+// Thin wrapper over the GitHub REST + GraphQL APIs: token, headers, and errors in one place.
 
 const GITHUB_API = "https://api.github.com";
 const GITHUB_GRAPHQL = `${GITHUB_API}/graphql`;
@@ -19,11 +18,7 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
   return { Authorization: `Bearer ${serverEnv.GH_STATS_TOKEN}`, ...extra };
 }
 
-/**
- * `api.github.com/repos/org/blog/contents/posts -> 403` — the path already identifies which
- * post or project failed, so it carries the context a prose message would have repeated.
- * Reddened for the dev terminal only; escape codes are noise in production log aggregators.
- */
+/** Build an error like `host/path -> 403 | body: … | retry-after: …s`; reddened outside production. */
 async function requestFailed(url: string, res: Response): Promise<Error> {
   const { host, pathname } = new URL(url);
   const body = await res.text().catch(() => "");
@@ -44,27 +39,34 @@ async function ghGet(url: string, accept?: string): Promise<Response> {
   return res;
 }
 
-/** GET a path under api.github.com (e.g. `/repos/org/repo/contents/posts`) as JSON. */
+/** GET an api.github.com path (e.g. `/repos/org/repo/contents/posts`) as JSON. */
 export async function ghJson<T>(path: string): Promise<T> {
   const res = await ghGet(`${GITHUB_API}${path}`, "application/vnd.github+json");
   return res.json();
 }
 
-/** GET an absolute URL (raw.githubusercontent.com, a contents `download_url`, …) as text. */
+/** GET an absolute URL as text. */
 export async function ghText(url: string): Promise<string> {
   const res = await ghGet(url);
   return res.text();
 }
 
+/** GET a file's content by its immutable blob SHA — content-addressed, never CDN-stale. */
+export async function ghBlobText(owner: string, repo: string, sha: string): Promise<string> {
+  const res = await ghGet(`${GITHUB_API}/repos/${owner}/${repo}/git/blobs/${sha}`, "application/vnd.github.raw");
+  return res.text();
+}
+
+/** GET a contents-path file as raw text via api.github.com — fresh (private-cached), unlike the raw CDN. */
+export async function ghRawContent(path: string): Promise<string> {
+  const res = await ghGet(`${GITHUB_API}${path}`, "application/vnd.github.raw");
+  return res.text();
+}
+
 /**
- * POST a GraphQL query. A 200 is returned as the raw envelope rather than throwing, because
- * partial failures (some aliases resolved, others errored) are normal for the batched queries
- * and callers need to inspect `errors` to decide what to retry.
- *
- * Transport failures are different and do throw: a 401/403/5xx carries `{ message }` with
- * neither `data` nor `errors`, which every caller would read as "all aliases failed, nothing
- * to retry" — turning an expired token or a rate limit into a silent no-op that still reports
- * a successful sync.
+ * POST a GraphQL query, returning a 200 envelope unthrown so callers can inspect per-alias
+ * `errors` (normal for batched queries). Transport failures (401/403/5xx) still throw, so an
+ * expired token or rate limit can't masquerade as "all aliases failed" and no-op silently.
  */
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export async function ghGraphQL<T>(query: string): Promise<{ data?: T; errors?: unknown[] }> {

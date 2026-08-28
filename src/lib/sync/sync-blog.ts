@@ -1,7 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { cacheTags } from "@/lib/cache-tags";
 import { GITHUB_ORG } from "@/lib/constants";
-import { type GhContentEntry, ghJson, ghText } from "@/lib/github";
+import { type GhContentEntry, ghJson, ghRawContent } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 
 const BLOG_REPO = "blog";
@@ -88,9 +88,9 @@ async function fetchPostDirs(): Promise<GhContentEntry[]> {
   return entries.filter((e) => e.type === "dir");
 }
 
-/** Fetch the raw index.mdx content for a given post slug. */
+/** Fetch a post's index.mdx via the contents API — fresh, unlike the ~5 min CDN-cached raw host. */
 function fetchPostContent(slug: string): Promise<string> {
-  return ghText(`${RAW_BASE}/${slug}/index.mdx`);
+  return ghRawContent(`${CONTENTS_BASE}/${slug}/index.mdx`);
 }
 
 /**

@@ -3,7 +3,7 @@ import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { cacheTags } from "@/lib/cache-tags";
 import { GITHUB_ORG } from "@/lib/constants";
-import { type GhContentEntry, ghGraphQL, ghText, ghJson } from "@/lib/github";
+import { type GhContentEntry, ghBlobText, ghGraphQL, ghJson } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 
 const BATCH_SIZE = 50;
@@ -41,7 +41,7 @@ async function fetchRegistry(): Promise<ShowcaseFile[]> {
 
   const results = await Promise.all(
     yamlFiles.map(async (file) => {
-      const content = await ghText(file.download_url);
+      const content = await ghBlobText(GITHUB_ORG, SHOWCASE_REPO, file.sha);
       const parsed = showcaseYamlSchema.safeParse(yamlLoad(content, { schema: yamlJSON_SCHEMA }));
       return parsed.success && parsed.data.repo ? { yaml: parsed.data, sha: file.sha } : null;
     }),
