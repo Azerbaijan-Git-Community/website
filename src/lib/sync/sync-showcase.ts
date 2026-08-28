@@ -119,7 +119,7 @@ function githubFields(ghData: RepoGqlData | undefined) {
   };
 }
 
-export async function syncShowcase(): Promise<{ synced: number; skipped: number }> {
+export async function syncShowcase(): Promise<{ synced: number; skipped: number; deleted: number }> {
   const [allFiles, existing] = await Promise.all([
     fetchRegistry(),
     // Load existing SHA map from DB
@@ -127,6 +127,18 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
   ]);
 
   const shaByRepo = new Map(existing.map((p) => [p.repo, p.fileSha]));
+
+  // Prune DB rows whose YAML no longer exists in the registry (files deleted upstream).
+  // Guard against wiping everything if the registry came back empty (e.g. API hiccup).
+  let deleted = 0;
+  if (allFiles.length > 0) {
+    const registryRepos = new Set(allFiles.map((f) => f.yaml.repo));
+    const removedRepos = existing.map((p) => p.repo).filter((repo) => !registryRepos.has(repo));
+    if (removedRepos.length > 0) {
+      const result = await prisma.showcaseProject.deleteMany({ where: { repo: { in: removedRepos } } });
+      deleted = result.count;
+    }
+  }
 
   // Only process files whose SHA has changed (or are new)
   const changedFiles = allFiles.filter((f) => shaByRepo.get(f.yaml.repo) !== f.sha);
@@ -160,11 +172,14 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number 
         });
       }),
     );
+  }
 
+  // Refresh the cache when anything changed — upserts or deletions.
+  if (changedFiles.length > 0 || deleted > 0) {
     revalidateTag(cacheTags.showcase, "max");
   }
 
-  return { synced: changedFiles.length, skipped };
+  return { synced: changedFiles.length, skipped, deleted };
 }
 
 /**
