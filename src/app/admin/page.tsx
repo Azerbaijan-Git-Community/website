@@ -37,14 +37,6 @@ export default async function AdminPage() {
           </div>
         </header>
 
-        {/* Caution strip */}
-        <div className="mb-6 rounded-lg border border-icon-orange/30 bg-icon-orange/5 px-4 py-3">
-          <p className="font-mono text-xs leading-relaxed text-icon-orange">
-            Manual triggers fire the same authenticated requests as the scheduled jobs. They hit external GitHub APIs
-            and write to production — run only when needed.
-          </p>
-        </div>
-
         <SyncPanel />
       </div>
     </div>
