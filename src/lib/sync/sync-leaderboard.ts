@@ -98,23 +98,33 @@ function isComplete(d: UserData | undefined): d is UserData {
 type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range };
 
 async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): Promise<Record<string, UserData>> {
-  const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
   const result: Record<string, UserData> = {};
+  let batchFailed = false;
 
-  // Collect successfully fetched users
-  for (let i = 0; i < users.length; i++) {
-    const d = json.data?.[`u${i}`];
-    if (isComplete(d)) result[`u${i}`] = d;
+  // A batch of 5 users bundles ~15 contribution calendars into one query. When that lands on a
+  // heavy account it becomes an "expensive" query that GitHub can reject with a secondary-rate-limit
+  // 403 (a thrown error here) even though the token is nowhere near its point budget. We catch that
+  // instead of abandoning all 5 users, then re-fetch the missing ones one at a time below — single
+  // queries are cheap and don't trip the flag.
+  try {
+    const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
+    for (let i = 0; i < users.length; i++) {
+      const d = json.data?.[`u${i}`];
+      if (isComplete(d)) result[`u${i}`] = d;
+    }
+    batchFailed = Boolean(json.errors);
+  } catch (error) {
+    console.error(`Batch request failed, falling back to individual fetches:`, error);
+    batchFailed = true;
   }
 
-  // Retry failed users individually
+  // Re-fetch anything the batch didn't return, serially and spaced so the retries are not their own
+  // burst on top of whatever throttled the batch.
   const failedIndices = Array.from({ length: users.length }, (_, i) => i).filter((i) => !result[`u${i}`]);
 
-  if (failedIndices.length > 0 && json.errors) {
+  if (failedIndices.length > 0 && batchFailed) {
     console.error(`Batch had ${failedIndices.length} failures, retrying individually...`);
 
-    // Retry serially with the same spacing as the main loop: firing the retries concurrently is
-    // itself a burst that can trip GitHub's secondary rate limit on top of whatever failed the batch.
     for (const i of failedIndices) {
       await sleep(BATCH_DELAY_MS);
       try {
