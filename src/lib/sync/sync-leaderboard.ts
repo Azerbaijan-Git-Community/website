@@ -7,13 +7,13 @@ import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
 const BATCH_SIZE = 5;
 
-/** Spacing between batches so bursts don't trip GitHub's GraphQL secondary rate limit (403). */
-const BATCH_DELAY_MS = 1000;
-
 /** Cool-down assumed when GitHub sends no `retry-after`, and the cap on any single wait. */
 const RATE_LIMIT_FALLBACK_MS = 60_000;
 const MAX_RATE_LIMIT_WAIT_MS = 120_000;
 const MAX_BATCH_ATTEMPTS = 3;
+
+/** GitHub's secondary limit allows ~12 batch requests/min, so pause a minute after every 12. */
+const BATCHES_BEFORE_COOLDOWN = 12;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -204,9 +204,13 @@ export async function syncLeaderboard(): Promise<{
 
   for (let i = 0; i < users.length; i += BATCH_SIZE) {
     const batch = users.slice(i, i + BATCH_SIZE);
+    const batchIndex = i / BATCH_SIZE;
 
-    // Space batches apart so the burst never trips GitHub's secondary rate limit.
-    if (i > 0) await sleep(BATCH_DELAY_MS);
+    // Fire batches back-to-back, cooling down a full minute after every 12 to stay under the limit.
+    // The retry-after handling in fetchBatch still covers a limit that trips earlier than expected.
+    if (batchIndex > 0 && batchIndex % BATCHES_BEFORE_COOLDOWN === 0) {
+      await sleep(RATE_LIMIT_FALLBACK_MS);
+    }
 
     try {
       const data = await fetchBatch({ users: batch, weekRange, monthRange });
