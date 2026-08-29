@@ -18,19 +18,53 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
   return { Authorization: `Bearer ${serverEnv.GH_STATS_TOKEN}`, ...extra };
 }
 
+/** A failed GitHub request, carrying the parsed `retry-after` so callers can wait out a rate limit. */
+export class GithubRequestError extends Error {
+  readonly status: number;
+  /** `retry-after` in ms, or `null` if GitHub didn't send it. */
+  readonly retryAfterMs: number | null;
+  /** True for a secondary-rate-limit 403/429 — the whole token is throttled, not just this query. */
+  readonly secondaryRateLimit: boolean;
+
+  constructor(message: string, opts: { status: number; retryAfterMs: number | null; secondaryRateLimit: boolean }) {
+    super(message);
+    this.name = "GithubRequestError";
+    this.status = opts.status;
+    this.retryAfterMs = opts.retryAfterMs;
+    this.secondaryRateLimit = opts.secondaryRateLimit;
+  }
+}
+
+/** Parse the `retry-after` header (delta seconds) into ms. GitHub sends seconds for rate limits. */
+function parseRetryAfterMs(retryAfter: string | null): number | null {
+  if (!retryAfter) return null;
+  const seconds = Number(retryAfter);
+  return Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : null;
+}
+
 /** Build an error like `host/path -> 403 | body: … | retry-after: …s`; reddened outside production. */
-async function requestFailed(url: string, res: Response): Promise<Error> {
+async function requestFailed(url: string, res: Response): Promise<GithubRequestError> {
   const { host, pathname } = new URL(url);
   const body = await res.text().catch(() => "");
+  const retryAfter = res.headers.get("retry-after");
   const parts = [
     `${host}${pathname} -> ${res.status}`,
     body && `body: ${body.slice(0, 500)}`,
-    res.headers.get("retry-after") && `retry-after: ${res.headers.get("retry-after")}s`,
+    retryAfter && `retry-after: ${retryAfter}s`,
     res.headers.get("x-ratelimit-remaining") && `ratelimit-remaining: ${res.headers.get("x-ratelimit-remaining")}`,
     res.headers.get("x-ratelimit-reset") && `ratelimit-reset: ${res.headers.get("x-ratelimit-reset")}`,
   ].filter(Boolean);
   const message = parts.join(" | ");
-  return new Error(process.env.NODE_ENV === "production" ? message : `\x1b[31m${message}\x1b[0m`);
+
+  // A 403/429 that names the limit in the body or ships a `retry-after` is a secondary rate limit.
+  const secondaryRateLimit =
+    (res.status === 403 || res.status === 429) && (/secondary rate limit/i.test(body) || retryAfter !== null);
+
+  return new GithubRequestError(process.env.NODE_ENV === "production" ? message : `\x1b[31m${message}\x1b[0m`, {
+    status: res.status,
+    retryAfterMs: parseRetryAfterMs(retryAfter),
+    secondaryRateLimit,
+  });
 }
 
 async function ghGet(url: string, accept?: string): Promise<Response> {

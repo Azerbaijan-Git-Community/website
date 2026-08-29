@@ -1,7 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { cacheTags } from "@/lib/cache-tags";
-import { ghGraphQL } from "@/lib/github";
+import { ghGraphQL, GithubRequestError } from "@/lib/github";
 import { prisma } from "@/lib/prisma";
 import { getMonthKey, getWeekKey } from "@/lib/utils.server";
 
@@ -10,8 +10,31 @@ const BATCH_SIZE = 5;
 /** Spacing between batches so bursts don't trip GitHub's GraphQL secondary rate limit (403). */
 const BATCH_DELAY_MS = 1000;
 
+/** Cool-down assumed when GitHub sends no `retry-after`, and the cap on any single wait. */
+const RATE_LIMIT_FALLBACK_MS = 60_000;
+const MAX_RATE_LIMIT_WAIT_MS = 120_000;
+const MAX_BATCH_ATTEMPTS = 3;
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Fisher–Yates shuffle so heavy accounts don't cluster into the same batch every run. */
+function shuffle<T>(items: readonly T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/** Wait (ms) before retrying a secondary-rate-limited request, or `null` for any other error. */
+function rateLimitWaitMs(error: unknown): number | null {
+  if (error instanceof GithubRequestError && error.secondaryRateLimit) {
+    return Math.min(error.retryAfterMs ?? RATE_LIMIT_FALLBACK_MS, MAX_RATE_LIMIT_WAIT_MS);
+  }
+  return null;
 }
 
 const ContributionDataSchema = z.object({
@@ -97,54 +120,34 @@ function isComplete(d: UserData | undefined): d is UserData {
 
 type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range };
 
+/**
+ * Fetch one batch, retrying the whole batch across a secondary-rate-limit cool-down (the limit
+ * throttles the entire token, so retrying before the window elapses just re-hits the 403). Returns
+ * whatever completed; the caller records the rest as failed.
+ */
 async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): Promise<Record<string, UserData>> {
-  const result: Record<string, UserData> = {};
-  let batchFailed = false;
-
-  // A batch of 5 users bundles ~15 contribution calendars into one query. When that lands on a
-  // heavy account it becomes an "expensive" query that GitHub can reject with a secondary-rate-limit
-  // 403 (a thrown error here) even though the token is nowhere near its point budget. We catch that
-  // instead of abandoning all 5 users, then re-fetch the missing ones one at a time below — single
-  // queries are cheap and don't trip the flag.
-  try {
-    const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
-    for (let i = 0; i < users.length; i++) {
-      const d = json.data?.[`u${i}`];
-      if (isComplete(d)) result[`u${i}`] = d;
-    }
-    batchFailed = Boolean(json.errors);
-  } catch (error) {
-    console.error(`Batch request failed, falling back to individual fetches:`, error);
-    batchFailed = true;
-  }
-
-  // Re-fetch anything the batch didn't return, serially and spaced so the retries are not their own
-  // burst on top of whatever throttled the batch.
-  const failedIndices = Array.from({ length: users.length }, (_, i) => i).filter((i) => !result[`u${i}`]);
-
-  if (failedIndices.length > 0 && batchFailed) {
-    console.error(`Batch had ${failedIndices.length} failures, retrying individually...`);
-
-    for (const i of failedIndices) {
-      await sleep(BATCH_DELAY_MS);
-      try {
-        const singleJson = await ghGraphQL<Record<string, UserData | undefined>>(
-          buildBatchQuery([users[i]], weekRange, monthRange),
-        );
-        const d = singleJson.data?.u0;
-
-        if (isComplete(d)) {
-          result[`u${i}`] = d;
-        } else if (singleJson.errors) {
-          console.error(`Failed to fetch user ${users[i].githubUsername}:`, JSON.stringify(singleJson.errors));
-        }
-      } catch (error) {
-        console.error(`Failed to fetch user ${users[i].githubUsername}:`, error);
+  for (let attempt = 1; attempt <= MAX_BATCH_ATTEMPTS; attempt++) {
+    try {
+      const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
+      const result: Record<string, UserData> = {};
+      for (let i = 0; i < users.length; i++) {
+        const d = json.data?.[`u${i}`];
+        if (isComplete(d)) result[`u${i}`] = d;
       }
+      if (json.errors) console.error(`Batch returned partial errors:`, JSON.stringify(json.errors));
+      return result;
+    } catch (error) {
+      const wait = rateLimitWaitMs(error);
+      if (wait === null || attempt === MAX_BATCH_ATTEMPTS) {
+        console.error(`Batch request failed:`, error);
+        return {};
+      }
+      console.error(`Batch hit secondary rate limit, waiting ${Math.round(wait / 1000)}s before retry...`);
+      await sleep(wait);
     }
   }
 
-  return result;
+  return {};
 }
 
 /** Write one user's all-time stats plus their weekly and monthly snapshots. */
@@ -192,7 +195,9 @@ export async function syncLeaderboard(): Promise<{
   const weekRange = getWeekRange(now);
   const monthRange = getMonthRange(now);
 
-  const users = await prisma.user.findMany({ where: { banned: false }, select: { id: true, githubUsername: true } });
+  const users = shuffle(
+    await prisma.user.findMany({ where: { banned: false }, select: { id: true, githubUsername: true } }),
+  );
 
   let synced = 0;
   const failedUsers: string[] = [];
