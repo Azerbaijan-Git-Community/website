@@ -18,7 +18,7 @@
     "react-doctor": "react-doctor --verbose"
   },
   "dependencies": {
-    "@better-auth/infra": "0.4.3",
+    "@better-auth/infra": "0.4.5",
     "@better-auth/prisma-adapter": "1.7.2",
     "@heroui/react": "3.2.4",
     "@heroui/styles": "3.2.4",
