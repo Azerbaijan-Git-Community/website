@@ -46,7 +46,7 @@
     "rehype-slug": "6.0.0",
     "remark-gfm": "4.0.1",
     "unist-util-visit": "5.1.0",
-    "zod": "4.4.3"
+    "zod": "4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
