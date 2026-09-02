@@ -1,7 +1,6 @@
 saveExact: true
 engineStrict: true
 minimumReleaseAge: 1440
-minimumReleaseAgeStrict: true
 minimumReleaseAgeExcludePrune: true
 trustPolicy: "no-downgrade"
 trustPolicyExclude:
