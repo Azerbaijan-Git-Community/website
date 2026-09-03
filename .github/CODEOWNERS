@@ -1,0 +1,17 @@
+# Infrastructure and tooling config require CTO review.
+
+/.github/                 @Azerbaijan-Git-Community/cto
+/prisma/                  @Azerbaijan-Git-Community/cto
+/greenly.config.ts        @Azerbaijan-Git-Community/cto
+/prisma.config.ts         @Azerbaijan-Git-Community/cto
+/doctor.config.ts         @Azerbaijan-Git-Community/cto
+/next.config.ts           @Azerbaijan-Git-Community/cto
+/oxfmt.config.ts          @Azerbaijan-Git-Community/cto
+/oxlint.config.ts         @Azerbaijan-Git-Community/cto
+/tsconfig.json            @Azerbaijan-Git-Community/cto
+/pnpm-workspace.yaml      @Azerbaijan-Git-Community/cto
+/postcss.config.ts        @Azerbaijan-Git-Community/cto
+/package.json             @Azerbaijan-Git-Community/cto
+/.gitignore               @Azerbaijan-Git-Community/cto
+/.gitattributes           @Azerbaijan-Git-Community/cto
+/.env.example             @Azerbaijan-Git-Community/cto
