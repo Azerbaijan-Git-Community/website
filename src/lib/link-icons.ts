@@ -25,8 +25,7 @@ import {
 import { VscExtensions, VscVscode } from "react-icons/vsc";
 
 // ── Domain → icon registry ────────────────────────────────────────
-// Add a new entry here to support a new registry or marketplace.
-// The icon is picked automatically from the link URL — no user input needed.
+// Add an entry to support a new registry/marketplace; the icon is matched from the link URL.
 export type LinkIconDef = { icon: IconType; hoverClass: string; label: string };
 
 type DomainIconEntry = LinkIconDef & { domain: string };

@@ -1,8 +1,7 @@
 import { z } from "zod";
 
-// Zod schemas describing the JSON shapes returned by the Open Data API.
-// These mirror the database columns (dates are serialized to ISO 8601 strings in JSON).
-// They are the single source of truth for the generated OpenAPI document and the docs page.
+// Zod schemas for the Open Data API JSON shapes (dates as ISO 8601 strings); the single
+// source of truth for the generated OpenAPI document and the docs page.
 
 const DateTime = z.iso.datetime().describe("ISO 8601 date-time");
 

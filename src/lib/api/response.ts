@@ -1,9 +1,8 @@
 import "server-only";
 import { NextResponse } from "next/server";
 
-// The Open Data API is public, so responses are cross-origin readable. We deliberately
-// omit `s-maxage` so the handler runs on every request (needed for per-IP rate limiting);
-// `max-age` only lets the caller's own browser reuse a response for a short window.
+// Public, cross-origin readable. `s-maxage` omitted so the handler runs every request (for rate limiting);
+// `max-age` only lets the caller's own browser reuse a response briefly.
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
