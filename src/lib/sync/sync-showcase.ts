@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 
 const BATCH_SIZE = 50;
 const SHOWCASE_REPO = "showcase";
+const CREATED_AT_STEP_MS = 10 * 60 * 1000;
 
 const showcaseYamlSchema = z.object({
   repo: z.string(),
@@ -153,6 +154,13 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number;
       }),
     );
 
+    const now = Date.now();
+    const createdAtByRepo = new Map(
+      changedFiles
+        .filter((f) => !shaByRepo.has(f.yaml.repo))
+        .map((f, i) => [f.yaml.repo, new Date(now - i * CREATED_AT_STEP_MS)] as const),
+    );
+
     await Promise.all(
       changedFiles.map(async (file, index) => {
         const project = file.yaml;
@@ -165,9 +173,11 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number;
           fileSha: file.sha,
         };
 
+        const createdAt = createdAtByRepo.get(project.repo);
+
         return prisma.showcaseProject.upsert({
           where: { repo: project.repo },
-          create: { repo: project.repo, ...shared },
+          create: { repo: project.repo, ...(createdAt ? { createdAt } : {}), ...shared },
           update: { ...shared },
         });
       }),
