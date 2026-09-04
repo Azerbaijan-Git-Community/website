@@ -1,0 +1,19 @@
+name: Sync Showcase Data
+
+on:
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync Showcase Data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Sync Showcase Data
+        run: |
+          response=$(curl -s -X POST "${{ secrets.APP_URL }}/api/webhooks/showcase-data" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
+          echo "Response: $response"
