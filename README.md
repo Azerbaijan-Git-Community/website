@@ -15,7 +15,7 @@ Uniting talent, expanding open-source, and building national innovation metrics.
 
 ## About
 
-Azerbaijan GitHub Community is a national open-source growth program with an ambitious goal: **5,000,000 GitHub pushes**. The website serves as the public face of the community — showcasing impact metrics, contributor leaderboards, and the roadmap for Azerbaijan's open-source future.
+Azerbaijan GitHub Community is a national open-source growth program with an ambitious goal: **500,000 GitHub pushes**. The website serves as the public face of the community — showcasing impact metrics, contributor leaderboards, and the roadmap for Azerbaijan's open-source future.
 
 Members sign in with their GitHub accounts, and their contribution stats (commits, pull requests) are automatically synced and displayed on a competitive leaderboard with weekly, monthly, and all-time rankings.
 
