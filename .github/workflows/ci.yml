@@ -8,6 +8,10 @@ on:
 env:
   LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
   NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
+  # Dummy public env for CI builds only — must be a valid URL without a
+  # trailing slash to satisfy Zod validation in src/lib/env.client.ts.
+  # Mirrors .env.example; NEXT_PUBLIC_ values are client-exposed, never secrets.
+  NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL: "https://kv.better-auth.com/projects/ci"
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   DIRECT_URL: "nice_try"
   BETTER_AUTH_SECRET_V1: "abcdefghijklmnopqrstuvwxyz1234567890"
