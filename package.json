@@ -16,10 +16,10 @@
     "react-doctor": "react-doctor --verbose"
   },
   "dependencies": {
-    "@better-auth/infra": "0.4.7",
-    "@better-auth/prisma-adapter": "1.7.3",
-    "@heroui/react": "3.2.4",
-    "@heroui/styles": "3.2.4",
+    "@better-auth/infra": "0.4.9",
+    "@better-auth/prisma-adapter": "1.7.4",
+    "@heroui/react": "3.2.5",
+    "@heroui/styles": "3.2.5",
     "@mdx-js/mdx": "3.1.1",
     "@modelcontextprotocol/server": "2.0.0",
     "@prisma/adapter-pg": "7.9.1",
@@ -29,7 +29,7 @@
     "@upstash/redis": "1.38.4",
     "@vercel/analytics": "2.0.1",
     "@vercel/speed-insights": "2.0.0",
-    "better-auth": "1.7.3",
+    "better-auth": "1.7.4",
     "dotenv": "17.4.2",
     "js-yaml": "5.4.1",
     "mcp-handler": "2.1.1",
@@ -44,13 +44,13 @@
     "rehype-slug": "6.0.0",
     "remark-gfm": "4.0.1",
     "unist-util-visit": "5.1.0",
-    "zod": "4.5.4"
+    "zod": "4.6.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
     "@types/js-yaml": "4.0.9",
     "@types/mdx": "2.0.14",
-    "@types/node": "24.13.3",
+    "@types/node": "24.13.4",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
     "@types/react-syntax-highlighter": "15.5.13",

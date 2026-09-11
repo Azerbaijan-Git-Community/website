@@ -6,7 +6,8 @@
         "http://localhost:3000/blog",
         "http://localhost:3000/blog/hello-world",
         "http://localhost:3000/leaderboard",
-        "http://localhost:3000/showcase"
+        "http://localhost:3000/showcase",
+        "http://localhost:3000/api-docs"
       ],
       "startServerCommand": "pnpm start",
       "startServerReadyPattern": "Ready in",
