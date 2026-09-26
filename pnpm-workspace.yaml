@@ -13,15 +13,10 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
-  - "@better-auth/core@1.7.5"
-  - "@better-auth/drizzle-adapter@1.7.5"
-  - "@better-auth/kysely-adapter@1.7.5"
-  - "@better-auth/memory-adapter@1.7.5"
-  - "@better-auth/mongo-adapter@1.7.5"
-  - "@better-auth/prisma-adapter@1.7.5"
-  - "@better-auth/telemetry@1.7.5"
-  - better-auth@1.7.5
   - "@better-auth/infra@0.4.11"
   - "@modelcontextprotocol/core@2.1.0"
   - "@modelcontextprotocol/server@2.1.0"
   - "@upstash/ratelimit@2.2.0"
+  - framer-motion@13.4.4
+  - motion-dom@13.4.4
+  - motion@13.4.4

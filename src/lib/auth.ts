@@ -9,7 +9,10 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   appName: "Azerbaijan GitHub Community",
   plugins: [
-    admin({ bannedUserMessage: "You are banned from the community because of your Bot activity on GitHub." }),
+    admin({
+      bannedUserMessage: (user) =>
+        user.banReason || "You are banned from the community because of your Bot activity on GitHub.",
+    }),
     sentinel(),
     dash(),
   ],
