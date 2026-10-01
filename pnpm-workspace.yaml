@@ -13,10 +13,25 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
-  - "@better-auth/infra@0.4.11"
-  - "@modelcontextprotocol/core@2.1.0"
-  - "@modelcontextprotocol/server@2.1.0"
   - "@upstash/ratelimit@2.2.0"
   - framer-motion@13.4.4
   - motion-dom@13.4.4
   - motion@13.4.4
+  - "@better-auth/core@1.7.7"
+  - "@better-auth/drizzle-adapter@1.7.7"
+  - "@better-auth/kysely-adapter@1.7.7"
+  - "@better-auth/memory-adapter@1.7.7"
+  - "@better-auth/mongo-adapter@1.7.7"
+  - "@better-auth/prisma-adapter@1.7.7"
+  - "@better-auth/telemetry@1.7.7"
+  - "@next/env@16.3.8"
+  - "@next/swc-darwin-arm64@16.3.8"
+  - "@next/swc-darwin-x64@16.3.8"
+  - "@next/swc-linux-arm64-gnu@16.3.8"
+  - "@next/swc-linux-arm64-musl@16.3.8"
+  - "@next/swc-linux-x64-gnu@16.3.8"
+  - "@next/swc-linux-x64-musl@16.3.8"
+  - "@next/swc-win32-arm64-msvc@16.3.8"
+  - "@next/swc-win32-x64-msvc@16.3.8"
+  - better-auth@1.7.7
+  - next@16.3.8
