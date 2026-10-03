@@ -5,5 +5,5 @@ import { syncBlog } from "@/lib/sync/sync-blog";
 export const POST = webhookRoute({
   secret: serverEnv.BLOG_WEBHOOK_SECRET,
   run: syncBlog,
-  message: (r) => `Synced ${r.synced}, skipped ${r.skipped}, failed ${r.failed.length}`,
+  message: (r) => `Synced ${r.synced}, skipped ${r.skipped}, deleted ${r.deleted}, failed ${r.failed.length}`,
 });

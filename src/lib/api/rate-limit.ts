@@ -25,6 +25,7 @@ function getLimiters(): Limiters | null {
 
   const url = serverEnv.UPSTASH_REDIS_REST_URL;
   const token = serverEnv.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return (limiters = null);
 
   const redis = new Redis({ url, token });
   limiters = {
@@ -62,7 +63,14 @@ export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
   const l = getLimiters();
   if (!l) return { ok: true, headers: {} };
 
-  const [minute, daily] = await Promise.all([l.minute.limit(ip), l.daily.limit(ip)]);
+  let minute, daily;
+  try {
+    [minute, daily] = await Promise.all([l.minute.limit(ip), l.daily.limit(ip)]);
+  } catch (error) {
+    // A rate-limiter outage shouldn't take the public API down with it.
+    console.error("Rate limit check failed, allowing request:", error);
+    return { ok: true, headers: {} };
+  }
 
   const headers: Record<string, string> = {
     "X-RateLimit-Limit": String(MINUTE_LIMIT),

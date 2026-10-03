@@ -6,5 +6,6 @@ export default defineConfig({
     { name: "TypeScript", command: "pnpm tsc --noEmit --incremental false" },
     { name: "Oxfmt", command: "pnpm fmt:check", onFail: "pnpm fmt" },
     { name: "Oxlint", command: "pnpm lint" },
+    { name: "Vitest", command: "pnpm test" },
   ],
 });

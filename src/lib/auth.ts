@@ -55,6 +55,8 @@ export const auth = betterAuth({
     github: {
       clientId: serverEnv.GITHUB_CLIENT_ID,
       clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
+      // `scope` is appended to the provider defaults unless they're disabled, so this list is the full set.
+      disableDefaultScope: true,
       scope: ["read:user", "user:email"],
       overrideUserInfoOnSignIn: true,
       mapProfileToUser: (profile) => ({

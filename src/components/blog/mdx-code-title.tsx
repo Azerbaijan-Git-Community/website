@@ -60,7 +60,8 @@ export function MdxCodeTitle({ children, ...props }: Props) {
 
   if (!isCodeTitle) return <figcaption {...props}>{children}</figcaption>;
 
-  const filename = props["data-rehype-pretty-code-title"] ?? "";
+  // rehype-pretty-code leaves the attribute empty and puts the title text in children.
+  const filename = typeof children === "string" ? children : "";
   const ext = filename.includes(".") ? (filename.split(".").pop()?.toLowerCase() ?? "") : filename.toLowerCase();
   const icon = EXT_MAP[ext];
 

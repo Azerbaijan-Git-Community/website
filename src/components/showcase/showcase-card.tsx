@@ -13,8 +13,11 @@ function hexToRgba(hex: string | null | undefined, alpha: number): string {
 }
 
 function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
-  return String(n);
+  if (n < 1000) return String(n);
+  // Round before picking the unit, so 999,999 becomes 1M rather than 1000k.
+  const thousands = Math.round(n / 100) / 10;
+  if (thousands < 1000) return `${thousands}k`;
+  return `${Math.round(n / 100_000) / 10}M`;
 }
 
 export function ShowcaseCard({ project, index }: { project: ShowcaseProject; index: number }) {

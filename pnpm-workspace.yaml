@@ -9,6 +9,7 @@ trustPolicyExclude:
 allowBuilds:
   "@prisma/engines": true
   msgpackr-extract: true
+  msw: true
   prisma: true
   sharp: true
   unrs-resolver: true
@@ -35,3 +36,4 @@ minimumReleaseAgeExclude:
   - "@next/swc-win32-x64-msvc@16.3.8"
   - better-auth@1.7.7
   - next@16.3.8
+  - greenly@1.2.0

@@ -100,7 +100,7 @@ function fetchPostContent(slug: string): Promise<string> {
  * changed, avoiding unnecessary API calls and preventing `updatedAt` from being
  * modified on unchanged posts.
  */
-export async function syncBlog(): Promise<{ synced: number; skipped: number; failed: string[] }> {
+export async function syncBlog(): Promise<{ synced: number; skipped: number; deleted: number; failed: string[] }> {
   // 1. Fetch directory listing with SHAs
   // 2. Get existing posts from DB for SHA comparison
   const [dirs, existing] = await Promise.all([
@@ -121,6 +121,13 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; fai
   }
 
   const skipped = dirs.length - toSync.length;
+
+  // Prune posts whose folder was deleted upstream; an empty listing is treated as an API hiccup, not a wipe.
+  const listed = new Set(dirs.map((d) => d.name));
+  const removedSlugs = dirs.length > 0 ? existing.map((p) => p.slug).filter((slug) => !listed.has(slug)) : [];
+  if (removedSlugs.length > 0) {
+    await prisma.blogPost.deleteMany({ where: { slug: { in: removedSlugs } } });
+  }
 
   // 4. Fetch and upsert only changed/new posts
   const failed: string[] = [];
@@ -165,17 +172,17 @@ export async function syncBlog(): Promise<{ synced: number; skipped: number; fai
     }),
   );
 
-  // 5. Invalidate cache — only the posts that actually changed (each its own
-  //    page), plus the list views (blog page + sitemap) when at least one synced.
+  // 5. Invalidate cache — only the posts that changed or were removed (each its own
+  //    page), plus the list views (blog page + sitemap) when anything changed.
   const failedSet = new Set(failed);
   const syncedSlugs = toSync.filter(({ slug }) => !failedSet.has(slug));
 
-  for (const { slug } of syncedSlugs) {
+  for (const slug of [...syncedSlugs.map((p) => p.slug), ...removedSlugs]) {
     revalidateTag(cacheTags.blogPost(slug), "max");
   }
-  if (syncedSlugs.length > 0) {
+  if (syncedSlugs.length > 0 || removedSlugs.length > 0) {
     revalidateTag(cacheTags.blog, "max");
   }
 
-  return { synced: syncedSlugs.length, skipped, failed };
+  return { synced: syncedSlugs.length, skipped, deleted: removedSlugs.length, failed };
 }

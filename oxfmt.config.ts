@@ -11,5 +11,6 @@ export default defineConfig({
   },
   sortImports: {
     newlinesBetween: false,
+    internalPattern: ["~/", "@/", "#", "@test/"],
   },
 });

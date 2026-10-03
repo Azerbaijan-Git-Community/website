@@ -14,12 +14,25 @@ Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and
 
 - `pnpm dev` — start dev server
 - `pnpm build` — generate Prisma client + Next.js production build
-- `pnpm check` — Always run this command to check for typechecking, lint and format.
+- `pnpm check` — Always run this command to check for typechecking, lint, format and tests.
+- `pnpm test` / `pnpm test:watch` — run the Vitest suite once / in watch mode (needs a generated Prisma client)
 - `pnpm lint` — run Oxlint
 - `pnpm fmt:check` / `pnpm fmt` — check/fix Oxfmt formatting
 - `pnpm prisma:generate` — regenerate Prisma client after schema changes
 
-There are no tests in this project.
+### Tests
+
+Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one-to-one (`src/lib/crypto.ts` → `tests/lib/crypto.test.ts`); shared helpers live in `tests/test-utils/` (import via `@test/*`).
+
+- `*.test.ts` run in Node (`vmForks` pool), `*.test.tsx` in jsdom (`vmThreads` pool: one jsdom per worker, a fresh VM context per file; missing Node globals are added in `tests/test-utils/jsdom-vm-environment.ts`), `opengraph-image.test.ts` under the `react-server` condition.
+- Real dependencies over mocks: each test file gets an in-memory Postgres (PGlite) with the Prisma schema, truncated before every test; outgoing HTTP (GitHub, Upstash, Better Auth Infra) is faked with MSW, and unhandled requests fail the test. Only `next/cache`, `next/headers` and `next/font` are mocked, because they need Next's runtime or compiler.
+- Render Server Components (async included) with `renderServer()` and query with `screen`; don't call them as functions, since the React Compiler adds hooks to them.
+- Known bugs are tracked in `BUGS.md`, each with a `test.fails("BUG-xx: …")` asserting the correct behavior. Fixing a bug makes its test fail, so flip it to `test`.
+
+#### Workflow (test-driven)
+
+- **Bug or regression report:** first write a test that reproduces it and run it to confirm it fails (this verifies the claim). Only then fix the code, and confirm the test passes. If the test passes before any fix, report back instead of changing code.
+- **Feature request:** implement the feature first, then add tests covering it.
 
 ## Architecture
 
@@ -39,7 +52,7 @@ There are no tests in this project.
 - `src/data/` — server-side data fetching functions with `"use cache"` and `cacheLife("hours")`
 - `src/lib/` — auth config, Prisma client, env validation (Zod), fonts, action helpers
 - `prisma/schema.prisma` — database schema
-- `scripts/pr-checks.ts` — pre-publish CI check runner
+- `scripts/qstash-schedules.ts` — registers the QStash sync schedules on production builds
 
 ### Data Flow
 

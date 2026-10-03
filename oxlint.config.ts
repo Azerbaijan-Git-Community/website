@@ -1,7 +1,7 @@
 import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  plugins: ["typescript", "nextjs", "unicorn", "import", "jsx-a11y", "react", "react-perf"],
+  plugins: ["typescript", "nextjs", "unicorn", "import", "jsx-a11y", "react", "react-perf", "vitest"],
   categories: {
     suspicious: "warn",
   },
@@ -15,7 +15,16 @@ export default defineConfig({
     "no-throw-literal": "warn",
     "import/no-unassigned-import": [
       "warn",
-      { allow: ["**/globals.css", "**/env.server", "dotenv/config", "server-only"] },
+      {
+        allow: [
+          "**/globals.css",
+          "**/env.server",
+          "dotenv/config",
+          "server-only",
+          "@testing-library/jest-dom/vitest",
+          "./shared",
+        ],
+      },
     ],
     "unicorn/prefer-node-protocol": "warn",
     "react/react-in-jsx-scope": "off",
