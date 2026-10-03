@@ -24,7 +24,7 @@ Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and
 
 Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one-to-one (`src/lib/crypto.ts` → `tests/lib/crypto.test.ts`); shared helpers live in `tests/test-utils/` (import via `@test/*`).
 
-- `*.test.ts` run in Node, `*.test.tsx` in jsdom, `opengraph-image.test.ts` under the `react-server` condition.
+- `*.test.ts` run in Node, `*.test.tsx` in jsdom (`vmThreads` pool: one jsdom per worker, a fresh VM context per file; missing Node globals are added in `tests/test-utils/jsdom-vm-environment.ts`), `opengraph-image.test.ts` under the `react-server` condition.
 - Real dependencies over mocks: each test file gets an in-memory Postgres (PGlite) with the Prisma schema, truncated before every test; outgoing HTTP (GitHub, Upstash, Better Auth Infra) is faked with MSW, and unhandled requests fail the test. Only `next/cache`, `next/headers` and `next/font` are mocked, because they need Next's runtime or compiler.
 - Render Server Components (async included) with `renderServer()` and query with `screen`; don't call them as functions, since the React Compiler adds hooks to them.
 - Known bugs are tracked in `BUGS.md`, each with a `test.fails("BUG-xx: …")` asserting the correct behavior. Fixing a bug makes its test fail, so flip it to `test`.

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, beforeEach } from "vitest";
 import { sentinelIdentifyHandlers } from "../better-auth-infra";
 import { resetDb, testPrisma } from "../db";
@@ -9,6 +9,9 @@ import "./shared";
 
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion
 (globalThis as unknown as { prisma: typeof testPrisma }).prisma = testPrisma;
+
+// Worker threads share the CPU, so give exit animations and async renders more than the 1s default.
+configure({ asyncUtilTimeout: 3000 });
 
 // Baseline handlers that survive resetHandlers() between tests.
 server.resetHandlers(...sentinelIdentifyHandlers);

@@ -75,11 +75,14 @@ export default defineConfig({
         extends: true,
         test: {
           name: "dom",
-          environment: "jsdom",
+          // One jsdom per worker instead of per file; each file still gets its own VM context.
+          environment: "./tests/test-utils/jsdom-vm-environment.ts",
+          pool: "vmThreads",
+          testTimeout: 15_000,
           environmentOptions: { jsdom: { url: "http://localhost:3000/" } },
           include: ["tests/**/*.test.tsx"],
           setupFiles: ["./tests/test-utils/setup/dom.ts"],
-          // Every file runs in a fresh worker; pre-bundling these many-file packages halves per-file import time.
+          // Every file re-imports its modules; pre-bundling these many-file packages halves per-file import time.
           deps: {
             optimizer: {
               client: {

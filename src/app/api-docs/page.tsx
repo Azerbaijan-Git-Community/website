@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { type ReactNode } from "react";
 import { PiClockCountdown, PiGaugeBold, PiLockOpen, PiPlugsConnected } from "react-icons/pi";
 import { CodeTerminal } from "@/components/api-docs/code-terminal";
