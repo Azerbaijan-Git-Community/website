@@ -1,8 +1,7 @@
 name: Sync GitHub Stats
 
+# Hourly sync is scheduled via Upstash QStash (scripts/qstash-schedules.ts). This is a manual fallback.
 on:
-  schedule:
-    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -14,6 +13,5 @@ jobs:
     steps:
       - name: Sync GitHub Stats
         run: |
-          response=$(curl -s -X POST "${{ secrets.APP_URL }}/api/webhooks/leaderboard" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
-          echo "Response: $response"
+          curl -sS --fail-with-body -X POST "${{ secrets.APP_URL }}/api/webhooks/leaderboard" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
