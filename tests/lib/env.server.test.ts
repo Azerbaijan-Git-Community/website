@@ -38,7 +38,7 @@ describe("serverEnv", () => {
 
   // `.env.example` and the rate-limit module document Upstash as optional ("the API fails open"),
   // but the schema requires both variables, so the app refuses to boot without them.
-  test.fails("BUG-02: boots without Upstash credentials (documented as optional)", async () => {
+  test("BUG-02: boots without Upstash credentials (documented as optional)", async () => {
     vi.stubEnv("UPSTASH_REDIS_REST_URL", undefined);
     vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", undefined);
     await expect(loadServerEnv()).resolves.toBeDefined();

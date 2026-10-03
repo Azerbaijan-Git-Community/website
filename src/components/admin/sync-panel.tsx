@@ -72,15 +72,14 @@ export function SyncPanel() {
         }
         setResults((prev) => ({ ...prev, [target]: { status: "error", message } }));
         toast.danger(`${target} sync failed`, { description: message });
-        return;
+      } else {
+        let message = data.message;
+        if (!message) {
+          message = "Done.";
+        }
+        setResults((prev) => ({ ...prev, [target]: { status: "ok", message } }));
+        toast.success(`${target} sync complete`, { description: message });
       }
-
-      let message = data.message;
-      if (!message) {
-        message = "Done.";
-      }
-      setResults((prev) => ({ ...prev, [target]: { status: "ok", message } }));
-      toast.success(`${target} sync complete`, { description: message });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Network error";
       setResults((prev) => ({ ...prev, [target]: { status: "error", message } }));

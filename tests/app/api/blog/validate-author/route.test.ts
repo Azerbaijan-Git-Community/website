@@ -54,9 +54,14 @@ describe("GET /api/blog/validate-author", () => {
     });
   });
 
-  // githubId is an INT4 column; a larger all-digit id passes the regex and makes Prisma throw (500).
-  test.fails("BUG-11: answers 'not registered' for ids beyond the 32-bit range instead of crashing", async () => {
+  test("BUG-11: answers 'not registered' for ids beyond the 32-bit range instead of crashing", async () => {
     const res = await validate("99999999999");
     expect(res.status).toBe(404);
+    await expect(res.json()).resolves.toMatchObject({ exists: false });
+  });
+
+  test("still finds an author at the top of the 32-bit range", async () => {
+    await createUser({ githubId: 2_147_483_647 });
+    expect((await validate("2147483647")).status).toBe(200);
   });
 });

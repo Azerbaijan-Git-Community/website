@@ -63,8 +63,7 @@ describe("/api/auth/[...all]", () => {
     expect(res.status).toBeLessThan(500);
   });
 
-  // Better Auth's GitHub provider already requests read:user + user:email; `scope` appends, so they're sent twice.
-  test.fails("BUG-13: requests each OAuth scope only once", async () => {
+  test("BUG-13: requests each OAuth scope only once", async () => {
     useFakeBetterAuthInfra();
     const { url } = await (await signInSocial("github")).json();
     expect(new URL(url).searchParams.get("scope")).toBe("read:user user:email");

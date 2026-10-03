@@ -20,7 +20,10 @@ function githubUser(base: number) {
   return {
     weekly: collection({ commits: base, prs: 1, issues: 0, reviews: 2 }),
     monthly: collection({ commits: base * 4, prs: 3, issues: 1, reviews: 5 }),
-    allTime: collection({ commits: base * 50, prs: 40, issues: 10, reviews: 60 }),
+    allTime: {
+      ...collection({ commits: base * 50, prs: 40, issues: 10, reviews: 60 }),
+      contributionCalendar: { totalContributions: base * 200 },
+    },
     repositories: { totalCount: 12 },
     followers: { totalCount: 7 },
   };
@@ -246,7 +249,7 @@ describe("syncLeaderboard", () => {
 
   // The week key comes from local-time getWeekKey() while the queried range is UTC, so in UTC+4 on a
   // Sunday evening last week's numbers are filed under next week's key.
-  test.fails("BUG-01: files weekly stats under the same week that was queried, in any server timezone", async () => {
+  test("BUG-01: files weekly stats under the same week that was queried, in any server timezone", async () => {
     vi.stubEnv("TZ", "Asia/Baku");
     vi.setSystemTime(new Date("2026-07-19T22:00:00Z"));
     await createUser({ githubUsername: "aysel" });
@@ -259,14 +262,13 @@ describe("syncLeaderboard", () => {
     });
   });
 
-  // `GithubStats.contributions` is summed into `totalContributions` by getGithubStats, but no code ever writes it.
-  test.fails("BUG-09: populates the all-time contributions column", async () => {
+  test("BUG-09: populates the all-time contributions column", async () => {
     const user = await createUser({ githubUsername: "aysel" });
     fakeGithubUsers(["aysel"]);
 
     await syncLeaderboard();
 
     const stats = await testPrisma.githubStats.findUniqueOrThrow({ where: { userId: user.id } });
-    expect(stats.contributions).toBeGreaterThan(0);
+    expect(stats.contributions).toBe(200);
   });
 });

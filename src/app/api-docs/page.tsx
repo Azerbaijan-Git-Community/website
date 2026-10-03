@@ -180,7 +180,7 @@ export default function ApiDocsPage() {
                     {[
                       ["400", "invalid_params", "A path parameter is malformed (e.g. bad year/month)."],
                       ["404", "not_found", "No resource for that slug or month."],
-                      ["429", "rate_limited", "You exceeded the per-minute or monthly limit."],
+                      ["429", "rate_limited", "You exceeded the per-minute or daily limit."],
                       ["500", "internal_error", "Something went wrong on our side."],
                     ].map(([s, c, w]) => (
                       <tr key={c} className="border-b border-line/50">

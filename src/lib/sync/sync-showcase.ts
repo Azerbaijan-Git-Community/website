@@ -11,7 +11,8 @@ const SHOWCASE_REPO = "showcase";
 const CREATED_AT_STEP_MS = 10 * 60 * 1000;
 
 const showcaseYamlSchema = z.object({
-  repo: z.string(),
+  // `owner/name` only, which also keeps it safe to interpolate into the GraphQL query.
+  repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, "Expected owner/name"),
   submittedBy: z.string(),
   banner: z.string().optional(),
   links: z.array(z.string()).optional(),
@@ -25,6 +26,12 @@ type ShowcaseFile = {
   sha: string;
 };
 
+type InvalidFile = {
+  name: string;
+  /** The `repo` the file still names, if any — that project must not be pruned. */
+  repo: string | null;
+};
+
 type RepoGqlData = {
   stargazerCount: number;
   forkCount: number;
@@ -36,19 +43,34 @@ type RepoGqlData = {
   primaryLanguage: { name: string; color: string } | null;
 };
 
-async function fetchRegistry(): Promise<ShowcaseFile[]> {
-  const files = await ghJson<GhContentEntry[]>(`/repos/${GITHUB_ORG}/${SHOWCASE_REPO}/contents/projects`);
-  const yamlFiles = files.filter((f) => f.name.endsWith(".yaml"));
+function loadYaml(content: string): unknown {
+  try {
+    return yamlLoad(content, { schema: yamlJSON_SCHEMA });
+  } catch {
+    return undefined;
+  }
+}
+
+async function fetchRegistry(): Promise<{ files: ShowcaseFile[]; invalid: InvalidFile[] }> {
+  const entries = await ghJson<GhContentEntry[]>(`/repos/${GITHUB_ORG}/${SHOWCASE_REPO}/contents/projects`);
+  const yamlFiles = entries.filter((f) => f.name.endsWith(".yaml"));
 
   const results = await Promise.all(
     yamlFiles.map(async (file) => {
-      const content = await ghBlobText(GITHUB_ORG, SHOWCASE_REPO, file.sha);
-      const parsed = showcaseYamlSchema.safeParse(yamlLoad(content, { schema: yamlJSON_SCHEMA }));
-      return parsed.success && parsed.data.repo ? { yaml: parsed.data, sha: file.sha } : null;
+      const raw = loadYaml(await ghBlobText(GITHUB_ORG, SHOWCASE_REPO, file.sha));
+      const parsed = showcaseYamlSchema.safeParse(raw);
+      if (parsed.success) return { file: { yaml: parsed.data, sha: file.sha } };
+
+      console.warn(`Invalid showcase file "${file.name}": ${z.prettifyError(parsed.error)}`);
+      const named = z.object({ repo: z.string() }).safeParse(raw);
+      return { invalid: { name: file.name, repo: named.success ? named.data.repo : null } };
     }),
   );
 
-  return results.filter((r): r is ShowcaseFile => r !== null);
+  return {
+    files: results.flatMap((r) => (r.file ? [r.file] : [])),
+    invalid: results.flatMap((r) => (r.invalid ? [r.invalid] : [])),
+  };
 }
 
 function buildBatchQuery(repos: Array<{ owner: string; name: string }>): string {
@@ -106,22 +128,22 @@ async function fetchRepoDataMap(repoSlugs: RepoSlug[]): Promise<Record<string, R
 }
 
 /** GitHub-derived fields for a showcase project, extracted from a GraphQL repo payload. */
-function githubFields(ghData: RepoGqlData | undefined) {
+function githubFields(ghData: RepoGqlData) {
   return {
-    stars: ghData?.stargazerCount ?? 0,
-    forks: ghData?.forkCount ?? 0,
-    openIssues: ghData?.issues?.totalCount ?? 0,
-    openPRs: ghData?.pullRequests?.totalCount ?? 0,
-    description: ghData?.description ?? null,
-    homepageUrl: ghData?.homepageUrl ?? null,
-    license: ghData?.licenseInfo?.spdxId ?? null,
-    language: ghData?.primaryLanguage?.name ?? null,
-    languageColor: ghData?.primaryLanguage?.color ?? null,
+    stars: ghData.stargazerCount,
+    forks: ghData.forkCount,
+    openIssues: ghData.issues.totalCount,
+    openPRs: ghData.pullRequests.totalCount,
+    description: ghData.description,
+    homepageUrl: ghData.homepageUrl,
+    license: ghData.licenseInfo?.spdxId ?? null,
+    language: ghData.primaryLanguage?.name ?? null,
+    languageColor: ghData.primaryLanguage?.color ?? null,
   };
 }
 
-export async function syncShowcase(): Promise<{ synced: number; skipped: number; deleted: number }> {
-  const [allFiles, existing] = await Promise.all([
+export async function syncShowcase(): Promise<{ synced: number; skipped: number; deleted: number; invalid: string[] }> {
+  const [{ files: allFiles, invalid }, existing] = await Promise.all([
     fetchRegistry(),
     // Load existing SHA map from DB
     prisma.showcaseProject.findMany({ select: { repo: true, fileSha: true } }),
@@ -130,10 +152,11 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number;
   const shaByRepo = new Map(existing.map((p) => [p.repo, p.fileSha]));
 
   // Prune DB rows whose YAML no longer exists in the registry (files deleted upstream).
+  // An invalid file still protects the repo it names; if it names none, what's gone is unknown, so skip pruning.
   // Guard against wiping everything if the registry came back empty (e.g. API hiccup).
   let deleted = 0;
-  if (allFiles.length > 0) {
-    const registryRepos = new Set(allFiles.map((f) => f.yaml.repo));
+  if (allFiles.length > 0 && invalid.every((f) => f.repo !== null)) {
+    const registryRepos = new Set([...allFiles.map((f) => f.yaml.repo), ...invalid.map((f) => f.repo)]);
     const removedRepos = existing.map((p) => p.repo).filter((repo) => !registryRepos.has(repo));
     if (removedRepos.length > 0) {
       const result = await prisma.showcaseProject.deleteMany({ where: { repo: { in: removedRepos } } });
@@ -164,12 +187,14 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number;
     await Promise.all(
       changedFiles.map(async (file, index) => {
         const project = file.yaml;
+        const ghData = allGqlData[`r${index}`];
         const shared = {
           submittedBy: project.submittedBy,
           banner: project.banner ?? null,
           links: project.links ?? [],
           website: project.website ?? null,
-          ...githubFields(allGqlData[`r${index}`]),
+          // Without GitHub data, keep the last known stats (new projects get the schema defaults).
+          ...(ghData ? githubFields(ghData) : {}),
           fileSha: file.sha,
         };
 
@@ -189,7 +214,7 @@ export async function syncShowcase(): Promise<{ synced: number; skipped: number;
     revalidateTag(cacheTags.showcase, "max");
   }
 
-  return { synced: changedFiles.length, skipped, deleted };
+  return { synced: changedFiles.length, skipped, deleted, invalid: invalid.map((f) => f.name) };
 }
 
 /**
@@ -211,16 +236,18 @@ export async function syncShowcaseData(): Promise<{ synced: number }> {
     }),
   );
 
+  // A repo GitHub can't resolve right now (renamed, private, transient error) keeps its last known stats.
+  const resolved = projects.flatMap(({ repo }, index) => {
+    const ghData = allGqlData[`r${index}`];
+    if (!ghData) console.warn(`No GitHub data for showcase repo "${repo}", keeping existing stats`);
+    return ghData ? [{ repo, ghData }] : [];
+  });
+
   await Promise.all(
-    projects.map(async (project, index) =>
-      prisma.showcaseProject.update({
-        where: { repo: project.repo },
-        data: githubFields(allGqlData[`r${index}`]),
-      }),
-    ),
+    resolved.map(({ repo, ghData }) => prisma.showcaseProject.update({ where: { repo }, data: githubFields(ghData) })),
   );
 
   revalidateTag(cacheTags.showcase, "max");
 
-  return { synced: projects.length };
+  return { synced: resolved.length };
 }

@@ -36,6 +36,7 @@ export default defineConfig({
   },
   test: {
     env: testEnv,
+    fsModuleCache: true,
     clearMocks: true,
     restoreMocks: true,
     unstubEnvs: true,

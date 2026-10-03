@@ -108,7 +108,7 @@ describe("SyncPanel", () => {
   });
 
   // The `!res.ok` branch returns before `setRunning(null)`, so one failed job locks the whole panel.
-  test.fails("BUG-10: re-enables the buttons after a job fails", async () => {
+  test("BUG-10: re-enables the buttons after a job fails", async () => {
     const user = userEvent.setup();
     syncEndpoint(() => HttpResponse.json({ error: "Forbidden" }, { status: 403 }));
     renderPanel();

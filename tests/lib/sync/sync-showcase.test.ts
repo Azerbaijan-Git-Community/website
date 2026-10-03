@@ -1,6 +1,6 @@
 import { HttpResponse } from "msw";
 import { revalidateTag } from "next/cache";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { syncShowcase, syncShowcaseData } from "@/lib/sync/sync-showcase";
 import { createShowcaseProject, testPrisma } from "@test/db";
 import { fakeGraphQL, fakeShowcaseRegistry, type FakeRegistryFile } from "@test/github";
@@ -34,6 +34,10 @@ function yamlFile(repo: string, sha: string, extra = ""): FakeRegistryFile {
   return { name: `${repo.replace("/", "-")}.yaml`, sha, content: `repo: ${repo}\nsubmittedBy: octocat\n${extra}` };
 }
 
+beforeEach(() => {
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+});
+
 describe("syncShowcase", () => {
   test("creates projects from the registry with registry and GitHub fields", async () => {
     fakeShowcaseRegistry([
@@ -45,7 +49,7 @@ describe("syncShowcase", () => {
     ]);
     fakeRepos({ "acme/rocket": 1234 });
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0 });
+    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, invalid: [] });
 
     expect(await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/rocket" } })).toMatchObject({
       submittedBy: "octocat",
@@ -84,7 +88,7 @@ describe("syncShowcase", () => {
     fakeShowcaseRegistry([yamlFile("acme/rocket", "sha-1")]);
     const { queries } = fakeRepos({ "acme/rocket": 999 });
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 0 });
+    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 0, invalid: [] });
 
     expect(queries).toHaveLength(0);
     expect((await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/rocket" } })).stars).toBe(5);
@@ -97,7 +101,7 @@ describe("syncShowcase", () => {
     fakeShowcaseRegistry([yamlFile("acme/rocket", "new", "website: https://new.dev\n")]);
     fakeRepos({ "acme/rocket": 50 });
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0 });
+    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, invalid: [] });
 
     expect(await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/rocket" } })).toMatchObject({
       id: existing.id,
@@ -114,7 +118,7 @@ describe("syncShowcase", () => {
     fakeShowcaseRegistry([yamlFile("acme/kept", "sha-1")]);
     fakeRepos({});
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 1 });
+    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 1, invalid: [] });
 
     expect((await testPrisma.showcaseProject.findMany()).map((p) => p.repo)).toEqual(["acme/kept"]);
     expect(revalidateTag).toHaveBeenCalledWith("showcase", "max");
@@ -125,11 +129,11 @@ describe("syncShowcase", () => {
     fakeShowcaseRegistry([]);
     fakeRepos({});
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 0, deleted: 0 });
+    await expect(syncShowcase()).resolves.toEqual({ synced: 0, skipped: 0, deleted: 0, invalid: [] });
     expect(await testPrisma.showcaseProject.count()).toBe(1);
   });
 
-  test("ignores non-YAML files and YAML that fails validation", async () => {
+  test("skips non-YAML files and reports YAML that fails validation", async () => {
     fakeShowcaseRegistry([
       yamlFile("acme/valid", "sha-1"),
       { name: "README.md", sha: "readme", content: "# Showcase" },
@@ -138,8 +142,14 @@ describe("syncShowcase", () => {
     ]);
     fakeRepos({ "acme/valid": 1, "acme/invalid": 1, "acme/typed": 1 });
 
-    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0 });
+    await expect(syncShowcase()).resolves.toEqual({
+      synced: 1,
+      skipped: 0,
+      deleted: 0,
+      invalid: ["missing-submitter.yaml", "wrong-type.yaml"],
+    });
     expect((await testPrisma.showcaseProject.findMany()).map((p) => p.repo)).toEqual(["acme/valid"]);
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Invalid showcase file "wrong-type.yaml"'));
   });
 
   test("staggers new projects' creation dates in registry order, newest first", async () => {
@@ -182,8 +192,7 @@ describe("syncShowcase", () => {
     }
   });
 
-  // A single YAML edit that fails validation is filtered out of the registry, so the project is deleted.
-  test.fails("BUG-07: keeps an existing project when its YAML becomes invalid", async () => {
+  test("BUG-07: keeps an existing project when its YAML becomes invalid", async () => {
     await createShowcaseProject({ repo: "acme/rocket", fileSha: "sha-1", stars: 100 });
     await createShowcaseProject({ repo: "acme/other", fileSha: "sha-2" });
     fakeShowcaseRegistry([
@@ -192,17 +201,59 @@ describe("syncShowcase", () => {
     ]);
     fakeRepos({});
 
-    await syncShowcase();
+    await expect(syncShowcase()).resolves.toMatchObject({ deleted: 0, invalid: ["acme-rocket.yaml"] });
 
-    expect(await testPrisma.showcaseProject.findUnique({ where: { repo: "acme/rocket" } })).not.toBeNull();
+    expect(await testPrisma.showcaseProject.findUnique({ where: { repo: "acme/rocket" } })).toMatchObject({
+      fileSha: "sha-1",
+      stars: 100,
+    });
   });
 
-  // `repo` is only `z.string()`, so a value without `owner/name` is queried as `name: "undefined"`.
-  test.fails("BUG-08: rejects registry entries whose repo is not owner/name", async () => {
-    fakeShowcaseRegistry([yamlFile("just-a-name", "1"), yamlFile("acme/valid", "2")]);
-    fakeRepos({ "acme/valid": 1 });
+  test("skips pruning when a file is not even parseable YAML", async () => {
+    await createShowcaseProject({ repo: "acme/rocket", fileSha: "sha-1" });
+    fakeShowcaseRegistry([
+      { name: "acme-rocket.yaml", sha: "sha-1b", content: "repo: [unclosed\n" },
+      yamlFile("acme/other", "sha-2"),
+    ]);
+    fakeRepos({ "acme/other": 1 });
+
+    await expect(syncShowcase()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, invalid: ["acme-rocket.yaml"] });
+    expect(await testPrisma.showcaseProject.count()).toBe(2);
+  });
+
+  test("still prunes files deleted upstream alongside an invalid one", async () => {
+    await createShowcaseProject({ repo: "acme/rocket", fileSha: "sha-1" });
+    await createShowcaseProject({ repo: "acme/gone", fileSha: "sha-2" });
+    fakeShowcaseRegistry([
+      { name: "acme-rocket.yaml", sha: "sha-1b", content: "repo: acme/rocket\n" },
+      yamlFile("acme/other", "sha-3"),
+    ]);
+    fakeRepos({ "acme/other": 1 });
+
+    await expect(syncShowcase()).resolves.toMatchObject({ deleted: 1 });
+    const repos = (await testPrisma.showcaseProject.findMany({ orderBy: { repo: "asc" } })).map((p) => p.repo);
+    expect(repos).toEqual(["acme/other", "acme/rocket"]);
+  });
+
+  test("keeps stats when a changed file's repo has no GitHub data", async () => {
+    await createShowcaseProject({ repo: "acme/rocket", fileSha: "sha-1", stars: 900 });
+    fakeShowcaseRegistry([yamlFile("acme/rocket", "sha-2", "website: https://new.dev\n")]);
+    fakeRepos({});
 
     await syncShowcase();
+
+    expect(await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/rocket" } })).toMatchObject({
+      stars: 900,
+      website: "https://new.dev",
+      fileSha: "sha-2",
+    });
+  });
+
+  test.for(["just-a-name", 'acme/rock"et', "acme/rocket/extra"])("BUG-08: rejects repo %j", async (repo) => {
+    fakeShowcaseRegistry([yamlFile(repo, "1"), yamlFile("acme/valid", "2")]);
+    fakeRepos({ "acme/valid": 1 });
+
+    await expect(syncShowcase()).resolves.toMatchObject({ synced: 1, invalid: [`${repo.replace("/", "-")}.yaml`] });
 
     expect((await testPrisma.showcaseProject.findMany()).map((p) => p.repo)).toEqual(["acme/valid"]);
   });
@@ -252,13 +303,15 @@ describe("syncShowcaseData", () => {
     await expect(syncShowcaseData()).rejects.toMatchObject({ status: 502 });
   });
 
-  // GitHub answers a missing/renamed/temporarily unresolvable repo with `null`, which overwrites real stats with zeros.
-  test.fails("BUG-06: keeps the last known stats when GitHub returns no data for a repo", async () => {
+  test("BUG-06: keeps the last known stats when GitHub returns no data for a repo", async () => {
     await createShowcaseProject({ repo: "acme/rocket", stars: 1500 });
-    fakeRepos({});
+    await createShowcaseProject({ repo: "acme/live", stars: 1 });
+    fakeRepos({ "acme/live": 42 });
 
-    await syncShowcaseData();
+    await expect(syncShowcaseData()).resolves.toEqual({ synced: 1 });
 
     expect((await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/rocket" } })).stars).toBe(1500);
+    expect((await testPrisma.showcaseProject.findUniqueOrThrow({ where: { repo: "acme/live" } })).stars).toBe(42);
+    expect(console.warn).toHaveBeenCalledWith('No GitHub data for showcase repo "acme/rocket", keeping existing stats');
   });
 });

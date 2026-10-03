@@ -209,6 +209,16 @@ describe("MCP server", () => {
     expect(res.headers.get("retry-after")).toMatch(/^\d+$/);
   });
 
+  test("keeps serving when the rate limiter is down", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    upstash.failWith = 503;
+
+    const { res, body } = await rpc("tools/list");
+
+    expect(res.status).toBe(200);
+    expect(body.result.tools).toHaveLength(6);
+  });
+
   test("serves GET on the same handler", () => {
     expect(GET).toBe(POST);
   });

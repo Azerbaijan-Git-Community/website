@@ -30,7 +30,8 @@ describe("POST /api/webhooks/showcase", () => {
       synced: 1,
       skipped: 1,
       deleted: 1,
-      message: "Synced 1 projects, skipped 1 unchanged, deleted 1",
+      invalid: [],
+      message: "Synced 1 projects, skipped 1 unchanged, deleted 1, invalid 0",
     });
     const repos = (await testPrisma.showcaseProject.findMany({ orderBy: { repo: "asc" } })).map((p) => p.repo);
     expect(repos).toEqual(["acme/new", "acme/same"]);

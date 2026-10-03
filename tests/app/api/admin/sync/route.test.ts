@@ -94,7 +94,7 @@ describe("POST /api/admin/sync", () => {
     const res = await sync({ target: "blog" });
 
     expect(res.status).toBe(200);
-    await expect(res.json()).resolves.toEqual({ message: "Synced 1, skipped 0, failed 0" });
+    await expect(res.json()).resolves.toEqual({ message: "Synced 1, skipped 0, deleted 0, failed 0" });
     expect(forwarded?.headers.get("authorization")).toBe("Bearer test-blog-secret");
     expect(await testPrisma.blogPost.count()).toBe(1);
   });

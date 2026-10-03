@@ -64,7 +64,7 @@ describe("getWeekKey", () => {
   });
 
   // Sunday 22:00 UTC is already Monday 02:00 in Baku (UTC+4); week keys must follow UTC like getMonthKey.
-  test.fails("BUG-01: uses the UTC week regardless of the server timezone", () => {
+  test("BUG-01: uses the UTC week regardless of the server timezone", () => {
     vi.stubEnv("TZ", "Asia/Baku");
     expect(getWeekKey(new Date("2026-01-04T22:00:00Z"))).toBe("2026-W01");
   });

@@ -63,6 +63,9 @@ describe("ShowcaseCard", () => {
     [1000, "1k"],
     [1050, "1.1k"],
     [12_345, "12.3k"],
+    [999_499, "999.5k"],
+    [1_500_000, "1.5M"],
+    [12_340_000, "12.3M"],
   ] as const)("formats %d stars as %s", ([stars, label]) => {
     render(<ShowcaseCard project={project({ stars, openIssues: 3, openPRs: 4 })} index={0} />);
     expect(screen.getByText(label)).toBeInTheDocument();
@@ -107,8 +110,9 @@ describe("ShowcaseCard", () => {
     for (const link of screen.getAllByRole("link")) expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  test.fails("BUG-12: rounds large counts into millions instead of showing 1000k", () => {
+  test("BUG-12: rounds large counts into millions instead of showing 1000k", () => {
     render(<ShowcaseCard project={project({ stars: 999_999 })} index={0} />);
+    expect(screen.getByText("1M")).toBeInTheDocument();
     expect(screen.queryByText("1000k")).not.toBeInTheDocument();
   });
 });

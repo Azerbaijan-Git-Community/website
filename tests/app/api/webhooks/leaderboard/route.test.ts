@@ -25,7 +25,7 @@ function fakeUsers(known: string[]) {
         ? {
             weekly: counts,
             monthly: counts,
-            allTime: counts,
+            allTime: { ...counts, contributionCalendar: { totalContributions: 9 } },
             repositories: { totalCount: 1 },
             followers: { totalCount: 1 },
           }

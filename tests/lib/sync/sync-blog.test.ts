@@ -28,7 +28,7 @@ describe("syncBlog", () => {
     const author = await createUser({ githubId: 4242 });
     fakeBlogRepo({ "hello-world": { sha: "tree-1", mdx: mdx() } });
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, failed: [] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, failed: [] });
 
     const post = await testPrisma.blogPost.findUniqueOrThrow({ where: { slug: "hello-world" } });
     expect(post).toMatchObject({
@@ -64,7 +64,7 @@ describe("syncBlog", () => {
     await createBlogPost(author.id, { slug: "same", contentSha: "tree-1", title: "Original" });
     const { requests } = fakeBlogRepo({ same: { sha: "tree-1", mdx: mdx({ title: "Changed" }) } });
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 1, failed: [] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 0, failed: [] });
 
     expect(requests).toEqual(["/repos/Azerbaijan-Git-Community/blog/contents/posts"]);
     expect((await testPrisma.blogPost.findUniqueOrThrow({ where: { slug: "same" } })).title).toBe("Original");
@@ -87,7 +87,7 @@ describe("syncBlog", () => {
   test("fails a post whose author has not signed up, without creating it", async () => {
     fakeBlogRepo({ orphan: { sha: "1", mdx: mdx({ author: "999" }) } });
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 0, failed: ["orphan"] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 0, deleted: 0, failed: ["orphan"] });
     expect(await testPrisma.blogPost.count()).toBe(0);
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining("no user found with githubId 999"));
     expect(revalidateTag).not.toHaveBeenCalled();
@@ -103,7 +103,7 @@ describe("syncBlog", () => {
     await createUser({ githubId: 4242 });
     fakeBlogRepo({ broken: { sha: "1", mdx: source } });
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 0, failed: ["broken"] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 0, deleted: 0, failed: ["broken"] });
     expect(await testPrisma.blogPost.count()).toBe(0);
   });
 
@@ -135,7 +135,7 @@ describe("syncBlog", () => {
     await createUser({ githubId: 4242 });
     fakeBlogRepo({ good: { sha: "1", mdx: mdx() }, bad: { sha: "2", mdx: "no frontmatter" } });
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, failed: ["bad"] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, failed: ["bad"] });
     expect(revalidateTag).toHaveBeenCalledWith("blog-good", "max");
     expect(revalidateTag).not.toHaveBeenCalledWith("blog-bad", "max");
   });
@@ -145,14 +145,14 @@ describe("syncBlog", () => {
     await expect(syncBlog()).resolves.toMatchObject({ failed: ["late"] });
 
     await createUser({ githubId: 4242 });
-    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, failed: [] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, failed: [] });
   });
 
   test("ignores loose files in the posts folder", async () => {
     await createUser({ githubId: 4242 });
     fakeBlogRepo({ real: { sha: "1", mdx: mdx() } }, [{ name: "README.md", sha: "r", type: "file" }]);
 
-    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, failed: [] });
+    await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, failed: [] });
   });
 
   test("propagates a failure to list the repo", async () => {
@@ -228,20 +228,30 @@ describe("syncBlog", () => {
       await createUser({ githubId: 4242 });
       fakeBlogRepo({ bom: { sha: "1", mdx: `﻿${mdx()}` } });
 
-      await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, failed: [] });
+      await expect(syncBlog()).resolves.toEqual({ synced: 1, skipped: 0, deleted: 0, failed: [] });
     });
   });
 
-  // Showcase prunes rows whose YAML disappeared; the blog never removes posts deleted upstream.
-  test.fails("BUG-05: removes posts that were deleted from the blog repo", async () => {
+  test("BUG-05: removes posts that were deleted from the blog repo", async () => {
     const author = await createUser({ githubId: 4242 });
     await createBlogPost(author.id, { slug: "kept", contentSha: "1" });
     await createBlogPost(author.id, { slug: "deleted-upstream", contentSha: "2" });
     fakeBlogRepo({ kept: { sha: "1", mdx: mdx() } });
 
-    await syncBlog();
+    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 1, deleted: 1, failed: [] });
 
     const slugs = (await testPrisma.blogPost.findMany({ select: { slug: true } })).map((p) => p.slug);
     expect(slugs).toEqual(["kept"]);
+    expect(revalidateTag).toHaveBeenCalledWith("blog-deleted-upstream", "max");
+    expect(revalidateTag).toHaveBeenCalledWith("blog", "max");
+  });
+
+  test("keeps every post when the listing comes back empty", async () => {
+    const author = await createUser({ githubId: 4242 });
+    await createBlogPost(author.id, { slug: "kept", contentSha: "1" });
+    fakeBlogRepo({});
+
+    await expect(syncBlog()).resolves.toEqual({ synced: 0, skipped: 0, deleted: 0, failed: [] });
+    expect(await testPrisma.blogPost.count()).toBe(1);
   });
 });

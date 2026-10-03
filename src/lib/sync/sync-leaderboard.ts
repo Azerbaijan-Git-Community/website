@@ -49,7 +49,9 @@ type ContributionData = z.infer<typeof ContributionDataSchema>;
 const UserDataSchema = z.object({
   weekly: ContributionDataSchema,
   monthly: ContributionDataSchema,
-  allTime: ContributionDataSchema,
+  allTime: ContributionDataSchema.extend({
+    contributionCalendar: z.object({ totalContributions: z.number() }),
+  }),
   repositories: z.object({ totalCount: z.number() }),
   followers: z.object({ totalCount: z.number() }),
 });
@@ -103,6 +105,7 @@ function buildBatchQuery(users: SyncUser[], weekRange: Range, monthRange: Range)
       monthly: contributionsCollection(from: "${monthRange.from}", to: "${monthRange.to}") {${CONTRIBUTION_FIELDS}
       }
       allTime: contributionsCollection {${CONTRIBUTION_FIELDS}
+        contributionCalendar { totalContributions }
       }
       repositories { totalCount }
       followers { totalCount }
@@ -154,6 +157,7 @@ async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): 
 function persistUser(userId: string, data: UserData, weekKey: string, monthKey: string) {
   const allTime = {
     ...toCounts(data.allTime),
+    contributions: data.allTime.contributionCalendar.totalContributions,
     repositories: data.repositories.totalCount,
     followers: data.followers.totalCount,
   };

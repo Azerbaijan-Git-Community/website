@@ -39,11 +39,15 @@ describe("getLinkIcon", () => {
     expect(getLinkIcon("https://example.com/docs")).toMatchObject({ label: "Link", hoverClass: "hover:text-hi" });
   });
 
-  test.fails("BUG-03: matches on the URL host, not anywhere in the URL", () => {
+  test("BUG-03: matches on the URL host, not anywhere in the URL", () => {
     expect(getLinkIcon("https://github.com/someone/npmjs.com-mirror").label).toBe("Link");
   });
 
-  test.fails("BUG-03: does not match look-alike hosts", () => {
+  test("BUG-03: does not match look-alike hosts", () => {
     expect(getLinkIcon("https://notpypi.org.evil.example/pkg").label).toBe("Link");
+  });
+
+  test("falls back for malformed URLs", () => {
+    expect(getLinkIcon("not a url").label).toBe("Link");
   });
 });

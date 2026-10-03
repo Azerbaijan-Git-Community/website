@@ -31,8 +31,9 @@ describe("POST /api/webhooks/blog", () => {
       ok: true,
       synced: 1,
       skipped: 0,
+      deleted: 0,
       failed: ["orphan"],
-      message: "Synced 1, skipped 0, failed 1",
+      message: "Synced 1, skipped 0, deleted 0, failed 1",
     });
     expect(await testPrisma.blogPost.count()).toBe(1);
     expect(revalidateTag).toHaveBeenCalledWith("blog", "max");

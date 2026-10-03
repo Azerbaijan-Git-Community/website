@@ -52,7 +52,7 @@ Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one
 - `src/data/` — server-side data fetching functions with `"use cache"` and `cacheLife("hours")`
 - `src/lib/` — auth config, Prisma client, env validation (Zod), fonts, action helpers
 - `prisma/schema.prisma` — database schema
-- `scripts/pr-checks.ts` — pre-publish CI check runner
+- `scripts/qstash-schedules.ts` — registers the QStash sync schedules on production builds
 
 ### Data Flow
 

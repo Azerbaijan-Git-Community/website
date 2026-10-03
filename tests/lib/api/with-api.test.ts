@@ -60,7 +60,7 @@ describe("withApi", () => {
   });
 
   // An Upstash outage currently rejects before the try/catch, so every public endpoint throws.
-  test.fails("BUG-04: keeps serving (fails open) when the rate-limit backend is down", async () => {
+  test("BUG-04: keeps serving (fails open) when the rate-limit backend is down", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     upstash.failWith = 503;
     const res = await withApi(async () => NextResponse.json({ data: "still up" }))(request("20.0.0.5"), undefined);

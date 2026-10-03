@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { checkRateLimit, getClientIp } from "@/lib/api/rate-limit";
 import { upstash, useFakeUpstash } from "@test/upstash";
 
@@ -90,5 +90,24 @@ describe("checkRateLimit", () => {
     const secondsUntilUtcMidnight = Math.ceil((86_400_000 - (Date.now() % 86_400_000)) / 1000);
     expect(retryAfter).toBeLessThanOrEqual(secondsUntilUtcMidnight);
     expect(retryAfter).toBeGreaterThanOrEqual(secondsUntilUtcMidnight - 5);
+  });
+
+  test("fails open and logs when Upstash is down", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    upstash.failWith = 503;
+
+    await expect(checkRateLimit("10.0.0.7")).resolves.toEqual({ ok: true, headers: {} });
+    expect(log).toHaveBeenCalledWith("Rate limit check failed, allowing request:", expect.any(Error));
+  });
+});
+
+describe("checkRateLimit without Upstash", () => {
+  test("fails open with no headers", async () => {
+    vi.stubEnv("UPSTASH_REDIS_REST_URL", undefined);
+    vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", undefined);
+    vi.resetModules();
+    const { checkRateLimit: check } = await import("@/lib/api/rate-limit");
+
+    await expect(check("1.1.1.1")).resolves.toEqual({ ok: true, headers: {} });
   });
 });

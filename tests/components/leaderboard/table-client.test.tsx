@@ -90,8 +90,7 @@ describe("TableClient", () => {
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
-  // The empty state replaces the whole component, tabs included, so the visitor can't switch back.
-  test.fails("BUG-15: keeps the period tabs available when the selected period is empty", async () => {
+  test("BUG-15: keeps the period tabs available when the selected period is empty", async () => {
     const user = userEvent.setup();
     render(<TableClient allData={{ ...data, weekly: [] }} />);
 
@@ -103,7 +102,7 @@ describe("TableClient", () => {
     expect(tableRows()).toEqual(["first", "second", "third", "fourth"]);
   });
 
-  test.fails("BUG-15: lets visitors reach other periods when the current month is still empty", () => {
+  test("BUG-15: lets visitors reach other periods when the current month is still empty", () => {
     render(<TableClient allData={{ ...data, monthly: [] }} />);
     expect(screen.getByRole("button", { name: "Last Year" })).toBeInTheDocument();
   });

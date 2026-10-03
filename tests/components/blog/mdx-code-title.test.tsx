@@ -40,11 +40,8 @@ describe("MdxCodeTitle", () => {
     await expect(navigator.clipboard.readText()).resolves.toBe("echo hi");
   });
 
-  // rehype-pretty-code emits `data-rehype-pretty-code-title=""` with the filename as the children,
-  // but the component derives the extension from the (always empty) attribute.
   test.for(["index.ts", "App.TSX", "schema.prisma", "Dockerfile", "run.sh"])(
     "BUG-14: shows a language icon for %s",
-    { fails: true },
     async (title) => {
       const { container } = await renderCodeBlock(title);
       // One icon for the language, one inside the copy button.

@@ -76,5 +76,7 @@ const DOMAIN_ICONS: DomainIconEntry[] = [
 const FALLBACK_LINK_ICON: LinkIconDef = { icon: PiArrowSquareOut, hoverClass: "hover:text-hi", label: "Link" };
 
 export function getLinkIcon(url: string): LinkIconDef {
-  return DOMAIN_ICONS.find(({ domain }) => url.includes(domain)) ?? FALLBACK_LINK_ICON;
+  const host = URL.parse(url)?.hostname;
+  if (!host) return FALLBACK_LINK_ICON;
+  return DOMAIN_ICONS.find(({ domain }) => host === domain || host.endsWith(`.${domain}`)) ?? FALLBACK_LINK_ICON;
 }

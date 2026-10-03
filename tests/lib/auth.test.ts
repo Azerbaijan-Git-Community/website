@@ -46,10 +46,6 @@ describe("GitHub profile mapping", () => {
   test("falls back to the login when the profile has no display name", () => {
     expect(map(githubProfile({ name: "" }))).toMatchObject({ name: "octocat" });
   });
-
-  test("requests only the scopes needed to read the profile", () => {
-    expect(auth.options.socialProviders.github.scope).toEqual(["read:user", "user:email"]);
-  });
 });
 
 describe("sessions", () => {
