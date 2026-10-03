@@ -4,8 +4,13 @@ import { PrismaPGlite } from "pglite-prisma-adapter";
 import { inject } from "vitest";
 import { PrismaClient } from "@/generated/prisma/client";
 
-// Real Postgres (WASM) per test file, so queries, constraints and relation filters behave like production.
-const pglite = new PGlite({ loadDataDir: new Blob([readFileSync(inject("dbSnapshotPath"))]) });
+// Real Postgres (WASM), so queries, constraints and relation filters behave like production. Cached on `process`,
+// which outlives each file's VM context, so a `vmThreads` worker loads one database (truncated per test).
+// The Prisma client stays per file: one from a torn-down VM context breaks.
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+const worker = process as NodeJS.Process & { testDb?: PGlite };
+
+const pglite = (worker.testDb ??= new PGlite({ loadDataDir: new Blob([readFileSync(inject("dbSnapshotPath"))]) }));
 
 export const testPrisma = new PrismaClient({ adapter: new PrismaPGlite(pglite) });
 
