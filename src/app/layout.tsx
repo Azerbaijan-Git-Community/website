@@ -11,6 +11,8 @@ import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 
+export const ensureStatic = "prefetch";
+
 export const metadata: Metadata = {
   metadataBase: new URL(clientEnv.NEXT_PUBLIC_BASE_URL),
   title: {
