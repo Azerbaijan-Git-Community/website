@@ -69,6 +69,7 @@ export default defineConfig({
         test: {
           name: "og",
           environment: "node",
+          // Not a VM pool: Vitest's VM loader can't resolve the dynamic `import()` in Next's CJS `ImageResponse`.
           include: ["tests/**/opengraph-image.test.ts"],
           setupFiles: ["./tests/test-utils/setup/server.ts"],
         },
