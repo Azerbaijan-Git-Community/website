@@ -103,7 +103,7 @@ describe("SyncPanel", () => {
 
     await user.click(within(row("Blog")).getByRole("button", { name: "Run" }));
 
-    expect(await within(row("Blog")).findByText("Failed to fetch")).toBeInTheDocument();
+    expect(await within(row("Blog")).findByText("fetch failed")).toBeInTheDocument();
     expect(within(row("Blog")).getByRole("button", { name: "Run" })).toBeEnabled();
   });
 

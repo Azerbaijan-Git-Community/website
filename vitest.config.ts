@@ -50,8 +50,8 @@ export default defineConfig({
         test: {
           name: "server",
           environment: "node",
-          // Reuses worker processes (each file still gets its own VM context), so the PGlite database is shared too.
-          pool: "vmForks",
+          // Reuses worker threads (each file still gets its own VM context), so the PGlite database is shared too.
+          pool: "vmThreads",
           include: ["tests/**/*.test.ts"],
           exclude: ["tests/**/opengraph-image.test.ts"],
           setupFiles: ["./tests/test-utils/setup/server.ts"],

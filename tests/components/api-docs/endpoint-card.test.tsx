@@ -92,6 +92,6 @@ describe("EndpointCard", () => {
     await user.click(screen.getByRole("button", { name: "Try it" }));
 
     expect(await screen.findByText("ERR")).toBeInTheDocument();
-    expect(responseCode()).toHaveTextContent("Failed to fetch");
+    expect(responseCode()).toHaveTextContent("fetch failed");
   });
 });

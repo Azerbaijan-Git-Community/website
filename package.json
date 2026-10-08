@@ -69,7 +69,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "greenly": "1.2.0",
     "jsdom": "30.1.1",
-    "msw": "2.15.0",
+    "msw": "3.0.2",
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
     "oxlint-tsgolint": "7.0.2003",

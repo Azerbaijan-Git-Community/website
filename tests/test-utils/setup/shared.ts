@@ -13,6 +13,6 @@ vi.mock(import("next/cache"), async (importOriginal) => ({
 }));
 
 // Listen before any test module loads: some clients (e.g. better-auth) capture `fetch` at import time.
-server.listen({ onUnhandledRequest: "error" });
+server.listen({ onUnhandledFrame: "error" });
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
