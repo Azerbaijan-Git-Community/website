@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     useOffline: true,
     useTypeScriptCli: true,
     turbopackRustReactCompiler: true,
+    agentUpgrade: "latest",
   },
   images: {
     qualities: [75, 100],
