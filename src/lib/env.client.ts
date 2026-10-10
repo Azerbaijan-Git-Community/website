@@ -1,12 +1,14 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 export const clientEnvSchema = z.object({
   NEXT_PUBLIC_BASE_URL: z
     .url()
-    .refine((url) => !url.endsWith("/"), { message: "NEXT_PUBLIC_BASE_URL must not have a trailing slash" }),
-  NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL: z.url().refine((url) => !url.endsWith("/"), {
-    message: "NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL must not have a trailing slash",
-  }),
+    .check(z.refine((url) => !url.endsWith("/"), { message: "NEXT_PUBLIC_BASE_URL must not have a trailing slash" })),
+  NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL: z.url().check(
+    z.refine((url) => !url.endsWith("/"), {
+      message: "NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL must not have a trailing slash",
+    }),
+  ),
 });
 
 export const clientEnv = clientEnvSchema.parse({
