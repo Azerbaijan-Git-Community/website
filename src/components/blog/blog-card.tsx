@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PiClock } from "react-icons/pi";
 import type { BlogPostItem } from "@/data/blog/get";
-import { formatDate } from "@/lib/utils.client";
+import { formatDate, sizedGithubAvatar } from "@/lib/utils.client";
 
 export function BlogPostCard({ post }: { post: BlogPostItem }) {
   return (
@@ -32,7 +32,7 @@ export function BlogPostCard({ post }: { post: BlogPostItem }) {
         <div className="mt-auto flex items-center justify-between border-t border-line pt-3">
           <div className="flex items-center gap-2">
             <Image
-              src={post.author.image}
+              src={sizedGithubAvatar(post.author.image, 48)}
               alt={post.author.name}
               width={24}
               height={24}

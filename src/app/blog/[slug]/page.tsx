@@ -12,7 +12,7 @@ import { cacheTags } from "@/lib/cache-tags";
 import { compileMdx } from "@/lib/compile-mdx";
 import { clientEnv } from "@/lib/env.client";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/structured-data";
-import { formatDate } from "@/lib/utils.client";
+import { formatDate, sizedGithubAvatar } from "@/lib/utils.client";
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   "use cache";
@@ -97,7 +97,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
             {/* Author */}
             <div className="flex items-center gap-2">
               <Image
-                src={post.author.image}
+                src={sizedGithubAvatar(post.author.image, 64)}
                 alt={post.author.name}
                 width={32}
                 height={32}

@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getPodiumData } from "@/data/leaderboard/get";
 import { getOgFonts } from "@/lib/og-fonts";
-import { formatMonthKey, getLatestMonthKey } from "@/lib/utils.client";
+import { formatMonthKey, getLatestMonthKey, sizedGithubAvatar } from "@/lib/utils.client";
 
 export const alt = "Monthly Leaderboard — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
@@ -92,7 +92,7 @@ export default async function Image() {
                 >
                   {/* oxlint-disable-next-line next/no-img-element */}
                   <img
-                    src={entry.user.image}
+                    src={sizedGithubAvatar(entry.user.image, config.avatarSize)}
                     alt={entry.user.githubUsername}
                     width={config.avatarSize}
                     height={config.avatarSize}

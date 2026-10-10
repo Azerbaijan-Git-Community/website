@@ -4,6 +4,7 @@ import { AnimatePresence, LazyMotion, domAnimation, m as motion } from "motion/r
 import Image from "next/image";
 import { useState } from "react";
 import type { AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
+import { sizedGithubAvatar } from "@/lib/utils.client";
 import { PeriodSelector } from "./period-selector";
 
 function getRankBadgeClass(rank: number): string {
@@ -100,7 +101,7 @@ export function TableClient({ allData }: TableClientProps) {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <Image
-                                src={entry.user.image}
+                                src={sizedGithubAvatar(entry.user.image, 80)}
                                 alt={`@${entry.user.githubUsername}`}
                                 width={40}
                                 height={40}
@@ -165,7 +166,7 @@ export function TableClient({ allData }: TableClientProps) {
                     </div>
                     <div className="mb-4 flex items-center gap-3">
                       <Image
-                        src={entry.user.image}
+                        src={sizedGithubAvatar(entry.user.image, 112)}
                         alt={`@${entry.user.githubUsername}`}
                         width={56}
                         height={56}

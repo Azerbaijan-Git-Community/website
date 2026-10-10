@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
 import type { LeaderboardEntry } from "@/data/leaderboard/get";
-import { getLatestMonthKey } from "@/lib/utils.client";
+import { getLatestMonthKey, sizedGithubAvatar } from "@/lib/utils.client";
 import { MonthSelector } from "./month-selector";
 
 type PodiumClientProps = {
@@ -93,7 +93,7 @@ function PodiumCard({ entry, config, className }: PodiumCardProps) {
     >
       <div className="relative mb-4">
         <Image
-          src={entry.user.image}
+          src={sizedGithubAvatar(entry.user.image, config.size * 2)}
           alt={`@${entry.user.githubUsername}`}
           width={config.size}
           height={config.size}

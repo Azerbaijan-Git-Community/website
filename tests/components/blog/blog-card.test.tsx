@@ -31,10 +31,10 @@ describe("BlogPostCard", () => {
     expect(screen.getByText("Mar 5, 2026")).toBeInTheDocument();
   });
 
-  test("renders the optimized cover and the raw author avatar", () => {
+  test("renders the optimized cover and a GitHub-resized author avatar", () => {
     render(<BlogPostCard post={post} />);
     const cover = screen.getByRole("img", { name: "Hello World" });
     expect(cover.getAttribute("src")).toMatch(/^\/_next\/image\?url=/);
-    expect(screen.getByRole("img", { name: "Aysel" })).toHaveAttribute("src", post.author.image);
+    expect(screen.getByRole("img", { name: "Aysel" })).toHaveAttribute("src", `${post.author.image}?s=48`);
   });
 });
