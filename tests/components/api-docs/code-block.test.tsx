@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { CodeBlock } from "@/components/api-docs/code-block";
+import { buildSnippets } from "@/components/api-docs/snippets";
 
 describe("CodeBlock", () => {
   test("syntax-highlights the code for the given language", () => {
@@ -12,6 +13,17 @@ describe("CodeBlock", () => {
     expect(colorOf("const")).toBeTruthy();
     expect(colorOf('"42"')).toBeTruthy();
     expect(colorOf("const")).not.toBe(colorOf('"42"'));
+  });
+
+  // Only registered languages are highlighted; anything else renders as plain text.
+  test.each([
+    ...buildSnippets("https://githubcommunity.az/api/v1/stats").map((s) => [s.lang, s.code]),
+    ["json", '{ "ok": true }'],
+    ["typescript", "export const x: number = 1;"],
+  ])("highlights %s", (language, code) => {
+    const { container } = render(<CodeBlock code={code} language={language} />);
+    const colored = [...container.querySelectorAll<HTMLElement>("code span")].filter((s) => s.style.color);
+    expect(colored.length).toBeGreaterThan(0);
   });
 
   test("sits on a transparent background", () => {

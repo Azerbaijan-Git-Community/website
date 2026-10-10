@@ -1,7 +1,24 @@
 "use client";
 
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash";
+import c from "react-syntax-highlighter/dist/esm/languages/prism/c";
+import csharp from "react-syntax-highlighter/dist/esm/languages/prism/csharp";
+import go from "react-syntax-highlighter/dist/esm/languages/prism/go";
+import java from "react-syntax-highlighter/dist/esm/languages/prism/java";
+import javascript from "react-syntax-highlighter/dist/esm/languages/prism/javascript";
+import json from "react-syntax-highlighter/dist/esm/languages/prism/json";
+import php from "react-syntax-highlighter/dist/esm/languages/prism/php";
+import python from "react-syntax-highlighter/dist/esm/languages/prism/python";
+import ruby from "react-syntax-highlighter/dist/esm/languages/prism/ruby";
+import rust from "react-syntax-highlighter/dist/esm/languages/prism/rust";
+import swift from "react-syntax-highlighter/dist/esm/languages/prism/swift";
+import typescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+// The full Prism build bundles ~300 languages (~270 KB gzipped); register only what the docs use.
+const LANGUAGES = { bash, c, csharp, go, java, javascript, json, php, python, ruby, rust, swift, typescript };
+for (const [name, language] of Object.entries(LANGUAGES)) SyntaxHighlighter.registerLanguage(name, language);
 
 type CodeBlockProps = {
   code: string;
