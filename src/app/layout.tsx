@@ -1,11 +1,11 @@
 import "@/lib/env.server";
-import { Toast } from "@heroui/react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
+import { Toaster } from "@/components/toaster";
 import { clientEnv } from "@/lib/env.client";
 import { inter, outfit } from "@/lib/fonts";
 import "./globals.css";
@@ -43,7 +43,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} dark antialiased`}>
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
-        <Toast.Provider placement="bottom end" />
+        <Toaster />
         <Navbar />
         <main>{children}</main>
         <Footer />

@@ -1,15 +1,15 @@
-import { Toast } from "@heroui/react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { delay, http, HttpResponse } from "msw";
 import { describe, expect, test } from "vitest";
 import { SyncPanel } from "@/components/admin/sync-panel";
+import { Toaster } from "@/components/toaster";
 import { server } from "@test/msw";
 
 function renderPanel() {
   return render(
     <>
-      <Toast.Provider />
+      <Toaster />
       <SyncPanel />
     </>,
   );

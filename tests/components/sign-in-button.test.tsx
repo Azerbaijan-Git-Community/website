@@ -1,16 +1,16 @@
-import { Toast } from "@heroui/react";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { describe, expect, test } from "vitest";
 import { SignInButton } from "@/components/sign-in-button";
+import { Toaster } from "@/components/toaster";
 import { server } from "@test/msw";
 import { renderWithRouter } from "@test/next-router";
 
 function renderButton(search = "") {
   return renderWithRouter(
     <>
-      <Toast.Provider />
+      <Toaster />
       <SignInButton />
     </>,
     { search },
@@ -18,7 +18,6 @@ function renderButton(search = "") {
 }
 
 describe("SignInButton", () => {
-  // Keep first: HeroUI's toast queue is module-global and closed toasts never finish exiting in jsdom.
   test("shows no toast without an error", async () => {
     renderButton();
     await new Promise((resolve) => setTimeout(resolve, 50));

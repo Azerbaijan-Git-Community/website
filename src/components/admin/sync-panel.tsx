@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, toast } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useState } from "react";
 import type { IconType } from "react-icons";
 import {
@@ -12,6 +12,7 @@ import {
   PiRocketLaunchBold,
   PiXCircleBold,
 } from "react-icons/pi";
+import { toast } from "sonner";
 import { type SyncTarget } from "@/lib/constants";
 import { ResponseSchema } from "@/lib/utils";
 
@@ -71,7 +72,7 @@ export function SyncPanel() {
           message = `Request failed (${res.status})`;
         }
         setResults((prev) => ({ ...prev, [target]: { status: "error", message } }));
-        toast.danger(`${target} sync failed`, { description: message });
+        toast.error(`${target} sync failed`, { description: message });
       } else {
         let message = data.message;
         if (!message) {
@@ -83,7 +84,7 @@ export function SyncPanel() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Network error";
       setResults((prev) => ({ ...prev, [target]: { status: "error", message } }));
-      toast.danger(`${target} sync failed`, { description: message });
+      toast.error(`${target} sync failed`, { description: message });
     }
     setRunning(null);
   }

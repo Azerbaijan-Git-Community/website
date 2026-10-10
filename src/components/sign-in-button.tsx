@@ -1,9 +1,10 @@
 "use client";
 
-import { Button, toast } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { PiGithubLogoBold } from "react-icons/pi";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 export function SignInButton() {
@@ -13,11 +14,11 @@ export function SignInButton() {
     const error = searchParams.get("error");
     const errorDescription = searchParams.get("error_description");
     if (error === "banned") {
-      toast.danger("You have been banned", {
+      toast.error("You have been banned", {
         description: "We banned your account because we detected bot activity on GitHub",
       });
     } else if (error) {
-      toast.danger(errorDescription || "An error occurred during sign-in. Please try again.");
+      toast.error(errorDescription || "An error occurred during sign-in. Please try again.");
     }
   }, [searchParams]);
 
