@@ -30,6 +30,18 @@ export function getTimeLeft(lastSync: Date | null): number {
   return Math.max(0, next - Date.now());
 }
 
+// GitHub resizes avatars server-side via `s`; the default is 460px.
+export function sizedGithubAvatar(src: string, size: number): string {
+  try {
+    const url = new URL(src);
+    if (url.hostname !== "avatars.githubusercontent.com") return src;
+    url.searchParams.set("s", String(size));
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
+
 export function formatTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const h = Math.floor(totalSeconds / 3600);

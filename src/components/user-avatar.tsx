@@ -4,6 +4,7 @@ import { Avatar, Dropdown } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { PiSignOutBold } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
+import { sizedGithubAvatar } from "@/lib/utils.client";
 
 type UserAvatarProps = {
   name: string | null;
@@ -25,7 +26,12 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
           size="lg"
           className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-shadow hover:ring-blue"
         >
-          <Avatar.Image className="rounded-full" src={image ?? undefined} alt={name ?? "User"} />
+          {/* 2x of the 56px (size-14) avatar */}
+          <Avatar.Image
+            className="rounded-full"
+            src={image ? sizedGithubAvatar(image, 112) : undefined}
+            alt={name ?? "User"}
+          />
           <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>
         </Avatar>
       </Dropdown.Trigger>

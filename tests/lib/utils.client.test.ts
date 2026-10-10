@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { formatDate, formatMonthKey, formatTime, getLatestMonthKey, getTimeLeft } from "@/lib/utils.client";
+import {
+  formatDate,
+  formatMonthKey,
+  formatTime,
+  getLatestMonthKey,
+  getTimeLeft,
+  sizedGithubAvatar,
+} from "@/lib/utils.client";
 
 describe("formatDate", () => {
   test("formats Date objects and ISO strings the same way", () => {
@@ -59,5 +66,23 @@ describe("formatTime", () => {
     [25 * 3_600_000, "25:00:00"],
   ] as const)("formats %d ms as %s", ([ms, label]) => {
     expect(formatTime(ms)).toBe(label);
+  });
+});
+
+describe("sizedGithubAvatar", () => {
+  test("asks GitHub for the requested size, keeping existing params", () => {
+    expect(sizedGithubAvatar("https://avatars.githubusercontent.com/u/114253515?v=4", 112)).toBe(
+      "https://avatars.githubusercontent.com/u/114253515?v=4&s=112",
+    );
+  });
+
+  test("replaces a size that is already set", () => {
+    expect(sizedGithubAvatar("https://avatars.githubusercontent.com/u/1?s=460&v=4", 112)).toBe(
+      "https://avatars.githubusercontent.com/u/1?s=112&v=4",
+    );
+  });
+
+  test.for(["https://example.com/me.png?v=4", "/avatar.png", "not a url"])("leaves %s untouched", (src) => {
+    expect(sizedGithubAvatar(src, 112)).toBe(src);
   });
 });
