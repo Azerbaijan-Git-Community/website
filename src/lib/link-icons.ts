@@ -1,6 +1,6 @@
 import type { IconType } from "react-icons";
 import { FaDocker, FaNpm, FaPython } from "react-icons/fa";
-import { PiArrowSquareOut, PiGithubLogo } from "react-icons/pi";
+import { PiArrowSquareOut, PiBookOpenText, PiGithubLogo } from "react-icons/pi";
 import {
   SiAnaconda,
   SiApachemaven,
@@ -24,13 +24,23 @@ import {
 } from "react-icons/si";
 import { VscExtensions, VscVscode } from "react-icons/vsc";
 
-// ── Domain → icon registry ────────────────────────────────────────
-// Add an entry to support a new registry/marketplace; the icon is matched from the link URL.
+// ── URL → icon rules ──────────────────────────────────────────────
+// Add an entry to support a new icon. Rules are checked in order and the first match wins.
 export type LinkIconDef = { icon: IconType; hoverClass: string; label: string };
 
-type DomainIconEntry = LinkIconDef & { domain: string };
+/** Every condition set on a rule must match. */
+type LinkIconRule = LinkIconDef & {
+  /** Host equals this domain or is a subdomain of it, e.g. `npmjs.com` matches `www.npmjs.com`. */
+  domain?: string;
+  /** Host starts with this label, e.g. `docs` matches `docs.example.com`. */
+  subdomain?: string;
+  /** First path segment (case-insensitive), e.g. `docs` matches `example.com/docs/intro`. */
+  path?: string;
+};
 
-const DOMAIN_ICONS: DomainIconEntry[] = [
+const DOCS: LinkIconDef = { icon: PiBookOpenText, hoverClass: "hover:text-hi", label: "Documentation" };
+
+const LINK_ICON_RULES: LinkIconRule[] = [
   { domain: "npmjs.com", icon: FaNpm, hoverClass: "hover:text-[#CB3837]", label: "npm" },
   { domain: "pypi.org", icon: FaPython, hoverClass: "hover:text-[#3776AB]", label: "PyPI" },
   {
@@ -71,12 +81,27 @@ const DOMAIN_ICONS: DomainIconEntry[] = [
   { domain: "search.nixos.org", icon: SiNixos, hoverClass: "hover:text-[#5277C3]", label: "NixOS" },
   { domain: "formulae.brew.sh", icon: SiHomebrew, hoverClass: "hover:text-[#FBB040]", label: "Homebrew" },
   { domain: "ghcr.io", icon: PiGithubLogo, hoverClass: "hover:text-hi", label: "GitHub Container Registry" },
+  // Generic patterns go last so a registry's own `/docs` page keeps the registry icon.
+  { domain: "readthedocs.io", ...DOCS },
+  { subdomain: "docs", ...DOCS },
+  { subdomain: "doc", ...DOCS },
+  { path: "docs", ...DOCS },
+  { path: "doc", ...DOCS },
+  { path: "documentation", ...DOCS },
 ];
 
 const FALLBACK_LINK_ICON: LinkIconDef = { icon: PiArrowSquareOut, hoverClass: "hover:text-hi", label: "Link" };
 
+function matches(rule: LinkIconRule, url: URL): boolean {
+  const host = url.hostname;
+  if (rule.domain && host !== rule.domain && !host.endsWith(`.${rule.domain}`)) return false;
+  if (rule.subdomain && !host.startsWith(`${rule.subdomain}.`)) return false;
+  if (rule.path && url.pathname.split("/")[1]?.toLowerCase() !== rule.path) return false;
+  return true;
+}
+
 export function getLinkIcon(url: string): LinkIconDef {
-  const host = URL.parse(url)?.hostname;
-  if (!host) return FALLBACK_LINK_ICON;
-  return DOMAIN_ICONS.find(({ domain }) => host === domain || host.endsWith(`.${domain}`)) ?? FALLBACK_LINK_ICON;
+  const parsed = URL.parse(url);
+  if (!parsed) return FALLBACK_LINK_ICON;
+  return LINK_ICON_RULES.find((rule) => matches(rule, parsed)) ?? FALLBACK_LINK_ICON;
 }

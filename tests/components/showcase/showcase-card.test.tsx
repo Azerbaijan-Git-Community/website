@@ -93,7 +93,7 @@ describe("ShowcaseCard", () => {
     render(
       <ShowcaseCard
         project={project({
-          links: ["https://www.npmjs.com/package/rocket", "https://example.com/docs"],
+          links: ["https://www.npmjs.com/package/rocket", "https://example.com/rocket"],
           website: "https://rocket.dev",
         })}
         index={0}
@@ -105,7 +105,7 @@ describe("ShowcaseCard", () => {
       "https://github.com/acme/rocket",
     );
     expect(screen.getByRole("link", { name: "npm" })).toHaveAttribute("href", "https://www.npmjs.com/package/rocket");
-    expect(screen.getByRole("link", { name: "Link" })).toHaveAttribute("href", "https://example.com/docs");
+    expect(screen.getByRole("link", { name: "Link" })).toHaveAttribute("href", "https://example.com/rocket");
     expect(screen.getByRole("link", { name: "Visit website" })).toHaveAttribute("href", "https://rocket.dev");
     for (const link of screen.getAllByRole("link")) expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });

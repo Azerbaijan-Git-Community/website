@@ -35,8 +35,30 @@ describe("getLinkIcon", () => {
     expect(def.icon).toBeTypeOf("function");
   });
 
+  test.for([
+    "https://docs.omicron.blog/",
+    "https://omicron.blog/docs",
+    "https://omicron.blog/docs/getting-started",
+    "https://example.com/Documentation/",
+    "https://doc.example.com/guide",
+    "https://mylib.readthedocs.io/en/latest/",
+  ])("shows the docs icon for %s", (url) => {
+    expect(getLinkIcon(url)).toMatchObject({ label: "Documentation", hoverClass: "hover:text-hi" });
+  });
+
+  test.for(["https://example.com/blog/docs", "https://example.com/docsify", "https://mydocs.example.com"])(
+    "does not treat %s as docs",
+    (url) => {
+      expect(getLinkIcon(url).label).toBe("Link");
+    },
+  );
+
+  test("registry domains take priority over the docs rule", () => {
+    expect(getLinkIcon("https://pkg.go.dev/docs").label).toBe("pkg.go.dev");
+  });
+
   test("falls back to a generic link icon for unknown hosts", () => {
-    expect(getLinkIcon("https://example.com/docs")).toMatchObject({ label: "Link", hoverClass: "hover:text-hi" });
+    expect(getLinkIcon("https://example.com/about")).toMatchObject({ label: "Link", hoverClass: "hover:text-hi" });
   });
 
   test("BUG-03: matches on the URL host, not anywhere in the URL", () => {
