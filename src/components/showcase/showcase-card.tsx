@@ -117,6 +117,18 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
               <PiGithubLogo size={18} />
             </a>
 
+            {project.website && (
+              <a
+                href={project.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lo transition-colors hover:text-hi"
+                aria-label="Visit website"
+              >
+                <PiGlobeSimple size={18} />
+              </a>
+            )}
+
             {links.map((url) => {
               const { icon: Icon, hoverClass, label } = getLinkIcon(url);
               return (
@@ -132,18 +144,6 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
                 </a>
               );
             })}
-
-            {project.website && (
-              <a
-                href={project.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lo transition-colors hover:text-hi"
-                aria-label="Visit website"
-              >
-                <PiGlobeSimple size={18} />
-              </a>
-            )}
           </div>
         </div>
       </div>

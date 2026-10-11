@@ -110,6 +110,22 @@ describe("ShowcaseCard", () => {
     for (const link of screen.getAllByRole("link")) expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  test("orders icon links as GitHub, website, then registry links", () => {
+    render(
+      <ShowcaseCard
+        project={project({ links: ["https://www.npmjs.com/package/rocket"], website: "https://rocket.dev" })}
+        index={0}
+      />,
+    );
+
+    const labels = screen.getAllByRole("link").map((link) => link.getAttribute("aria-label"));
+    expect(labels.filter((l) => ["View on GitHub", "Visit website", "npm"].includes(l ?? ""))).toEqual([
+      "View on GitHub",
+      "Visit website",
+      "npm",
+    ]);
+  });
+
   test("BUG-12: rounds large counts into millions instead of showing 1000k", () => {
     render(<ShowcaseCard project={project({ stars: 999_999 })} index={0} />);
     expect(screen.getByText("1M")).toBeInTheDocument();
