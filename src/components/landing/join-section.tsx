@@ -40,7 +40,7 @@ export function JoinSection() {
               Telegram Community
             </Link>
             <Link
-              href="https://signal.group/#CjQKIKatOPCrxxviN5HqbFZAgYD0QLcINoanWPB-1ZTV7sjnEhAmLiVp40DtkfM2fw-cMJIos"
+              href="https://signal.group/#CjQKIKatOPCrxxviN5HqbFZAgYD0QLcINoanWPBs-1ZTV7sjnEhAmLiVp40DtkfM2fw-cMJIo"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md border border-line px-8 py-4 text-lg font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay"
