@@ -80,6 +80,7 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 
 - **TypeScript only** — all source files must be `.ts` or `.tsx`
 - **No component library**: build UI from plain elements styled with Tailwind v4 and the tokens in `src/app/globals.css` — `bg-canvas`/`bg-surface`/`bg-overlay` for backgrounds, `border-line` for borders (the default border color), `text-hi`/`text-lo`/`text-dim` for text, the `glass` helper for translucent cards. Radii follow GitHub: `rounded-md`/`lg`/`xl` = 4.5/6/9px.
+- **UI design**: read [`STYLE.md`](STYLE.md) before building or restyling UI — it documents the tokens, component recipes (buttons, cards, menus, tables…), motion and accessibility rules.
 - **Icons**: use `react-icons` library
 - **Tailwind CSS v4** for all styling — avoid inline styles and external CSS except `globals.css`
 - **Server-first data fetching**: always explore server-side rendering strategies first. Use `"use cache"` with `cacheLife("hours")` for ISR. SWR is available as a dependency but only use it when you truly need client-side fetching. Prefer Server Components and server-side data loading over client-side fetching.
