@@ -7,9 +7,18 @@ import { server } from "@test/msw";
 import { renderWithRouter } from "@test/next-router";
 
 describe("UserAvatar", () => {
-  test("shows the user's initial until the avatar loads", async () => {
+  test("shows the user's initial without an avatar", async () => {
     renderWithRouter(<UserAvatar name="aysel" image={null} />);
     expect(await screen.findByText("A")).toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  test("renders the sized avatar image on first render", () => {
+    renderWithRouter(<UserAvatar name="Aysel" image="https://avatars.githubusercontent.com/u/1?v=4" />);
+    expect(screen.getByRole("img", { name: "Aysel avatar" })).toHaveAttribute(
+      "src",
+      "https://avatars.githubusercontent.com/u/1?v=4&s=112",
+    );
   });
 
   test("falls back to 'U' without a name", async () => {

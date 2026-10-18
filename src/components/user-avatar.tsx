@@ -1,6 +1,7 @@
 "use client";
 
-import { Avatar, Dropdown } from "@heroui/react";
+import { Dropdown } from "@heroui/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PiSignOutBold } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
@@ -22,18 +23,21 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
   return (
     <Dropdown>
       <Dropdown.Trigger aria-label="User menu">
-        <Avatar
-          size="lg"
-          className="size-14 cursor-pointer rounded-full ring-2 ring-line transition-shadow hover:ring-blue"
-        >
-          {/* 2x of the 56px (size-14) avatar */}
-          <Avatar.Image
-            className="rounded-full"
-            src={image ? sizedGithubAvatar(image, 112) : undefined}
-            alt={name ?? "User"}
-          />
-          <Avatar.Fallback delayMs={300}>{name?.[0]?.toUpperCase() ?? "U"}</Avatar.Fallback>
-        </Avatar>
+        <span className="relative flex size-14 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-surface font-semibold text-hi ring-2 ring-line transition-shadow hover:ring-blue">
+          <span aria-hidden={image ? true : undefined}>{name?.[0]?.toUpperCase() ?? "U"}</span>
+          {/* Server-rendered so a cached avatar paints before hydration; 2x of the 56px size */}
+          {image && (
+            <Image
+              src={sizedGithubAvatar(image, 112)}
+              alt={`${name ?? "User"} avatar`}
+              width={56}
+              height={56}
+              className="absolute inset-0 size-full object-cover"
+              unoptimized
+              loading="eager"
+            />
+          )}
+        </span>
       </Dropdown.Trigger>
 
       <Dropdown.Popover placement="bottom">
