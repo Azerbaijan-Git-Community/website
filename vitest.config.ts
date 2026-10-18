@@ -91,12 +91,7 @@ export default defineConfig({
             optimizer: {
               client: {
                 enabled: true,
-                include: [
-                  "@heroui/react",
-                  "@testing-library/jest-dom/vitest",
-                  "@testing-library/react",
-                  "@testing-library/user-event",
-                ],
+                include: ["@testing-library/jest-dom/vitest", "@testing-library/react", "@testing-library/user-event"],
               },
             },
           },
