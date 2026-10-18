@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/react";
 import { useState } from "react";
 import type { IconType } from "react-icons";
 import {
@@ -133,14 +132,15 @@ export function SyncPanel() {
                 </code>
               </div>
 
-              <Button
-                isDisabled={running !== null}
+              <button
+                type="button"
+                disabled={running !== null}
                 onClick={() => runSync(row.target)}
-                className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-xs font-semibold text-hi transition-[background-color,border-color,opacity] hover:border-lo hover:bg-overlay disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-9 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 font-outfit text-xs font-semibold text-hi transition-[background-color,border-color,opacity] hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <PiArrowsClockwise className={`size-3.5 ${isRunning ? "animate-spin" : ""}`} />
                 {isRunning ? "Running…" : "Run"}
-              </Button>
+              </button>
             </li>
           );
         })}
