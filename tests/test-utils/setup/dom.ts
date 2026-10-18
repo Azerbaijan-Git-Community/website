@@ -18,7 +18,7 @@ server.resetHandlers(...sentinelIdentifyHandlers);
 
 globalThis.IntersectionObserver = FakeIntersectionObserver;
 
-// jsdom lacks matchMedia (used by HeroUI/React Aria); report "no match" like a default desktop browser.
+// jsdom lacks matchMedia (used by motion's reduced-motion check); report "no match" like a default desktop browser.
 window.matchMedia = (query: string) => ({
   matches: false,
   media: query,

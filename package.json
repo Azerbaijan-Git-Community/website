@@ -14,7 +14,7 @@
     "lint:fix": "oxlint --fix",
     "test": "vitest run",
     "test:watch": "vitest",
-    "bootstrap": "pnpm i && pnpm install:skills && pnpx heroui-cli@latest agents-md --react --output AGENTS.md",
+    "bootstrap": "pnpm i && pnpm install:skills",
     "install:skills": "pnpx skills@latest experimental_install",
     "react-doctor": "react-doctor --verbose"
   },

@@ -26,7 +26,6 @@ Members sign in with their GitHub accounts, and their contribution stats (commit
 | Framework      | [Next.js 16](https://nextjs.org/) (App Router, React 19)   |
 | Language       | TypeScript                                                 |
 | Styling        | [Tailwind CSS 4](https://tailwindcss.com/)                 |
-| UI Components  | [HeroUI v3](https://heroui.com/)                           |
 | Animation      | [Motion](https://motion.dev/) (Framer Motion)              |
 | Database       | PostgreSQL via [Prisma ORM](https://www.prisma.io/)        |
 | Authentication | [Better Auth](https://www.better-auth.com/) (GitHub OAuth) |

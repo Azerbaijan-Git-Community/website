@@ -4,7 +4,7 @@ This file primarily provides guidance to Claude Code (claude.ai/code), but also 
 
 @AGENTS.md
 
-**Your Next.js and HeroUI v3 knowledge is outdated.** AGENTS.md is the single source of truth — always read the relevant docs there before writing or editing any Next.js or HeroUI code. Next.js Cache Components (`cacheComponents`) is enabled; read the Next.js docs from `node_modules/next/dist/docs/` for correct `"use cache"` usage.
+**Your Next.js knowledge is outdated.** AGENTS.md is the single source of truth — always read the relevant docs there before writing or editing any Next.js code. Next.js Cache Components (`cacheComponents`) is enabled; read the Next.js docs from `node_modules/next/dist/docs/` for correct `"use cache"` usage.
 
 ## Project Overview
 
@@ -39,7 +39,7 @@ Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one
 ### Stack
 
 - **Next.js 16** with React 19, React Compiler enabled, Cache Components enabled, typed routes
-- **HeroUI v3** component library + **Tailwind CSS v4** (design tokens in `src/app/globals.css`)
+- **Tailwind CSS v4** with plain HTML elements, no component library (design tokens in `src/app/globals.css`)
 - **Prisma 7** with PostgreSQL (via `@prisma/adapter-pg` for connection pooling)
 - **Better-Auth** for GitHub OAuth authentication
 - **Framer Motion** (`motion` package) for animations
@@ -79,7 +79,7 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 ## Conventions
 
 - **TypeScript only** — all source files must be `.ts` or `.tsx`
-- **HeroUI v3** is the primary UI library. Always consult AGENTS.md for docs before using any component. Never use v2 patterns.
+- **No component library**: build UI from plain elements styled with Tailwind v4 and the tokens in `src/app/globals.css` — `bg-canvas`/`bg-surface`/`bg-overlay` for backgrounds, `border-line` for borders (the default border color), `text-hi`/`text-lo`/`text-dim` for text, the `glass` helper for translucent cards. Radii follow GitHub: `rounded-md`/`lg`/`xl` = 4.5/6/9px.
 - **Icons**: use `react-icons` library
 - **Tailwind CSS v4** for all styling — avoid inline styles and external CSS except `globals.css`
 - **Server-first data fetching**: always explore server-side rendering strategies first. Use `"use cache"` with `cacheLife("hours")` for ISR. SWR is available as a dependency but only use it when you truly need client-side fetching. Prefer Server Components and server-side data loading over client-side fetching.
@@ -96,6 +96,5 @@ Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a
 Read these before writing/editing components:
 
 - `.agents/skills/next-cache-components/SKILL.md` — caching, partial prerendering
-- `.agents/skills/heroui-react/SKILL.md` — HeroUI best practices
 - `.agents/skills/vercel-composition-patterns/AGENTS.md` — composition patterns
 - `.agents/skills/vercel-react-best-practices/AGENTS.md` — React performance
