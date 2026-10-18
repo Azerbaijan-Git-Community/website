@@ -28,7 +28,7 @@ describe("PodiumClient", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /July 2026/ })).toBeInTheDocument();
+    expect(screen.getByText("July 2026")).toBeInTheDocument();
     expect(usernames()).toEqual(["gold", "silver", "bronze"]);
     expect(screen.getByText("Champion")).toBeInTheDocument();
     expect(screen.getByText("2nd Place")).toBeInTheDocument();
@@ -48,8 +48,8 @@ describe("PodiumClient", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /July 2026/ }));
-    await user.click(await screen.findByRole("option", { name: "June 2026" }));
+    expect(screen.getByText("July 2026")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Previous month" }));
 
     expect(usernames()).toEqual(["june-winner"]);
   });

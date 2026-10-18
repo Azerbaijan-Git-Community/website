@@ -1,44 +1,82 @@
 "use client";
 
-import { type Key, ListBox, Select } from "@heroui/react";
-import { PiCaretUpDownBold } from "react-icons/pi";
+import { AnimatePresence, motion } from "motion/react";
+import { type KeyboardEvent, useState } from "react";
+import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
 import { formatMonthKey } from "@/lib/utils.client";
 
 type MonthSelectorProps = {
   months: string[];
-  month: Key;
-  onMonthChange: (monthKey: Key) => void;
+  month: string;
+  onMonthChange: (monthKey: string) => void;
 };
 
+const arrowClassName =
+  "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md text-lo transition-colors hover:bg-overlay hover:text-hi focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-lo";
+
 export function MonthSelector({ months, month, onMonthChange }: MonthSelectorProps) {
+  const sorted = months.toSorted();
+  const index = sorted.indexOf(month);
+  const older = index > 0 ? sorted[index - 1] : undefined;
+  const newer = index !== -1 && index < sorted.length - 1 ? sorted[index + 1] : undefined;
+  // Slide direction: 1 = moving to a newer month, -1 = older
+  const [direction, setDirection] = useState(0);
+
+  const go = (target: string | undefined, dir: number) => {
+    if (!target) return;
+    setDirection(dir);
+    onMonthChange(target);
+  };
+
+  const handleArrowKeys = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "ArrowLeft") go(older, -1);
+    if (e.key === "ArrowRight") go(newer, 1);
+  };
+
   return (
-    <div className="mx-auto max-w-xs">
-      <Select aria-label="Select month" value={month} onChange={(key) => onMonthChange(key!)} className="w-full">
-        <Select.Trigger className="glass w-full rounded-lg px-4 py-3 font-outfit text-base font-semibold text-hi transition-colors hover:border-blue focus:ring-2 focus:ring-blue focus:outline-none">
-          <Select.Value />
-          <Select.Indicator aria-label="Toggle month picker" className="size-4 text-lo">
-            <PiCaretUpDownBold />
-          </Select.Indicator>
-        </Select.Trigger>
-        <Select.Popover
-          placement="bottom"
-          className="rounded-lg border border-line shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-        >
-          <ListBox className="p-1">
-            {months.map((m) => (
-              <ListBox.Item
-                key={m}
-                id={m}
-                textValue={formatMonthKey(m)}
-                className="cursor-pointer rounded-md px-4 py-2 font-outfit font-medium text-hi transition-colors hover:bg-overlay focus:bg-overlay focus:outline-none"
-              >
-                {formatMonthKey(m)}
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
-            ))}
-          </ListBox>
-        </Select.Popover>
-      </Select>
-    </div>
+    <fieldset aria-label="Month" className="glass mx-auto flex w-fit items-center gap-1 rounded-lg p-1">
+      <button
+        type="button"
+        aria-label="Previous month"
+        disabled={!older}
+        onClick={() => go(older, -1)}
+        onKeyDown={handleArrowKeys}
+        className={arrowClassName}
+      >
+        <PiCaretLeftBold className="size-4" />
+      </button>
+
+      <div className="relative flex h-9 w-36 items-center justify-center overflow-hidden" aria-live="polite">
+        <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+          <motion.div
+            key={month}
+            custom={direction}
+            variants={{
+              enter: (dir: number) => ({ x: dir * 40, opacity: 0 }),
+              center: { x: 0, opacity: 1 },
+              exit: (dir: number) => ({ x: dir * -40, opacity: 0 }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="font-outfit text-base font-medium whitespace-nowrap text-lo"
+          >
+            {formatMonthKey(month)}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        type="button"
+        aria-label="Next month"
+        disabled={!newer}
+        onClick={() => go(newer, 1)}
+        onKeyDown={handleArrowKeys}
+        className={arrowClassName}
+      >
+        <PiCaretRightBold className="size-4" />
+      </button>
+    </fieldset>
   );
 }

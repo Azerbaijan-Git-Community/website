@@ -28,7 +28,7 @@ describe("LeaderboardPage", () => {
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Monthly Leaderboard");
     expect(screen.getByText("Champion")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /July 2026/ })).toBeInTheDocument();
+    expect(screen.getByText("July 2026")).toBeInTheDocument();
     const tableRows = screen.getAllByRole("row").slice(1);
     expect(tableRows.map((r) => r.querySelector("a")?.textContent)).toEqual(["gold", "silver", "bronze"]);
   });

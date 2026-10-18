@@ -1,6 +1,5 @@
 "use client";
 
-import type { Key } from "@heroui/react";
 import Image from "next/image";
 import { useState } from "react";
 import { FaMedal } from "react-icons/fa";
@@ -16,7 +15,7 @@ type PodiumClientProps = {
 const PODIUM_MD_ORDER = ["md:order-2", "md:order-1", "md:order-3"] as const;
 
 export function PodiumClient({ allData }: PodiumClientProps) {
-  const [month, setMonth] = useState<Key>(() => getLatestMonthKey(allData));
+  const [month, setMonth] = useState(() => getLatestMonthKey(allData));
 
   const availableMonths = Object.keys(allData).toSorted().toReversed();
   const data = allData[month]?.length
