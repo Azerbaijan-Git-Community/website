@@ -41,6 +41,8 @@ export default defineConfig({
     restoreMocks: true,
     unstubEnvs: true,
     unstubGlobals: true,
+    // A file's first test pays its cold imports, which can pass 5s while the projects run in parallel.
+    testTimeout: 15_000,
     globalSetup: ["./tests/test-utils/global-setup.ts"],
     // Node 25+ exposes a half-configured global localStorage that warns on access; jsdom provides its own.
     execArgv: ["--no-experimental-webstorage"],
@@ -81,7 +83,6 @@ export default defineConfig({
           // One jsdom per worker instead of per file; each file still gets its own VM context.
           environment: "./tests/test-utils/jsdom-vm-environment.ts",
           pool: "vmThreads",
-          testTimeout: 15_000,
           environmentOptions: { jsdom: { url: "http://localhost:3000/" } },
           include: ["tests/**/*.test.tsx"],
           setupFiles: ["./tests/test-utils/setup/dom.ts"],
