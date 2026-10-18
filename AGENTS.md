@@ -5,3 +5,103 @@
 Before any Next.js work, find and read the relevant doc in `node_modules/next/dist/docs/`. Your training data is outdated — the docs are the source of truth.
 
 <!-- END:nextjs-agent-rules -->
+
+# AGENTS.md
+
+Guidance for AI coding agents (Claude Code, GitHub Copilot, Cursor, Gemini, Antigravity, and others) working in this repository. This is the single source of truth; there is intentionally no `CLAUDE.md`.
+
+**Your Next.js knowledge is outdated.** Always read the relevant docs in `node_modules/next/dist/docs/` before writing or editing any Next.js code (see the rule above). Next.js Cache Components (`cacheComponents`) is enabled, so check those docs for correct `"use cache"` usage.
+
+## Project Overview
+
+Azerbaijan GitHub Community website — a Next.js 16 app with a landing page and a leaderboard tracking GitHub contributions. Users authenticate via GitHub OAuth, and a cron job syncs their GitHub stats (commits, PRs, repos, followers) into weekly/monthly/all-time snapshots.
+
+## Commands
+
+- `pnpm dev` — start dev server
+- `pnpm build` — generate Prisma client + Next.js production build
+- `pnpm check` — Always run this command to check for typechecking, lint, format and tests.
+- `pnpm test` / `pnpm test:watch` — run the Vitest suite once / in watch mode (needs a generated Prisma client)
+- `pnpm lint` — run Oxlint
+- `pnpm fmt:check` / `pnpm fmt` — check/fix Oxfmt formatting
+- `pnpm prisma:generate` — regenerate Prisma client after schema changes
+
+### Tests
+
+Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one-to-one (`src/lib/crypto.ts` → `tests/lib/crypto.test.ts`); shared helpers live in `tests/test-utils/` (import via `@test/*`).
+
+- `*.test.ts` run in Node (`vmThreads` pool), `*.test.tsx` in jsdom (`vmThreads` pool: one jsdom per worker, a fresh VM context per file; missing Node globals are added in `tests/test-utils/jsdom-vm-environment.ts`), `opengraph-image.test.ts` under the `react-server` condition.
+- Real dependencies over mocks: each test file gets an in-memory Postgres (PGlite) with the Prisma schema, truncated before every test; outgoing HTTP (GitHub, Upstash, Better Auth Infra) is faked with MSW, and unhandled requests fail the test. Only `next/cache`, `next/headers` and `next/font` are mocked, because they need Next's runtime or compiler.
+- Render Server Components (async included) with `renderServer()` and query with `screen`; don't call them as functions, since the React Compiler adds hooks to them.
+- Known bugs are tracked in `BUGS.md`, each with a `test.fails("BUG-xx: …")` asserting the correct behavior. Fixing a bug makes its test fail, so flip it to `test`.
+
+#### Workflow (test-driven)
+
+- **Bug or regression report:** first write a test that reproduces it and run it to confirm it fails (this verifies the claim). Only then fix the code, and confirm the test passes. If the test passes before any fix, report back instead of changing code.
+- **Feature request:** implement the feature first, then add tests covering it.
+
+## Architecture
+
+### Stack
+
+- **Next.js 16** with React 19, React Compiler enabled, Cache Components enabled, typed routes
+- **Tailwind CSS v4** with plain HTML elements, no component library (design tokens in `src/app/globals.css`)
+- **Prisma 7** with PostgreSQL (via `@prisma/adapter-pg` for connection pooling)
+- **Better-Auth** for GitHub OAuth authentication
+- **Framer Motion** (`motion` package) for animations
+
+### Key Directories
+
+- `src/app/` — Next.js App Router pages and API routes
+- `src/components/landing/` — landing page section components
+- `src/components/leaderboard/` — leaderboard UI (podium, table, period/month selectors)
+- `src/data/` — server-side data fetching functions with `"use cache"` and `cacheLife("hours")`
+- `src/lib/` — auth config, Prisma client, env validation (Zod), fonts, action helpers
+- `prisma/schema.prisma` — database schema
+- `scripts/qstash-schedules.ts` — registers the QStash sync schedules on production builds
+
+### Data Flow
+
+1. **Stats sync** (`POST /api/webhooks/leaderboard`, called hourly by an Upstash QStash schedule that `scripts/qstash-schedules.ts` registers on every production build): fetches GitHub GraphQL API for all users, upserts `GithubStats` (all-time) and `GithubStatsSnapshot` (weekly/monthly), then revalidates cache tag `leaderboard` Logic lives in `src/lib/sync/sync-leaderboard.ts`; the route is a thin `webhookRoute()` wrapper like the blog and showcase webhooks. All three authenticate with `Authorization: Bearer <secret>`.
+2. **Leaderboard** (`src/data/leaderboard/get.ts`): server-cached queries return `AllTableData` (weekly, monthly, allTime arrays) and podium data (top 3 per month).
+3. **Stats** (`src/data/stats/get.ts`): aggregated community totals shown on the landing page hero.
+
+### Auth
+
+Better-Auth with Prisma adapter. Config in `src/lib/auth.ts`, client in `src/lib/auth-client.ts`. GitHub OAuth maps `profile.login` to a custom `githubUsername` field on User. Sessions stored in DB with 30-day expiry.
+
+### Environment Variables
+
+All validated with Zod in `src/lib/env.server.ts` and `src/lib/env.client.ts`. See `.env.example` for the full list. Key vars: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GH_STATS_TOKEN`, `CRON_SECRET`.
+
+### Caching Pattern
+
+Data functions use Next.js `"use cache"` directive with `cacheLife("hours")` and `cacheTag()` for on-demand revalidation. The cron sync endpoint calls `revalidateTag()` after updating stats.
+
+### Server Action Results
+
+Use the `ok<T>()` / `err()` helpers from `src/lib/action-helpers.ts` returning a discriminated union `ActionResult<T>`.
+
+## Conventions
+
+- **TypeScript only** — all source files must be `.ts` or `.tsx`
+- **No component library**: build UI from plain elements styled with Tailwind v4 and the tokens in `src/app/globals.css` — `bg-canvas`/`bg-surface`/`bg-overlay` for backgrounds, `border-line` for borders (the default border color), `text-hi`/`text-lo`/`text-dim` for text, the `glass` helper for translucent cards. Radii follow GitHub: `rounded-md`/`lg`/`xl` = 4.5/6/9px.
+- **UI design**: read [`STYLE.md`](STYLE.md) before building or restyling UI — it documents the tokens, component recipes (buttons, cards, menus, tables…), motion and accessibility rules.
+- **Icons**: use `react-icons` library
+- **Tailwind CSS v4** for all styling — avoid inline styles and external CSS except `globals.css`
+- **Server-first data fetching**: always explore server-side rendering strategies first. Use `"use cache"` with `cacheLife("hours")` for ISR. SWR is available as a dependency but only use it when you truly need client-side fetching. Prefer Server Components and server-side data loading over client-side fetching.
+- **State management**: prefer `useState` for local state. `nuqs` is installed for URL search param state if needed in the future — use it (not another package) when URL state is required.
+- **Composition over configuration**: prefer compound components, context providers, and explicit variants over boolean prop proliferation
+- **`cacheComponents`** and **React Compiler** are enabled in `next.config.ts` — follow `"use cache"` directive and compiler boundary rules, read the Next.js docs in `node_modules/next/dist/docs/`.
+- Oxfmt enforces 120-char line width, Tailwind class sorting, and organized imports (see `oxfmt.config.ts` for import order groups)
+- Path alias: `@/*` maps to `./src/*`
+- Dark theme by default (canvas background `#0d1117`)
+- Run `pnpm check` before commits
+
+### Skill References
+
+Read these before writing/editing components:
+
+- `.agents/skills/next-cache-components/SKILL.md` — caching, partial prerendering
+- `.agents/skills/vercel-composition-patterns/AGENTS.md` — composition patterns
+- `.agents/skills/vercel-react-best-practices/AGENTS.md` — React performance
