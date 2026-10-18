@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +10,9 @@ import { SignInButton } from "./sign-in-button";
 import { UserAvatar } from "./user-avatar";
 
 async function NavAuth() {
+  "use cache: private";
+  cacheLife("default");
+
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (session?.user) {
