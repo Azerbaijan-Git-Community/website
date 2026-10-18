@@ -53,10 +53,15 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex min-w-26 items-center gap-3">
-          <Suspense fallback={<div className="size-14 animate-pulse rounded-full bg-surface" />}>
-            <NavAuth />
-          </Suspense>
+        <div className="flex items-center gap-3">
+          {/* Avatar-sized box: the wider sign-in button overflows it evenly, sharing the avatar's center */}
+          <div className="flex h-14 w-26 items-center">
+            <div className="flex w-14 justify-center">
+              <Suspense fallback={<div className="size-14 shrink-0 animate-pulse rounded-full bg-surface" />}>
+                <NavAuth />
+              </Suspense>
+            </div>
+          </div>
           <MobileMenu />
         </div>
       </div>

@@ -28,7 +28,7 @@ export function SignInButton() {
         const pathname = window.location.pathname;
         await authClient.signIn.social({ provider: "github", callbackURL: pathname });
       }}
-      className="inline-flex h-full w-26 cursor-pointer items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 font-outfit text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none"
+      className="inline-flex h-10 w-26 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 py-2 font-outfit text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none"
     >
       <PiGithubLogoBold className="size-4" />
       Sign in
