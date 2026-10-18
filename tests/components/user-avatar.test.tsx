@@ -26,6 +26,41 @@ describe("UserAvatar", () => {
     expect(await screen.findByText("U")).toBeInTheDocument();
   });
 
+  test("opens the menu with the sign-out item focused", async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<UserAvatar name="Aysel" image={null} />);
+    const trigger = screen.getByRole("button", { name: "User menu" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+
+    await user.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("menuitem", { name: "Sign out" })).toHaveFocus();
+  });
+
+  test("closes on Escape and returns focus to the avatar", async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<UserAvatar name="Aysel" image={null} />);
+    const trigger = screen.getByRole("button", { name: "User menu" });
+
+    await user.click(trigger);
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  test("closes when clicking outside", async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<UserAvatar name="Aysel" image={null} />);
+
+    await user.click(screen.getByRole("button", { name: "User menu" }));
+    await user.click(document.body);
+
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
   test("signs out from the menu and refreshes the page", async () => {
     const user = userEvent.setup();
     let signedOut = false;
