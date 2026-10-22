@@ -85,7 +85,7 @@
     "packageManager": {
       "name": "pnpm",
       "version": ">=12.15.0 <13",
-      "onFail": "error"
+      "onFail": "download"
     }
   },
   "engines": {
