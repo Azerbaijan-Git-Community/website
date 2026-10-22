@@ -84,12 +84,12 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": ">=12.15.0",
+      "version": ">=12.15.0 <13",
       "onFail": "error"
     }
   },
   "engines": {
     "node": ">=24",
-    "pnpm": ">=12.15.0"
+    "pnpm": ">=12.15.0 <13"
   }
 }
