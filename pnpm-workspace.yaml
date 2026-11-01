@@ -13,5 +13,3 @@ allowBuilds:
   prisma: true
   sharp: true
   unrs-resolver: true
-minimumReleaseAgeExclude:
-  - "@better-auth/infra@0.4.22"
