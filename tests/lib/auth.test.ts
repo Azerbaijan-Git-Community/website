@@ -22,7 +22,8 @@ function githubProfile(overrides: Partial<GithubProfile> = {}): GithubProfile {
 async function startSessionFor(userId: string) {
   const ctx = await auth.$context;
   const admin = auth.options.plugins.find((p) => p.id === "admin")!;
-  const hooks = admin.init().options.databaseHooks;
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  const hooks = admin.init(ctx as never).options.databaseHooks;
   return hooks.session.create.before(
     { userId, token: "t", expiresAt: new Date(), createdAt: new Date(), updatedAt: new Date(), id: "s" },
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion

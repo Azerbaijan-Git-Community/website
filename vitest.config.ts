@@ -16,6 +16,8 @@ const testEnv = {
   BETTER_AUTH_SECRET_V1: "test-secret-v1-abcdefghijklmnopqrstuvwxyz",
   BETTER_AUTH_SECRET_V2: "test-secret-v2-abcdefghijklmnopqrstuvwxyz",
   BETTER_AUTH_URL: "http://localhost:3000",
+  // Infra skips its API calls (fails open) without a key, which would bypass the faked Sentinel.
+  BETTER_AUTH_API_KEY: "test-better-auth-api-key",
   GH_STATS_TOKEN: "test-gh-token",
   CRON_SECRET: "test-cron-secret",
   GITHUB_CLIENT_ID: "test-client-id",
