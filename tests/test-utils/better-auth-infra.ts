@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { server } from "./msw";
 
-const INFRA = "https://dash.better-auth.com";
+const INFRA = "https://dash.better-auth.com/api/v1";
 // NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL in the test env.
 const IDENTIFY = "https://kv.better-auth.com/projects/test";
 
