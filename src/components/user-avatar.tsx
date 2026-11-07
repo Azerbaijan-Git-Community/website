@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { PiLinkBold, PiNewspaperBold, PiSignOutBold } from "react-icons/pi";
+import { PiNewspaperBold, PiSignOutBold } from "react-icons/pi";
 import * as z from "zod/mini";
+import { OmicronLogo } from "@/components/omicron-logo";
 import { authClient } from "@/lib/auth-client";
 import { sizedGithubAvatar } from "@/lib/utils.client";
 
@@ -126,7 +127,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
           {omicronConnected === false && (
             // oxlint-disable-next-line next/no-html-link-for-pages -- this route redirects off-site, so it must never be prefetched
             <a ref={(el) => el?.focus()} href="/api/omicron/connect" role="menuitem" className={MENU_LINK}>
-              <PiLinkBold className="size-4" />
+              <OmicronLogo />
               Connect Omicron
             </a>
           )}
