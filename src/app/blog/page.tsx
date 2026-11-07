@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { BlogPostCard } from "@/components/blog/blog-card";
-import { BlogConnectCta } from "@/components/blog/blog-connect-cta";
+import { BlogConnectCta, BlogConnectCtaFallback } from "@/components/blog/blog-connect-cta";
 import { JsonLd } from "@/components/json-ld";
 import { getBlogPosts } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
@@ -67,8 +67,8 @@ export default function BlogPage() {
             Articles and tutorials from Azerbaijan GitHub Community members.
           </p>
           {/* The rest of the page is cached for everyone; only this depends on who's asking. */}
-          <div className="mt-6 flex min-h-10 justify-center sm:absolute sm:top-0 sm:right-0 sm:mt-0">
-            <Suspense fallback={null}>
+          <div className="mt-6 flex justify-center empty:hidden sm:absolute sm:top-0 sm:right-0 sm:mt-0">
+            <Suspense fallback={<BlogConnectCtaFallback />}>
               <BlogConnectCta />
             </Suspense>
           </div>

@@ -1,8 +1,10 @@
 import { screen } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Navbar } from "@/components/navbar";
 import { sessionHeadersFor } from "@test/auth";
 import { createUser } from "@test/db";
+import { server } from "@test/msw";
 import { incomingRequest } from "@test/next-headers";
 import { renderServer } from "@test/render-server";
 
@@ -41,6 +43,7 @@ describe("Navbar", () => {
   test("shows the user menu when signed in", async () => {
     const user = await createUser({ name: "Aysel" });
     incomingRequest.headers = await sessionHeadersFor(user.id);
+    server.use(http.get("http://localhost:3000/api/omicron/connection", () => HttpResponse.json({ connected: false })));
 
     await renderServer(<Navbar />);
 

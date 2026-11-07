@@ -66,9 +66,13 @@ describe("BlogPage", () => {
     expect(cards.map((a) => a.getAttribute("href"))).toEqual(["/blog/visible"]);
   });
 
-  test("offers visitors sign-in", async () => {
+  test("shows visitors no button at all", async () => {
+    await createBlogPost((await createUser()).id);
     await renderServer(<BlogPage />);
-    expect(await screen.findByRole("button", { name: "Sign in" })).toBeInTheDocument();
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Connect Omicron|Manage my posts/ })).not.toBeInTheDocument();
+    expect(screen.queryByTestId("connect-skeleton")).not.toBeInTheDocument();
   });
 
   test("offers a signed-in member the Omicron connection", async () => {

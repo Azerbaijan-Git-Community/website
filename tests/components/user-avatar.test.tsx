@@ -24,25 +24,25 @@ beforeEach(() => {
 });
 
 describe("UserAvatar", () => {
-  test("asks for nothing until the user reaches for the menu", async () => {
+  test("asks as soon as it appears, before anyone touches the menu", async () => {
     const connection = fakeConnection(() => HttpResponse.json({ connected: false }));
     renderWithRouter(<UserAvatar name="Aysel" image={null} />);
-    await screen.findByText("A");
-    expect(connection.requests()).toBe(0);
+    await waitFor(() => expect(connection.requests()).toBe(1));
   });
 
-  test("asks once, however many ways the user reaches for it", async () => {
+  test("once the answer is in, the menu opens with it already there, and doesn't ask again", async () => {
     const user = userEvent.setup();
-    const connection = fakeConnection(() => HttpResponse.json({ connected: false }));
+    const connection = fakeConnection(() => HttpResponse.json({ connected: true }));
     renderWithRouter(<UserAvatar name="Aysel" image={null} />);
+    await waitFor(() => expect(connection.requests()).toBe(1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
     const trigger = screen.getByRole("button", { name: "User menu" });
 
     await user.hover(trigger);
     await user.click(trigger);
-    await user.click(trigger);
-    await user.click(trigger);
 
-    await screen.findByRole("menuitem", { name: "Connect Omicron" });
+    expect(screen.getByRole("menuitem", { name: "My blog posts" })).toHaveFocus();
+    expect(screen.queryByTestId("menu-item-skeleton")).not.toBeInTheDocument();
     expect(connection.requests()).toBe(1);
   });
 

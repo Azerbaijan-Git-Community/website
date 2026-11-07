@@ -24,23 +24,28 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [omicronConnected, setOmicronConnected] = useState<boolean | null>(null);
-  const connectionRequested = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
 
-  // Only the menu needs this, so the avatar never waits for it. Asked on hover so it's usually ready by the click.
-  const loadConnection = async () => {
-    if (connectionRequested.current) return;
-    connectionRequested.current = true;
-    try {
-      const res = await fetch("/api/omicron/connection");
-      setOmicronConnected(ConnectionSchema.parse(await res.json()).connected);
-    } catch {
-      // "My blog posts" is the safe guess: that page offers to connect when there's no connection.
-      setOmicronConnected(true);
+  // Only the menu needs this, so the avatar never waits for it, and it's ready before the menu opens.
+  useEffect(() => {
+    let ignore = false;
+    async function loadConnection() {
+      try {
+        const res = await fetch("/api/omicron/connection");
+        const { connected } = ConnectionSchema.parse(await res.json());
+        if (!ignore) setOmicronConnected(connected);
+      } catch {
+        // "My blog posts" is the safe guess: that page offers to connect when there's no connection.
+        if (!ignore) setOmicronConnected(true);
+      }
     }
-  };
+    void loadConnection();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -81,12 +86,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        onPointerEnter={loadConnection}
-        onFocus={loadConnection}
-        onClick={() => {
-          void loadConnection();
-          setOpen((o) => !o);
-        }}
+        onClick={() => setOpen((o) => !o)}
         className="relative flex size-14 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-surface font-semibold text-hi ring-2 ring-line transition-shadow hover:ring-blue focus-visible:ring-blue focus-visible:outline-none aria-expanded:ring-blue"
       >
         <span aria-hidden={image ? true : undefined}>{name?.[0]?.toUpperCase() ?? "U"}</span>
