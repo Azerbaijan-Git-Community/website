@@ -120,7 +120,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
           )}
           {omicronConnected === true && (
             <Link ref={(el) => el?.focus()} href="/account/blog" role="menuitem" className={MENU_LINK}>
-              <PiNewspaperBold className="size-4" />
+              <PiNewspaperBold className="size-5" />
               My blog posts
             </Link>
           )}
@@ -139,7 +139,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
             onClick={handleSignOut}
             className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-lo transition-colors hover:bg-danger/10 hover:text-danger focus-visible:bg-danger/10 focus-visible:text-danger focus-visible:outline-none"
           >
-            <PiSignOutBold className="size-4" />
+            <PiSignOutBold className="size-5" />
             Sign out
           </button>
         </div>
