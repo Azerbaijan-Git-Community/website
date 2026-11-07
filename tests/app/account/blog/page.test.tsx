@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import AccountBlogPage, { metadata } from "@/app/account/blog/page";
+import { AccountBlogContent, AccountBlogSkeleton } from "@/components/account/account-blog-content";
 import { sessionHeadersFor } from "@test/auth";
 import { createBlogPost, createOmicronConnection, createUser } from "@test/db";
 import { incomingRequest } from "@test/next-headers";
@@ -27,7 +28,7 @@ beforeEach(() => {
 
 describe("AccountBlogPage", () => {
   test("sends visitors to the blog", async () => {
-    await expect(renderServer(<AccountBlogPage {...props()} />)).rejects.toMatchObject({
+    await expect(renderServer(<AccountBlogContent />)).rejects.toMatchObject({
       digest: expect.stringContaining("NEXT_REDIRECT"),
     });
   });
@@ -90,6 +91,12 @@ describe("AccountBlogPage", () => {
     await renderServer(<AccountBlogPage {...props()} />);
     expect(screen.getByText("This connection was ended on Omicron.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Connect Omicron" })).toBeInTheDocument();
+  });
+
+  test("its shell needs nothing from the database, so it can show before the posts arrive", async () => {
+    await renderServer(<AccountBlogSkeleton />);
+    const skeleton = screen.getByTestId("account-blog-skeleton");
+    expect(skeleton).toHaveAttribute("aria-hidden", "true");
   });
 
   test("is not indexed", () => {
