@@ -1,8 +1,10 @@
 <!-- BEGIN:nextjs-agent-rules -->
 
-# Next.js: ALWAYS read docs before coding
+## This is NOT the Next.js you know
 
-Before any Next.js work, find and read the relevant doc in `node_modules/next/dist/docs/`. Your training data is outdated — the docs are the source of truth.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
 
@@ -62,9 +64,10 @@ Vitest (`vitest.config.ts`, React Compiler enabled). `tests/` mirrors `src/` one
 
 ### Data Flow
 
-1. **Stats sync** (`POST /api/webhooks/leaderboard`, called hourly by an Upstash QStash schedule that `scripts/qstash-schedules.ts` registers on every production build): fetches GitHub GraphQL API for all users, upserts `GithubStats` (all-time) and `GithubStatsSnapshot` (weekly/monthly), then revalidates cache tag `leaderboard` Logic lives in `src/lib/sync/sync-leaderboard.ts`; the route is a thin `webhookRoute()` wrapper like the blog and showcase webhooks. All three authenticate with `Authorization: Bearer <secret>`.
+1. **Stats sync** (`POST /api/webhooks/leaderboard`, called hourly by an Upstash QStash schedule that `scripts/qstash-schedules.ts` registers on every production build): fetches GitHub GraphQL API for all users, upserts `GithubStats` (all-time) and `GithubStatsSnapshot` (weekly/monthly), then revalidates cache tag `leaderboard` Logic lives in `src/lib/sync/sync-leaderboard.ts`; the route is a thin `webhookRoute()` wrapper like the showcase webhook and the Omicron reconcile. All three authenticate with `Authorization: Bearer <secret>`.
 2. **Leaderboard** (`src/data/leaderboard/get.ts`): server-cached queries return `AllTableData` (weekly, monthly, allTime arrays) and podium data (top 3 per month).
 3. **Stats** (`src/data/stats/get.ts`): aggregated community totals shown on the landing page hero.
+4. **Blog**: members connect an Omicron account (`/api/omicron/connect`), and their public posts are mirrored into `BlogPost`. `POST /api/webhooks/omicron` receives signed events and a daily reconcile catches the rest (`src/lib/sync/sync-omicron.ts`). Bodies are sanitized HTML, rendered by `src/lib/render-post-html.ts`. Every public reader filters with `publicBlogPostWhere` (`src/data/blog/get.ts`). Hidden and removed posts stay as rows so a sync can't restore them.
 
 ### Auth
 
@@ -72,7 +75,7 @@ Better-Auth with Prisma adapter. Config in `src/lib/auth.ts`, client in `src/lib
 
 ### Environment Variables
 
-All validated with Zod in `src/lib/env.server.ts` and `src/lib/env.client.ts`. See `.env.example` for the full list. Key vars: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GH_STATS_TOKEN`, `CRON_SECRET`.
+All validated with Zod in `src/lib/env.server.ts` and `src/lib/env.client.ts`. See `.env.example` for the full list. Key vars: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GH_STATS_TOKEN`, `CRON_SECRET`, `OMICRON_ORIGIN`, `OMICRON_CLIENT_ID`, `OMICRON_CLIENT_SECRET`.
 
 ### Caching Pattern
 

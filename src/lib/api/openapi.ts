@@ -143,7 +143,7 @@ export function buildOpenApiDocument(): JsonSchema {
       "/blog/{slug}": {
         get: {
           operationId: "getBlogPost",
-          summary: "Single blog post (with MDX body)",
+          summary: "Single blog post (with HTML body)",
           tags: ["Blog"],
           parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" } }],
           responses: {

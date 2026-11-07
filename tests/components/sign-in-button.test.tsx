@@ -45,7 +45,12 @@ describe("SignInButton", () => {
   test("explains a ban when redirected back with error=banned", async () => {
     renderButton("?error=banned");
     expect(await screen.findByText("You have been banned")).toBeInTheDocument();
-    expect(screen.getByText("We banned your account because we detected bot activity on GitHub")).toBeInTheDocument();
+    expect(screen.getByText("An admin banned your account from this site.")).toBeInTheDocument();
+  });
+
+  test("gives the admin's reason for a ban when there is one", async () => {
+    renderButton("?error=banned&error_description=Spamming+the+blog");
+    expect(await screen.findByText("Spamming the blog")).toBeInTheDocument();
   });
 
   test("shows the provider's error description for other errors", async () => {

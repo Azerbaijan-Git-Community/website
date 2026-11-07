@@ -3,14 +3,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PiArrowLeft, PiCalendar } from "react-icons/pi";
-import { mdxComponents } from "@/components/blog/mdx-components";
+import { PiArrowLeft, PiArrowSquareOut, PiCalendar, PiSparkle } from "react-icons/pi";
 import { ReadingTimeBadge } from "@/components/blog/reading-time-badge";
 import { JsonLd } from "@/components/json-ld";
 import { getAllBlogSlugs, getBlogPost } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
-import { compileMdx } from "@/lib/compile-mdx";
-import { clientEnv } from "@/lib/env.client";
+import { renderPostHtml } from "@/lib/render-post-html";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/structured-data";
 import { formatDate, sizedGithubAvatar } from "@/lib/utils.client";
 
@@ -27,7 +25,8 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.title,
     description: post.description,
     keywords: post.tags,
-    alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}` },
+    // Omicron is where the post lives, so search engines credit it there rather than see a duplicate.
+    alternates: { canonical: post.sourceUrl },
     openGraph: {
       type: "article",
       publishedTime: post.createdAt.toISOString(),
@@ -52,7 +51,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   const post = await getBlogPost(slug);
   if (!post) notFound();
 
-  const MDXContent = await compileMdx(post.contentMdx, post.slug);
+  const content = await renderPostHtml(post.contentHtml);
 
   return (
     <div className="min-h-svh pt-32 pb-24">
@@ -82,9 +81,10 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
             src={post.coverImage}
             alt={post.title}
             fill
+            // A banner can be on any host, which next/image only optimizes from a fixed list.
+            unoptimized
             className="object-cover"
             priority
-            quality={100}
             sizes="(max-width: 768px) 100vw, 768px"
           />
         </div>
@@ -131,13 +131,32 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
 
             {/* Reading time */}
             <ReadingTimeBadge minutes={post.readingTime} />
+
+            {post.aiAssisted && (
+              <>
+                <span className="text-line">|</span>
+                <span className="inline-flex items-center gap-1.5 text-dim">
+                  <PiSparkle size={16} />
+                  AI-assisted
+                </span>
+              </>
+            )}
           </div>
         </header>
 
-        {/* MDX content */}
-        <div className="prose prose-lg max-w-none prose-invert">
-          <MDXContent components={mdxComponents} />
-        </div>
+        <div className="prose prose-lg max-w-none prose-invert">{content}</div>
+
+        <footer className="mt-12 border-t border-line pt-6">
+          <a
+            href={post.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-blue transition-colors hover:text-lime"
+          >
+            Comment on Omicron
+            <PiArrowSquareOut size={16} />
+          </a>
+        </footer>
       </article>
     </div>
   );

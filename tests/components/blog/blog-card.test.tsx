@@ -9,7 +9,7 @@ const post: BlogPostItem = {
   title: "Hello World",
   description: "An introduction",
   tags: ["intro"],
-  coverImage: "https://raw.githubusercontent.com/Azerbaijan-Git-Community/blog/main/posts/hello-world/images/cover.png",
+  coverImage: "https://cdn.example/cover.png",
   userId: "u1",
   readingTime: 4,
   createdAt: new Date("2026-03-05T12:00:00Z"),
@@ -31,10 +31,10 @@ describe("BlogPostCard", () => {
     expect(screen.getByText("Mar 5, 2026")).toBeInTheDocument();
   });
 
-  test("renders the optimized cover and a GitHub-resized author avatar", () => {
+  test("renders the cover as-is, since it can be on any host, and a GitHub-resized author avatar", () => {
     render(<BlogPostCard post={post} />);
     const cover = screen.getByRole("img", { name: "Hello World" });
-    expect(cover.getAttribute("src")).toMatch(/^\/_next\/image\?url=/);
+    expect(cover).toHaveAttribute("src", "https://cdn.example/cover.png");
     expect(screen.getByRole("img", { name: "Aysel" })).toHaveAttribute("src", `${post.author.image}?s=48`);
   });
 });

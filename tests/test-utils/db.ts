@@ -32,6 +32,7 @@ type UserInput = Partial<{
   role: string;
   banned: boolean;
   banReason: string | null;
+  blogBanned: boolean;
 }>;
 
 export function createUser(input: UserInput = {}) {
@@ -47,6 +48,7 @@ export function createUser(input: UserInput = {}) {
       role: input.role ?? "user",
       banned: input.banned ?? false,
       banReason: input.banReason ?? null,
+      blogBanned: input.blogBanned ?? false,
     },
   });
 }
@@ -66,10 +68,14 @@ type PostInput = Partial<{
   title: string;
   description: string;
   tags: string[];
-  contentMdx: string;
-  contentSha: string;
+  contentHtml: string;
+  coverImage: string;
+  sourcePostId: string;
   readingTime: number;
   createdAt: Date;
+  removedByAuthorAt: Date | null;
+  removedByAdminAt: Date | null;
+  sourceMissingAt: Date | null;
 }>;
 
 export function createBlogPost(userId: string, input: PostInput = {}) {
@@ -81,12 +87,40 @@ export function createBlogPost(userId: string, input: PostInput = {}) {
       title: input.title ?? `Post ${seq}`,
       description: input.description ?? `Description ${seq}`,
       tags: input.tags ?? ["test"],
-      coverImage: `https://raw.githubusercontent.com/Azerbaijan-Git-Community/blog/main/posts/${slug}/images/cover.png`,
+      coverImage: input.coverImage ?? `https://omicron.example/api/uploads/${slug}.png`,
       userId,
-      contentMdx: input.contentMdx ?? "# Hello",
-      contentSha: input.contentSha ?? `sha-${slug}`,
+      contentHtml: input.contentHtml ?? "<h1>Hello</h1>",
+      sourceOrigin: "https://omicron.example",
+      sourcePostId: input.sourcePostId ?? `source-${slug}`,
+      sourceUrl: `https://omicron.example/@author/${slug}`,
+      sourceUpdatedAt: input.createdAt ?? new Date("2026-01-01T00:00:00Z"),
       readingTime: input.readingTime ?? 1,
+      removedByAuthorAt: input.removedByAuthorAt ?? null,
+      removedByAdminAt: input.removedByAdminAt ?? null,
+      sourceMissingAt: input.sourceMissingAt ?? null,
       ...(input.createdAt ? { createdAt: input.createdAt } : {}),
+    },
+  });
+}
+
+export function createOmicronConnection(
+  userId: string,
+  input: Partial<{
+    username: string;
+    subscriptionId: string | null;
+    webhookSecret: string | null;
+    reviewedAt: Date | null;
+  }> = {},
+) {
+  seq += 1;
+  return testPrisma.omicronConnection.create({
+    data: {
+      userId,
+      origin: "https://omicron.example",
+      username: input.username ?? `omi${seq}`,
+      subscriptionId: input.subscriptionId === undefined ? `sub-${seq}` : input.subscriptionId,
+      webhookSecret: input.webhookSecret === undefined ? "whsec_test" : input.webhookSecret,
+      reviewedAt: input.reviewedAt === undefined ? new Date("2026-01-01T00:00:00Z") : input.reviewedAt,
     },
   });
 }

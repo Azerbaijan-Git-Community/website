@@ -10,43 +10,6 @@ function entry(name: string, sha: string, type: Entry["type"]) {
   return { name, sha, type, download_url: type === "file" ? `https://raw.githubusercontent.com/x/${name}` : null };
 }
 
-export type FakePost = {
-  sha: string;
-  mdx: string;
-  /** File names inside `posts/<slug>/images`; `null` makes the folder 404. */
-  images?: string[] | null;
-};
-
-/** Serve the blog repo's contents API from an in-memory map of posts. Returns per-path request counters. */
-export function fakeBlogRepo(posts: Record<string, FakePost>, extraRootEntries: Entry[] = []) {
-  const requests: string[] = [];
-  const base = `${API}/repos/${ORG}/blog/contents/posts`;
-
-  server.use(
-    http.get(base, ({ request }) => {
-      requests.push(new URL(request.url).pathname);
-      return HttpResponse.json([
-        ...Object.entries(posts).map(([slug, p]) => entry(slug, p.sha, "dir")),
-        ...extraRootEntries.map((e) => entry(e.name, e.sha, e.type)),
-      ]);
-    }),
-    http.get(`${base}/:slug/index.mdx`, ({ params, request }) => {
-      requests.push(new URL(request.url).pathname);
-      const post = posts[String(params.slug)];
-      return post ? HttpResponse.text(post.mdx) : new HttpResponse("Not Found", { status: 404 });
-    }),
-    http.get(`${base}/:slug/images`, ({ params, request }) => {
-      requests.push(new URL(request.url).pathname);
-      const post = posts[String(params.slug)];
-      const images = post?.images === undefined ? ["cover.png"] : post.images;
-      if (images === null) return new HttpResponse("Not Found", { status: 404 });
-      return HttpResponse.json(images.map((name) => entry(name, `img-sha-${name}`, "file")));
-    }),
-  );
-
-  return { requests };
-}
-
 export type FakeRegistryFile = { name: string; sha: string; content: string };
 
 /** Serve the showcase registry (`projects/*.yaml`) via the contents + blobs APIs. */

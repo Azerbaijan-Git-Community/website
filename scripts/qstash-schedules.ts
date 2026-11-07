@@ -1,7 +1,11 @@
 import { Client } from "@upstash/qstash";
 
 // Runs after `next build`. Schedules use fixed IDs, so re-running updates them in place.
-const schedules = [{ id: "leaderboard-sync", path: "/api/webhooks/leaderboard", cron: "0 * * * *" }];
+const schedules = [
+  { id: "leaderboard-sync", path: "/api/webhooks/leaderboard", cron: "0 * * * *" },
+  // Webhooks keep posts current; this catches what they can't report, like an author going private.
+  { id: "omicron-reconcile", path: "/api/webhooks/omicron-reconcile", cron: "0 3 * * *" },
+];
 
 async function main() {
   const { QSTASH_TOKEN, VERCEL_ENV, NEXT_PUBLIC_BASE_URL, CRON_SECRET } = process.env;

@@ -13,9 +13,9 @@ beforeEach(() => {
 });
 
 describe("GET /api/v1/blog/[slug]", () => {
-  test("returns the post with its MDX body and author", async () => {
+  test("returns the post with its HTML body and author", async () => {
     const author = await createUser({ githubUsername: "aysel" });
-    await createBlogPost(author.id, { slug: "hello", contentMdx: "# Hello", title: "Hello" });
+    await createBlogPost(author.id, { slug: "hello", contentHtml: "<h1>Hello</h1>", title: "Hello" });
 
     const res = await get("hello");
     const body = await res.json();
@@ -25,10 +25,10 @@ describe("GET /api/v1/blog/[slug]", () => {
     expect(body.data).toMatchObject({
       slug: "hello",
       title: "Hello",
-      contentMdx: "# Hello",
+      contentHtml: "<h1>Hello</h1>",
       author: { githubUsername: "aysel" },
     });
-    expect(body.data).not.toHaveProperty("contentSha");
+    expect(body.data).not.toHaveProperty("sourcePostId");
   });
 
   test("returns 404 for an unknown slug", async () => {
@@ -37,6 +37,12 @@ describe("GET /api/v1/blog/[slug]", () => {
     await expect(res.json()).resolves.toEqual({
       error: { code: "not_found", message: 'No blog post with slug "nope".' },
     });
+  });
+
+  test("a removed post looks like it never existed", async () => {
+    const author = await createUser();
+    await createBlogPost(author.id, { slug: "gone", removedByAdminAt: new Date() });
+    expect((await get("gone")).status).toBe(404);
   });
 
   test("answers CORS preflight", () => {

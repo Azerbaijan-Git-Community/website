@@ -17,6 +17,7 @@ export function serveRemoteImages() {
     http.get("https://avatars.githubusercontent.com/*", respond),
     http.get("https://opengraph.githubassets.com/*", respond),
     http.get("https://images.test/*", respond),
+    http.get("https://omicron.example/*", respond),
   );
   return { fetched };
 }

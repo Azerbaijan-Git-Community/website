@@ -38,7 +38,7 @@ describe("SyncPanel", () => {
     expect(screen.getByText("4 jobs")).toBeInTheDocument();
     for (const [title, endpoint] of [
       ["GitHub Stats", "/api/webhooks/leaderboard"],
-      ["Blog", "/api/webhooks/blog"],
+      ["Blog", "/api/webhooks/omicron-reconcile"],
       ["Showcase", "/api/webhooks/showcase"],
       ["Showcase Data", "/api/admin/sync"],
     ]) {

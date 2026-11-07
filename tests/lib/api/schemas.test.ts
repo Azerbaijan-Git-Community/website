@@ -48,7 +48,9 @@ describe("API schemas", () => {
     expect(
       BlogPostSchema.safeParse({
         ...listItem,
-        contentMdx: "# Hi",
+        contentHtml: "<h1>Hi</h1>",
+        sourceUrl: "https://omicron.example/@octo/hello",
+        aiAssisted: false,
         updatedAt: listItem.createdAt,
         author: { ...listItem.author, githubUsername: "octo" },
       }).success,

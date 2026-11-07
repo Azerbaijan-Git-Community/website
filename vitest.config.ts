@@ -23,8 +23,9 @@ const testEnv = {
   GITHUB_CLIENT_ID: "test-client-id",
   GITHUB_CLIENT_SECRET: "test-client-secret",
   SHOWCASE_WEBHOOK_SECRET: "test-showcase-secret",
-  BLOG_WEBHOOK_SECRET: "test-blog-secret",
-  AUTHOR_VALIDATE_SECRET: "test-author-secret",
+  OMICRON_ORIGIN: "https://omicron.example",
+  OMICRON_CLIENT_ID: "test-omicron-client",
+  OMICRON_CLIENT_SECRET: "test-omicron-secret",
   UPSTASH_REDIS_REST_URL: "https://upstash.test",
   UPSTASH_REDIS_REST_TOKEN: "test-upstash-token",
 };

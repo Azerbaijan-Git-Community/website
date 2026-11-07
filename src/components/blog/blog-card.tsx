@@ -17,8 +17,9 @@ export function BlogPostCard({ post }: { post: BlogPostItem }) {
           src={post.coverImage}
           alt={post.title}
           fill
+          // A banner can be on any host, which next/image only optimizes from a fixed list.
+          unoptimized
           className="object-cover"
-          quality={100}
           sizes="(max-width: 768px) 100vw, 33vw"
         />
       </div>

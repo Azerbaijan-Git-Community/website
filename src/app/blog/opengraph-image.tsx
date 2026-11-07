@@ -1,12 +1,22 @@
 import { ImageResponse } from "next/og";
 import { PiCalendar, PiClock } from "react-icons/pi";
 import { getBlogPosts } from "@/data/blog/get";
+import { clientEnv } from "@/lib/env.client";
+import { serverEnv } from "@/lib/env.server";
 import { getOgFonts } from "@/lib/og-fonts";
 import { formatDate } from "@/lib/utils.client";
 
 export const alt = "Developer Blog — Azerbaijan GitHub Community";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+// Satori throws on an image it can't fetch or decode, which would take this whole card down with
+// one member's banner, so only formats and hosts known to work are drawn.
+function drawableCover(cover: string): string | null {
+  const url = URL.canParse(cover) ? new URL(cover) : null;
+  const hosts = [new URL(serverEnv.OMICRON_ORIGIN).host, new URL(clientEnv.NEXT_PUBLIC_BASE_URL).host];
+  return url && hosts.includes(url.host) && /\.(png|jpe?g)$/i.test(url.pathname) ? cover : null;
+}
 
 export default async function Image() {
   const [fonts, blogPosts] = await Promise.all([getOgFonts(), getBlogPosts()]);
@@ -48,55 +58,64 @@ export default async function Image() {
 
       {posts.length > 0 ? (
         <div tw="items-stretch justify-center" style={{ display: "flex", gap: 24 }}>
-          {posts.map((post) => (
-            <div
-              key={post.slug}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                background: "rgba(22, 27, 34, 0.8)",
-                border: "1px solid rgba(240, 246, 252, 0.1)",
-                borderRadius: 9,
-                width: 350,
-              }}
-            >
-              {/* oxlint-disable-next-line next/no-img-element */}
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                width={350}
-                height={175}
-                style={{ borderTopLeftRadius: 9, borderTopRightRadius: 9, objectFit: "cover" }}
-              />
+          {posts.map((post) => {
+            const cover = drawableCover(post.coverImage);
+            return (
+              <div
+                key={post.slug}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  background: "rgba(22, 27, 34, 0.8)",
+                  border: "1px solid rgba(240, 246, 252, 0.1)",
+                  borderRadius: 9,
+                  width: 350,
+                }}
+              >
+                {cover ? (
+                  // oxlint-disable-next-line next/no-img-element
+                  <img
+                    src={cover}
+                    alt={post.title}
+                    width={350}
+                    height={175}
+                    style={{ borderTopLeftRadius: 9, borderTopRightRadius: 9, objectFit: "cover" }}
+                  />
+                ) : (
+                  <div
+                    style={{ display: "flex", height: 175, backgroundColor: "#161b22", borderRadius: "9px 9px 0 0" }}
+                  />
+                )}
 
-              <div tw="px-5 pt-4 pb-4" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div tw="text-lg font-bold" style={{ display: "flex", fontFamily: "Outfit", color: "#f0f6fc" }}>
-                  {post.title.length > 50 ? `${post.title.slice(0, 50)}...` : post.title}
-                </div>
-
-                <div tw="text-sm" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
-                  {post.description.length > 80 ? `${post.description.slice(0, 80)}...` : post.description}
-                </div>
-
-                <div tw="w-full" style={{ display: "flex", height: 1, backgroundColor: "#30363d" }} />
-
-                <div tw="items-center justify-between" style={{ display: "flex" }}>
-                  <div tw="items-center" style={{ display: "flex", gap: 4 }}>
-                    <PiClock size={12} color="#848d97" />
-                    <div tw="text-xs" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
-                      {post.readingTime} min read
-                    </div>
+                <div tw="px-5 pt-4 pb-4" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div tw="text-lg font-bold" style={{ display: "flex", fontFamily: "Outfit", color: "#f0f6fc" }}>
+                    {post.title.length > 50 ? `${post.title.slice(0, 50)}...` : post.title}
                   </div>
-                  <div tw="items-center" style={{ display: "flex", gap: 4 }}>
-                    <PiCalendar size={12} color="#848d97" />
-                    <div tw="text-xs" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
-                      {formatDate(post.createdAt)}
+
+                  <div tw="text-sm" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
+                    {post.description.length > 80 ? `${post.description.slice(0, 80)}...` : post.description}
+                  </div>
+
+                  <div tw="w-full" style={{ display: "flex", height: 1, backgroundColor: "#30363d" }} />
+
+                  <div tw="items-center justify-between" style={{ display: "flex" }}>
+                    <div tw="items-center" style={{ display: "flex", gap: 4 }}>
+                      <PiClock size={12} color="#848d97" />
+                      <div tw="text-xs" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
+                        {post.readingTime} min read
+                      </div>
+                    </div>
+                    <div tw="items-center" style={{ display: "flex", gap: 4 }}>
+                      <PiCalendar size={12} color="#848d97" />
+                      <div tw="text-xs" style={{ display: "flex", fontFamily: "Inter", color: "#848d97" }}>
+                        {formatDate(post.createdAt)}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div tw="text-2xl" style={{ display: "flex", fontFamily: "Inter", color: "#8b949e" }}>

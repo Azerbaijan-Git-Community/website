@@ -2,13 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { MdxCodeTitle } from "@/components/blog/mdx-code-title";
-import { mdxComponents } from "@/components/blog/mdx-components";
-import { compileMdx } from "@/lib/compile-mdx";
+import { renderPostHtml } from "@/lib/render-post-html";
 
-/** Render a titled code fence through the real MDX pipeline, as the blog post page does. */
+/** Render a titled code block through the real pipeline, as the blog post page does. */
 async function renderCodeBlock(title: string) {
-  const Content = await compileMdx(`\`\`\`sh title="${title}"\necho hi\n\`\`\``, "post");
-  return render(<Content components={mdxComponents} />);
+  return render(await renderPostHtml(`<pre data-title="${title}"><code class="language-sh">echo hi</code></pre>`));
 }
 
 describe("MdxCodeTitle", () => {

@@ -18,8 +18,8 @@ function buildSyncRequest(target: SyncTarget): { url: string; headers: Record<st
   switch (target) {
     case "blog":
       return {
-        url: `${base}/api/webhooks/blog`,
-        headers: { Authorization: `Bearer ${serverEnv.BLOG_WEBHOOK_SECRET}` },
+        url: `${base}/api/webhooks/omicron-reconcile`,
+        headers: { Authorization: `Bearer ${serverEnv.CRON_SECRET}` },
       };
     case "showcase":
       return {

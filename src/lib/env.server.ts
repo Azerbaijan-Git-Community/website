@@ -14,8 +14,9 @@ const serverEnvSchema = z.object({
   GITHUB_CLIENT_ID: z.string().check(z.minLength(3)),
   GITHUB_CLIENT_SECRET: z.string().check(z.minLength(3)),
   SHOWCASE_WEBHOOK_SECRET: z.string().check(z.minLength(3)),
-  BLOG_WEBHOOK_SECRET: z.string().check(z.minLength(3)),
-  AUTHOR_VALIDATE_SECRET: z.string().check(z.minLength(3)),
+  OMICRON_ORIGIN: z.url(),
+  OMICRON_CLIENT_ID: z.string().check(z.minLength(3)),
+  OMICRON_CLIENT_SECRET: z.string().check(z.minLength(3)),
   BETTER_AUTH_API_KEY: z.optional(z.string().check(z.minLength(3))),
   // Open Data API rate limiting (Upstash Redis). Optional: when unset, the API fails open
   // (no rate limiting) so local dev and previews work without an Upstash account.
