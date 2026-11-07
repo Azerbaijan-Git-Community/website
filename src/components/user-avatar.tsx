@@ -122,7 +122,13 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
             />
           )}
           {omicronConnected === true && (
-            <Link ref={(el) => el?.focus()} href="/account/blog" role="menuitem" className={MENU_LINK}>
+            <Link
+              ref={(el) => el?.focus()}
+              href="/account/blog"
+              role="menuitem"
+              className={MENU_LINK}
+              onClick={() => setOpen(false)}
+            >
               <PiNewspaperBold className="size-5" />
               My blog posts
             </Link>

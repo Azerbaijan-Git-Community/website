@@ -61,6 +61,17 @@ describe("UserAvatar", () => {
     expect(connection.requests()).toBe(1);
   });
 
+  test("following the link closes the menu, so it doesn't sit over the page it leads to", async () => {
+    const user = userEvent.setup();
+    fakeConnection(() => HttpResponse.json({ connected: true }));
+    renderWithRouter(<UserAvatar name="Aysel" image={null} />);
+
+    await user.click(screen.getByRole("button", { name: "User menu" }));
+    await user.click(await screen.findByRole("menuitem", { name: "My blog posts" }));
+
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
   test("the menu opens straight away, with sign-out ready, while the answer is on its way", async () => {
     const user = userEvent.setup();
     fakeConnection(async () => {
