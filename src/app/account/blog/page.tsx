@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { PiLinkBold } from "react-icons/pi";
 import { BlogPostsManager } from "@/components/account/blog-posts-manager";
+import { OmicronLogo } from "@/components/omicron-logo";
 import { getMemberBlog } from "@/data/blog/manage";
 import { auth } from "@/lib/auth";
 
@@ -74,7 +74,7 @@ export default async function AccountBlogPage({ searchParams }: PageProps<"/acco
               href="/api/omicron/connect"
               className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 py-2 font-outfit text-sm font-semibold text-hi transition-[background-color,border-color] hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none"
             >
-              <PiLinkBold className="size-4" />
+              <OmicronLogo />
               Connect Omicron
             </a>
           </div>

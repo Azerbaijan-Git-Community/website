@@ -56,18 +56,18 @@ export default function BlogPage() {
   return (
     <div className="min-h-svh pt-32 pb-24">
       <div className="mx-auto max-w-300 px-8">
-        <div className="mb-12 text-center">
+        <div className="relative mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
             Community Blog
           </span>
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Developer <span className="text-gradient">Blog</span>
           </h1>
-          <p className="mx-auto mb-6 max-w-2xl text-lg text-lo">
+          <p className="mx-auto max-w-2xl text-lg text-lo">
             Articles and tutorials from Azerbaijan GitHub Community members.
           </p>
           {/* The rest of the page is cached for everyone; only this depends on who's asking. */}
-          <div className="flex min-h-10 justify-center">
+          <div className="mt-6 flex min-h-10 justify-center sm:absolute sm:top-0 sm:right-0 sm:mt-0">
             <Suspense fallback={null}>
               <BlogConnectCta />
             </Suspense>

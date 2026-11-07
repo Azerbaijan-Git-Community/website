@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-import { PiLinkBold, PiNewspaperBold } from "react-icons/pi";
+import { PiNewspaperBold } from "react-icons/pi";
+import { OmicronLogo } from "@/components/omicron-logo";
 import { SignInButton } from "@/components/sign-in-button";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -25,7 +26,7 @@ export async function BlogConnectCta() {
   ) : (
     // oxlint-disable-next-line next/no-html-link-for-pages -- this route redirects off-site, so it must never be prefetched
     <a href="/api/omicron/connect" className={BUTTON}>
-      <PiLinkBold className="size-4" />
+      <OmicronLogo />
       Connect Omicron
     </a>
   );

@@ -133,6 +133,16 @@ describe("generateMetadata", () => {
 });
 
 describe("generateStaticParams", () => {
+  test("gives Next a placeholder when there are no posts, because an empty list fails the build", async () => {
+    await expect(generateStaticParams()).resolves.toEqual([{ slug: "__placeholder__" }]);
+  });
+
+  test("the placeholder is a 404, not a page", async () => {
+    await expect(renderServer(<BlogPostPage {...props("__placeholder__")} />)).rejects.toMatchObject({
+      digest: "NEXT_HTTP_ERROR_FALLBACK;404",
+    });
+  });
+
   test("prerenders every post", async () => {
     const author = await createUser();
     await createBlogPost(author.id, { slug: "a" });
