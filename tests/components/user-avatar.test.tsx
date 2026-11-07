@@ -4,7 +4,7 @@ import { delay, http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, test } from "vitest";
 import { UserAvatar } from "@/components/user-avatar";
 import { server } from "@test/msw";
-import { renderWithRouter } from "@test/next-router";
+import { createTestRouter, renderWithRouter } from "@test/next-router";
 
 const CONNECTION = "http://localhost:3000/api/omicron/connection";
 
@@ -28,6 +28,21 @@ describe("UserAvatar", () => {
     const connection = fakeConnection(() => HttpResponse.json({ connected: false }));
     renderWithRouter(<UserAvatar name="Aysel" image={null} />);
     await waitFor(() => expect(connection.requests()).toBe(1));
+  });
+
+  test("gets the blog posts page ready for a connected member, and only them", async () => {
+    const connected = createTestRouter();
+    fakeConnection(() => HttpResponse.json({ connected: true }));
+    const { unmount } = renderWithRouter(<UserAvatar name="Aysel" image={null} />, { router: connected });
+    await waitFor(() => expect(connected.prefetch).toHaveBeenCalledWith("/account/blog"));
+    unmount();
+
+    const notConnected = createTestRouter();
+    const answered = fakeConnection(() => HttpResponse.json({ connected: false }));
+    renderWithRouter(<UserAvatar name="Aysel" image={null} />, { router: notConnected });
+    await waitFor(() => expect(answered.requests()).toBe(1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(notConnected.prefetch).not.toHaveBeenCalled();
   });
 
   test("once the answer is in, the menu opens with it already there, and doesn't ask again", async () => {

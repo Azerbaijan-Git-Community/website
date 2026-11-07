@@ -35,7 +35,10 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
       try {
         const res = await fetch("/api/omicron/connection");
         const { connected } = ConnectionSchema.parse(await res.json());
-        if (!ignore) setOmicronConnected(connected);
+        if (ignore) return;
+        setOmicronConnected(connected);
+        // The link only exists while the menu is open, which is too late to get ahead of the click.
+        if (connected) router.prefetch("/account/blog");
       } catch {
         // "My blog posts" is the safe guess: that page offers to connect when there's no connection.
         if (!ignore) setOmicronConnected(true);
@@ -45,7 +48,7 @@ export function UserAvatar({ name, image }: UserAvatarProps) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!open) return undefined;
