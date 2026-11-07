@@ -14,7 +14,7 @@ export function SignInButton() {
     const errorDescription = searchParams.get("error_description");
     if (error === "banned") {
       toast.error("You have been banned", {
-        description: "We banned your account because we detected bot activity on GitHub",
+        description: errorDescription || "An admin banned your account from this site.",
       });
     } else if (error) {
       toast.error(errorDescription || "An error occurred during sign-in. Please try again.");
