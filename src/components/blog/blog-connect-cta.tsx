@@ -1,20 +1,9 @@
 import { headers } from "next/headers";
-import Link from "next/link";
-import { PiNewspaperBold } from "react-icons/pi";
 import { OmicronLogo } from "@/components/omicron-logo";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const BUTTON =
-  "inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 py-2 font-outfit text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none";
-
-/** Holds the button's place while the server works out which one to show. */
-export function BlogConnectCtaFallback() {
-  return (
-    <div aria-hidden="true" data-testid="connect-skeleton" className="h-10 w-44 animate-pulse rounded-md bg-surface" />
-  );
-}
-
+/** Only for a signed-in member with no connection. Everyone else sees nothing here. */
 export async function BlogConnectCta() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) return null;
@@ -23,15 +12,14 @@ export async function BlogConnectCta() {
     where: { userId: session.user.id },
     select: { id: true },
   });
+  if (connection) return null;
 
-  return connection ? (
-    <Link href="/account/blog" className={BUTTON}>
-      <PiNewspaperBold className="size-4" />
-      Manage my posts
-    </Link>
-  ) : (
+  return (
     // oxlint-disable-next-line next/no-html-link-for-pages -- this route redirects off-site, so it must never be prefetched
-    <a href="/api/omicron/connect" className={BUTTON}>
+    <a
+      href="/api/omicron/connect"
+      className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 py-2 font-outfit text-sm font-semibold text-hi transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-lo hover:bg-overlay focus-visible:ring-2 focus-visible:ring-blue focus-visible:outline-none"
+    >
       <OmicronLogo />
       Connect Omicron
     </a>

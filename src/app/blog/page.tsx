@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { BlogPostCard } from "@/components/blog/blog-card";
-import { BlogConnectCta, BlogConnectCtaFallback } from "@/components/blog/blog-connect-cta";
+import { BlogConnectCta } from "@/components/blog/blog-connect-cta";
 import { JsonLd } from "@/components/json-ld";
 import { getBlogPosts } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
@@ -68,7 +68,7 @@ export default function BlogPage() {
           </p>
           {/* The rest of the page is cached for everyone; only this depends on who's asking. */}
           <div className="mt-6 flex justify-center empty:hidden sm:absolute sm:top-0 sm:right-0 sm:mt-0">
-            <Suspense fallback={<BlogConnectCtaFallback />}>
+            <Suspense fallback={null}>
               <BlogConnectCta />
             </Suspense>
           </div>

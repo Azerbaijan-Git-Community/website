@@ -72,7 +72,6 @@ describe("BlogPage", () => {
     await screen.findByRole("heading", { level: 1 });
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Connect Omicron|Manage my posts/ })).not.toBeInTheDocument();
-    expect(screen.queryByTestId("connect-skeleton")).not.toBeInTheDocument();
   });
 
   test("offers a signed-in member the Omicron connection", async () => {
@@ -84,12 +83,13 @@ describe("BlogPage", () => {
     );
   });
 
-  test("sends a connected member to their posts", async () => {
+  test("shows a connected member no button at all", async () => {
     const user = await createUser();
     await createOmicronConnection(user.id);
     incomingRequest.headers = await sessionHeadersFor(user.id);
     await renderServer(<BlogPage />);
-    expect(await screen.findByRole("link", { name: "Manage my posts" })).toHaveAttribute("href", "/account/blog");
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByRole("link", { name: /Connect Omicron|Manage my posts/ })).not.toBeInTheDocument();
   });
 
   test("declares its title and canonical URL", () => {
