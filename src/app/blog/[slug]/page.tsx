@@ -39,6 +39,8 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
 
 export async function generateStaticParams() {
   const slugs = await getAllBlogSlugs();
+  // Cache Components fails the build on an empty list. No post has this slug, so it renders as a 404.
+  if (slugs.length === 0) return [{ slug: "__placeholder__" }];
   return slugs.map((s) => ({ slug: s.slug }));
 }
 
