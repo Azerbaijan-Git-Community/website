@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
+import { Suspense } from "react";
 import { BlogPostCard } from "@/components/blog/blog-card";
+import { BlogConnectCta } from "@/components/blog/blog-connect-cta";
 import { JsonLd } from "@/components/json-ld";
 import { getBlogPosts } from "@/data/blog/get";
 import { cacheTags } from "@/lib/cache-tags";
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${clientEnv.NEXT_PUBLIC_BASE_URL}/blog` },
 };
 
-export default async function BlogPage() {
+async function BlogListing() {
   "use cache";
   cacheLife("max");
   cacheTag(cacheTags.blog);
@@ -22,7 +24,7 @@ export default async function BlogPage() {
   const blogPosts = await getBlogPosts();
 
   return (
-    <div className="min-h-svh pt-32 pb-24">
+    <>
       <JsonLd
         data={collectionPageSchema({
           name: "Developer Blog",
@@ -35,6 +37,24 @@ export default async function BlogPage() {
           })),
         })}
       />
+      {blogPosts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <p className="text-lg text-lo">No blog posts yet. Be the first to contribute!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post) => {
+            return <BlogPostCard key={post.id} post={post} />;
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
+export default function BlogPage() {
+  return (
+    <div className="min-h-svh pt-32 pb-24">
       <div className="mx-auto max-w-300 px-8">
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
@@ -43,30 +63,18 @@ export default async function BlogPage() {
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Developer <span className="text-gradient">Blog</span>
           </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-lo">
-            Articles and tutorials from Azerbaijan GitHub Community members.{" "}
-            <a
-              href="https://github.com/Azerbaijan-Git-Community/blog#readme"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue transition-colors hover:text-lime"
-            >
-              Write a post
-            </a>
+          <p className="mx-auto mb-6 max-w-2xl text-lg text-lo">
+            Articles and tutorials from Azerbaijan GitHub Community members.
           </p>
+          {/* The rest of the page is cached for everyone; only this depends on who's asking. */}
+          <div className="flex min-h-10 justify-center">
+            <Suspense fallback={null}>
+              <BlogConnectCta />
+            </Suspense>
+          </div>
         </div>
 
-        {blogPosts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-lg text-lo">No blog posts yet. Be the first to contribute!</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {blogPosts.map((post) => {
-              return <BlogPostCard key={post.id} post={post} />;
-            })}
-          </div>
-        )}
+        <BlogListing />
       </div>
     </div>
   );

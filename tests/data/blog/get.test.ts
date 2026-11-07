@@ -3,6 +3,22 @@ import { describe, expect, test } from "vitest";
 import { getAllBlogSlugs, getBlogPost, getBlogPosts } from "@/data/blog/get";
 import { createBlogPost, createUser, testPrisma } from "@test/db";
 
+describe.each([
+  ["hidden by its author", { removedByAuthorAt: new Date() }, {}],
+  ["removed by an admin", { removedByAdminAt: new Date() }, {}],
+  ["no longer on Omicron", { sourceMissingAt: new Date() }, {}],
+  ["by a banned author", {}, { banned: true }],
+  ["by a blog-banned author", {}, { blogBanned: true }],
+])("a post %s", (_label, post, author) => {
+  test("is in no public reader", async () => {
+    const user = await createUser(author);
+    await createBlogPost(user.id, { slug: "secret", ...post });
+    await expect(getBlogPosts()).resolves.toEqual([]);
+    await expect(getBlogPost("secret")).resolves.toBeNull();
+    await expect(getAllBlogSlugs()).resolves.toEqual([]);
+  });
+});
+
 describe("getBlogPosts", () => {
   test("lists posts newest first with their author", async () => {
     const author = await createUser({ name: "Aysel" });
@@ -15,7 +31,7 @@ describe("getBlogPosts", () => {
     expect(posts[0].author).toEqual({ name: "Aysel", image: author.image });
   });
 
-  test("omits the MDX body and sync bookkeeping", async () => {
+  test("omits the body and sync bookkeeping", async () => {
     const author = await createUser();
     await createBlogPost(author.id);
 
@@ -49,18 +65,28 @@ describe("getBlogPosts", () => {
 });
 
 describe("getBlogPost", () => {
-  test("returns the full post with author username, without the content SHA", async () => {
+  test("returns the full post with author username, without the sync bookkeeping", async () => {
     const author = await createUser({ githubUsername: "aysel" });
-    await createBlogPost(author.id, { slug: "hello", contentMdx: "# Hello" });
+    await createBlogPost(author.id, { slug: "hello", contentHtml: "<h1>Hello</h1>" });
 
     const post = await getBlogPost("hello");
 
     expect(post).toMatchObject({
       slug: "hello",
-      contentMdx: "# Hello",
+      contentHtml: "<h1>Hello</h1>",
+      sourceUrl: "https://omicron.example/@author/hello",
       author: { name: author.name, image: author.image, githubUsername: "aysel" },
     });
-    expect(post).not.toHaveProperty("contentSha");
+    for (const field of [
+      "sourceOrigin",
+      "sourcePostId",
+      "sourceUpdatedAt",
+      "removedByAuthorAt",
+      "removedByAdminAt",
+      "sourceMissingAt",
+    ]) {
+      expect(post).not.toHaveProperty(field);
+    }
     expect(post?.updatedAt).toBeInstanceOf(Date);
   });
 

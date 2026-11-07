@@ -27,11 +27,18 @@ describe("blog OG image", () => {
     const res = await Image();
 
     await expect(readPng(res)).resolves.toEqual({ isPng: true, width: 1200, height: 630 });
-    expect(fetched.map((url) => url.split("/posts/")[1]).toSorted()).toEqual([
-      "p2/images/cover.png",
-      "p3/images/cover.png",
-      "p4/images/cover.png",
-    ]);
+    expect(fetched.map((url) => url.split("/uploads/")[1]).toSorted()).toEqual(["p2.png", "p3.png", "p4.png"]);
+  });
+
+  test.each([
+    ["an arbitrary host", "https://evil.example/cover.png"],
+    ["a format the renderer can't decode", "https://omicron.example/api/uploads/cover.webp"],
+  ])("draws no cover from %s, so one banner can't break the card", async (_label, coverImage) => {
+    const { fetched } = serveRemoteImages();
+    await createBlogPost((await createUser()).id, { coverImage });
+
+    await expect(readPng(await Image())).resolves.toMatchObject({ isPng: true, width: 1200 });
+    expect(fetched).toEqual([]);
   });
 
   test("renders an empty state without posts", async () => {

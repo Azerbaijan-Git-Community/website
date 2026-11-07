@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { PiShieldCheckBold } from "react-icons/pi";
+import { BlogModeration } from "@/components/admin/blog-moderation";
 import { SyncPanel } from "@/components/admin/sync-panel";
+import { getModerationPosts } from "@/data/blog/manage";
 import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -14,6 +16,8 @@ export default async function AdminPage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.role || session?.user?.role !== "admin") notFound();
+
+  const posts = await getModerationPosts();
 
   return (
     <div className="min-h-svh pt-28 pb-24">
@@ -38,6 +42,7 @@ export default async function AdminPage() {
         </header>
 
         <SyncPanel />
+        <BlogModeration posts={posts} />
       </div>
     </div>
   );

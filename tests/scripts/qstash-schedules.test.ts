@@ -41,7 +41,7 @@ afterEach(() => {
 });
 
 describe("qstash-schedules script", () => {
-  test("registers the hourly leaderboard sync against the production URL", async () => {
+  test("registers the schedules against the production URL, with the secret kept out of logs", async () => {
     const requests = fakeQstash();
 
     await runScript();
@@ -49,8 +49,12 @@ describe("qstash-schedules script", () => {
       .poll(() => log.mock.calls.flat())
       .toContain("[qstash] leaderboard-sync: 0 * * * * -> https://githubcommunity.az/api/webhooks/leaderboard");
 
-    expect(requests).toHaveLength(1);
-    const [{ url, headers }] = requests;
+    await expect
+      .poll(() => log.mock.calls.flat())
+      .toContain("[qstash] omicron-reconcile: 0 3 * * * -> https://githubcommunity.az/api/webhooks/omicron-reconcile");
+    expect(requests).toHaveLength(2);
+    const [{ url, headers }, reconcile] = requests;
+    expect(reconcile.headers.get("upstash-forward-authorization")).toBe("Bearer test-cron-secret");
     expect(decodeURIComponent(new URL(url).pathname)).toBe(
       "/v2/schedules/https://githubcommunity.az/api/webhooks/leaderboard",
     );
@@ -90,7 +94,7 @@ describe("qstash-schedules script", () => {
 
     await runScript();
 
-    await expect.poll(() => requests).toHaveLength(1);
+    await expect.poll(() => requests).toHaveLength(2);
   });
 
   test.for(["http://localhost:3000", "http://127.0.0.1:3000"])("skips local URL %s", async (url) => {

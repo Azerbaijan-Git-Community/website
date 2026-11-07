@@ -28,11 +28,16 @@ model User {
   githubStats    GithubStats?
   statsSnapshots GithubStatsSnapshot[]
   blogPosts      BlogPost[]
+  omicronConnection OmicronConnection?
 
   role       String
   banned     Boolean   @default(false)
   banReason  String?
   banExpires DateTime?
+
+  // Off the blog only; `banned` above removes the whole account from the site.
+  blogBanned    Boolean @default(false)
+  blogBanReason String?
 
   @@unique([email])
   @@map("user")
@@ -165,22 +170,52 @@ model ShowcaseProject {
   @@map("showcase_project")
 }
 
+/// A member's linked Omicron account. Kept while they're banned, so the same account can't be
+/// moved to another GitHub login. No subscriptionId means Omicron no longer sends events.
+model OmicronConnection {
+  id             String    @id @default(uuid(7))
+  userId         String    @unique
+  origin         String
+  username       String
+  subscriptionId String?   @unique
+  webhookSecret  String?
+  reviewedAt     DateTime?
+  lastSyncedAt   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([origin, username])
+  @@map("omicron_connection")
+}
+
 model BlogPost {
-  id          String   @id @default(uuid(7))
-  slug        String   @unique
-  title       String
-  description String
-  tags        String[]
-  coverImage  String
-  userId      String
-  contentMdx  String
-  readingTime Int      @default(0)
-  contentSha  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String    @id @default(uuid(7))
+  slug              String    @unique
+  title             String
+  description       String
+  tags              String[]
+  coverImage        String
+  userId            String
+  /// Sanitized at import, with absolute URLs.
+  contentHtml       String
+  readingTime       Int       @default(0)
+  sourceOrigin      String
+  sourcePostId      String
+  sourceUrl         String
+  sourceUpdatedAt   DateTime
+  aiAssisted        Boolean   @default(false)
+  /// Rows stay when hidden, so a sync can't bring a removed post back.
+  removedByAuthorAt DateTime?
+  removedByAdminAt  DateTime?
+  sourceMissingAt   DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   author User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([sourceOrigin, sourcePostId])
   @@index([createdAt])
   @@index([userId])
   @@map("blog_post")

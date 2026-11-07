@@ -156,13 +156,13 @@ describe("MCP server", () => {
   describe("get_blog_post", () => {
     test("returns the post body", async () => {
       const author = await createUser({ githubUsername: "aysel" });
-      await createBlogPost(author.id, { slug: "hello", contentMdx: "# Hi" });
+      await createBlogPost(author.id, { slug: "hello", contentHtml: "<h1>Hi</h1>" });
 
       const result = await callTool("get_blog_post", { slug: "hello" });
 
       expect(result.structuredContent).toMatchObject({
         slug: "hello",
-        contentMdx: "# Hi",
+        contentHtml: "<h1>Hi</h1>",
         author: { githubUsername: "aysel" },
       });
     });

@@ -157,7 +157,7 @@ const mcpHandler = createMcpHandler(
       {
         title: "List blog posts",
         description:
-          "Returns all community blog posts (metadata only, without the MDX body), newest first. Use `get_blog_post` with a slug to read a full post.",
+          "Returns all community blog posts (metadata only, without the HTML body), newest first. Use `get_blog_post` with a slug to read a full post.",
         inputSchema: {},
         outputSchema: blogListOutputSchema,
       },
@@ -171,7 +171,8 @@ const mcpHandler = createMcpHandler(
       "get_blog_post",
       {
         title: "Get a blog post",
-        description: "Returns a single blog post including its raw MDX body, by slug (as returned by get_blog_posts).",
+        description:
+          "Returns a single blog post including its sanitized HTML body, by slug (as returned by get_blog_posts).",
         inputSchema: {
           slug: z.string().min(1).describe("The post's URL slug."),
         },

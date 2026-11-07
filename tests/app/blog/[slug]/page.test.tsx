@@ -16,12 +16,13 @@ async function seedPost() {
     tags: ["intro", "community"],
     readingTime: 4,
     createdAt: new Date("2026-03-05T12:00:00Z"),
-    contentMdx: "## Getting Started\n\nRead the [docs](https://example.com).\n\n![diagram](./images/diagram.png)",
+    contentHtml:
+      '<h2>Getting Started</h2><p>Read the <a href="https://example.com">docs</a>.</p><p><img src="https://omicron.example/api/uploads/diagram.png" alt="diagram"></p>',
   });
 }
 
 describe("BlogPostPage", () => {
-  test("renders the post header and its compiled MDX body", async () => {
+  test("renders the post header and its rendered body", async () => {
     await seedPost();
 
     const { container } = await renderServer(<BlogPostPage {...props("hello-world")} />);
@@ -35,9 +36,44 @@ describe("BlogPostPage", () => {
     expect(screen.getByRole("link", { name: "docs" })).toHaveAttribute("target", "_blank");
     expect(screen.getByRole("img", { name: "diagram" })).toHaveAttribute(
       "src",
-      "https://raw.githubusercontent.com/Azerbaijan-Git-Community/blog/main/posts/hello-world/images/diagram.png",
+      "https://omicron.example/api/uploads/diagram.png",
     );
     expect(screen.getByRole("link", { name: "Back to blog" })).toHaveAttribute("href", "/blog");
+    expect(screen.getByRole("link", { name: "Comment on Omicron" })).toHaveAttribute(
+      "href",
+      "https://omicron.example/@author/hello-world",
+    );
+    expect(screen.queryByText("AI-assisted")).not.toBeInTheDocument();
+  });
+
+  test("never lets a stored body run script", async () => {
+    const author = await createUser();
+    await createBlogPost(author.id, {
+      slug: "evil",
+      contentHtml: '<p>hi</p><script>alert(1)</script><img src="x" onerror="alert(1)">',
+    });
+    const { container } = await renderServer(<BlogPostPage {...props("evil")} />);
+    expect(container.querySelector(".prose script")).toBeNull();
+    expect(container.querySelector(".prose [onerror]")).toBeNull();
+  });
+
+  test("discloses AI assistance", async () => {
+    const post = await seedPost();
+    await testPrisma.blogPost.update({ where: { id: post.id }, data: { aiAssisted: true } });
+    await renderServer(<BlogPostPage {...props("hello-world")} />);
+    expect(screen.getByText("AI-assisted")).toBeInTheDocument();
+  });
+
+  test.each([
+    ["hidden by its author", { removedByAuthorAt: new Date() }],
+    ["removed by an admin", { removedByAdminAt: new Date() }],
+    ["no longer on Omicron", { sourceMissingAt: new Date() }],
+  ])("404s for a post %s", async (_label, removal) => {
+    const author = await createUser();
+    await createBlogPost(author.id, { slug: "gone", ...removal });
+    await expect(renderServer(<BlogPostPage {...props("gone")} />)).rejects.toMatchObject({
+      digest: "NEXT_HTTP_ERROR_FALLBACK;404",
+    });
   });
 
   test("emits BlogPosting and breadcrumb structured data", async () => {
@@ -80,7 +116,7 @@ describe("generateMetadata", () => {
       title: "Hello World",
       description: "An introduction",
       keywords: ["intro", "community"],
-      alternates: { canonical: "http://localhost:3000/blog/hello-world" },
+      alternates: { canonical: "https://omicron.example/@author/hello-world" },
       openGraph: {
         type: "article",
         publishedTime: "2026-03-05T12:00:00.000Z",

@@ -62,7 +62,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     method: "GET",
     path: "/api/v1/blog",
     title: "List posts",
-    summary: "All blog posts (metadata only, without the MDX body), newest first.",
+    summary: "All blog posts (metadata only, without the HTML body), newest first.",
   },
   {
     id: "blog-single",
@@ -70,7 +70,7 @@ export const ENDPOINTS: EndpointDoc[] = [
     method: "GET",
     path: "/api/v1/blog/{slug}",
     title: "Single post",
-    summary: "A single blog post including its raw MDX body. Returns 404 for an unknown slug.",
+    summary: "A single blog post including its sanitized HTML body. Returns 404 for an unknown slug.",
     params: [{ name: "slug", example: "hello-world", description: "The post's URL slug." }],
   },
   {

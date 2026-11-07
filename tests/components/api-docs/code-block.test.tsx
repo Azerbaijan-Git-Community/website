@@ -28,8 +28,8 @@ describe("CodeBlock", () => {
 
   test("sits on a transparent background", () => {
     const { container } = render(<CodeBlock code="x" language="bash" />);
-    // Inline style, since jsdom 30.1.3 expands a computed `background` into every sub-property.
-    expect(container.querySelector("pre")!.style.background).toBe("transparent");
+    // Inline style, since jsdom expands a computed `background` into every sub-property and 31 serializes this shorthand as "none".
+    expect(container.querySelector("pre")!.style.backgroundColor).toBe("transparent");
   });
 
   test("only constrains the height when asked to", () => {

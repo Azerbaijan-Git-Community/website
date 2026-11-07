@@ -1,12 +1,13 @@
 import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { POST } from "@/app/api/admin/sync/route";
-import { POST as blogWebhook } from "@/app/api/webhooks/blog/route";
+import { POST as reconcileWebhook } from "@/app/api/webhooks/omicron-reconcile/route";
 import { sessionHeadersFor } from "@test/auth";
-import { createShowcaseProject, createUser, testPrisma } from "@test/db";
-import { fakeBlogRepo, fakeGraphQL } from "@test/github";
+import { createOmicronConnection, createShowcaseProject, createUser, testPrisma } from "@test/db";
+import { fakeGraphQL } from "@test/github";
 import { server } from "@test/msw";
 import { incomingRequest } from "@test/next-headers";
+import { fakeOmicronListing, omicronPost } from "@test/omicron";
 import { request } from "@test/request";
 
 vi.mock(import("next/headers"), async (importOriginal) =>
@@ -78,24 +79,24 @@ describe("POST /api/admin/sync", () => {
     expect((await testPrisma.showcaseProject.findFirstOrThrow()).stars).toBe(99);
   });
 
-  test("triggers the blog webhook with its secret and relays the result", async () => {
+  test("triggers the blog reconcile with the cron secret and relays the result", async () => {
     await signInAs("admin");
-    await createUser({ githubId: 77 });
-    fakeBlogRepo({ post: { sha: "1", mdx: "---\ntitle: T\ndescription: D\nauthor: 77\n---\nbody" } });
+    await createOmicronConnection((await createUser()).id, { username: "ada" });
+    fakeOmicronListing("ada", [[omicronPost()]]);
     let forwarded: Request | undefined;
     // Route the outgoing self-call into the real webhook handler.
     server.use(
-      http.post("http://localhost:3000/api/webhooks/blog", async ({ request: req }) => {
+      http.post("http://localhost:3000/api/webhooks/omicron-reconcile", async ({ request: req }) => {
         forwarded = req.clone();
-        return blogWebhook(request("/api/webhooks/blog", { method: "POST", headers: req.headers }));
+        return reconcileWebhook(request("/api/webhooks/omicron-reconcile", { method: "POST", headers: req.headers }));
       }),
     );
 
     const res = await sync({ target: "blog" });
 
     expect(res.status).toBe(200);
-    await expect(res.json()).resolves.toEqual({ message: "Synced 1, skipped 0, deleted 0, failed 0" });
-    expect(forwarded?.headers.get("authorization")).toBe("Bearer test-blog-secret");
+    await expect(res.json()).resolves.toEqual({ message: "Reconciled 1 accounts, failed 0" });
+    expect(forwarded?.headers.get("authorization")).toBe("Bearer test-cron-secret");
     expect(await testPrisma.blogPost.count()).toBe(1);
   });
 
@@ -135,7 +136,10 @@ describe("POST /api/admin/sync", () => {
   test("tolerates a non-JSON upstream response", async () => {
     await signInAs("admin");
     server.use(
-      http.post("http://localhost:3000/api/webhooks/blog", () => new HttpResponse("Gateway Timeout", { status: 504 })),
+      http.post(
+        "http://localhost:3000/api/webhooks/omicron-reconcile",
+        () => new HttpResponse("Gateway Timeout", { status: 504 }),
+      ),
     );
 
     const res = await sync({ target: "blog" });
