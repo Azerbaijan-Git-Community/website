@@ -1,6 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { http, HttpResponse } from "msw";
+import { describe, expect, test, vi } from "vitest";
 import Image, { alt, contentType, size } from "@/app/blog/opengraph-image";
 import { createBlogPost, createUser } from "@test/db";
+import { server } from "@test/msw";
 import { readPng, serveRemoteImages } from "@test/og";
 
 describe("blog OG image", () => {
@@ -30,15 +32,20 @@ describe("blog OG image", () => {
     expect(fetched.map((url) => url.split("/uploads/")[1]).toSorted()).toEqual(["p2.png", "p3.png", "p4.png"]);
   });
 
-  test.each([
-    ["an arbitrary host", "https://evil.example/cover.png"],
-    ["a format the renderer can't decode", "https://omicron.example/api/uploads/cover.webp"],
-  ])("draws no cover from %s, so one banner can't break the card", async (_label, coverImage) => {
-    const { fetched } = serveRemoteImages();
-    await createBlogPost((await createUser()).id, { coverImage });
+  test("a cover that can't be used only blanks its own card", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    server.use(http.get("https://cdn.sanity.io/*", () => HttpResponse.text("not an image")));
+    await createBlogPost((await createUser()).id, { coverImage: "https://cdn.sanity.io/broken.png" });
 
     await expect(readPng(await Image())).resolves.toMatchObject({ isPng: true, width: 1200 });
-    expect(fetched).toEqual([]);
+  });
+
+  test("draws a cover from wherever a member's banner is hosted", async () => {
+    const { fetched } = serveRemoteImages();
+    await createBlogPost((await createUser()).id, { coverImage: "https://cdn.sanity.io/images/cover.png" });
+
+    await expect(readPng(await Image())).resolves.toMatchObject({ isPng: true, width: 1200 });
+    expect(fetched).toEqual(["https://cdn.sanity.io/images/cover.png"]);
   });
 
   test("renders an empty state without posts", async () => {
