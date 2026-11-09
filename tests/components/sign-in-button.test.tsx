@@ -24,7 +24,7 @@ describe("SignInButton", () => {
     expect(screen.queryByText(/banned|error occurred/i)).not.toBeInTheDocument();
   });
 
-  test("starts GitHub sign-in and returns to the current page afterwards", async () => {
+  test("starts GitHub sign-in, returning to the current page or sending new members to /welcome", async () => {
     const user = userEvent.setup();
     let body: unknown;
     server.use(
@@ -39,7 +39,9 @@ describe("SignInButton", () => {
 
     await user.click(screen.getByRole("button", { name: "Sign in" }));
 
-    await expect.poll(() => body).toEqual({ provider: "github", callbackURL: "/leaderboard" });
+    await expect
+      .poll(() => body)
+      .toEqual({ provider: "github", callbackURL: "/leaderboard", newUserCallbackURL: "/welcome" });
   });
 
   test("explains a ban when redirected back with error=banned", async () => {
