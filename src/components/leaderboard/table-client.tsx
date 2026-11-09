@@ -2,10 +2,11 @@
 
 import { AnimatePresence, LazyMotion, domAnimation, m as motion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AllTableData, LeaderboardPeriod } from "@/data/leaderboard/get";
 import { sizedGithubAvatar } from "@/lib/utils.client";
 import { PeriodSelector } from "./period-selector";
+import { SCROLL_TO_ME_KEY } from "./scroll-to-me";
 
 function getRankBadgeClass(rank: number): string {
   if (rank === 1)
@@ -35,14 +36,39 @@ function EmptyState() {
   );
 }
 
+function YouBadge() {
+  return (
+    <span className="rounded-full border border-[rgba(88,166,255,0.3)] bg-[rgba(88,166,255,0.1)] px-2 py-0.5 font-outfit text-xs font-semibold text-blue">
+      You
+    </span>
+  );
+}
+
 type TableClientProps = {
   allData: AllTableData;
+  /** The signed-in viewer, whose row is highlighted. */
+  currentUserId?: string;
 };
 
-export function TableClient({ allData }: TableClientProps) {
+export function TableClient({ allData, currentUserId }: TableClientProps) {
   const [period, setPeriod] = useState<LeaderboardPeriod>("monthly");
 
   const entries = allData[period];
+
+  // Arriving from the welcome flow: bring the new member's row into view once we know who they are.
+  useEffect(() => {
+    if (!currentUserId) return;
+    try {
+      if (!sessionStorage.getItem(SCROLL_TO_ME_KEY)) return;
+      sessionStorage.removeItem(SCROLL_TO_ME_KEY);
+    } catch {
+      return;
+    }
+    // Desktop rows and mobile cards both render; scroll to whichever layout is showing.
+    const rows = [...document.querySelectorAll<HTMLElement>("[data-me]")];
+    const row = rows.find((el) => el.offsetParent !== null) ?? rows[0];
+    row?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [currentUserId]);
 
   return (
     <LazyMotion features={domAnimation}>
@@ -81,15 +107,18 @@ export function TableClient({ allData }: TableClientProps) {
                   <AnimatePresence initial={false}>
                     {entries.map((entry, index) => {
                       const rank = index + 1;
+                      const isMe = entry.userId === currentUserId;
                       return (
                         <motion.tr
                           key={entry.userId}
+                          data-me={isMe || undefined}
+                          aria-current={isMe || undefined}
                           layout
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          className="border-b border-line transition-colors last:border-0 hover:bg-[rgba(48,54,61,0.3)]"
+                          className={`border-b border-line transition-colors last:border-0 ${isMe ? "bg-[rgba(88,166,255,0.08)] shadow-[inset_3px_0_0_var(--color-blue)] hover:bg-[rgba(88,166,255,0.12)]" : "hover:bg-[rgba(48,54,61,0.3)]"}`}
                         >
                           <td className="px-6 py-4">
                             <div
@@ -119,6 +148,7 @@ export function TableClient({ allData }: TableClientProps) {
                                   {entry.user.githubUsername}
                                 </span>
                               </a>
+                              {isMe && <YouBadge />}
                             </div>
                           </td>
                           <td className="px-6 py-4 text-center font-mono text-lg font-bold text-lime">
@@ -147,15 +177,18 @@ export function TableClient({ allData }: TableClientProps) {
             <AnimatePresence initial={false}>
               {entries.map((entry, index) => {
                 const rank = index + 1;
+                const isMe = entry.userId === currentUserId;
                 return (
                   <motion.div
                     key={entry.userId}
+                    data-me={isMe || undefined}
+                    aria-current={isMe || undefined}
                     layout
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="glass relative overflow-hidden rounded-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                    className={`glass relative overflow-hidden rounded-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ${isMe ? "border-[rgba(88,166,255,0.5)]! bg-[rgba(88,166,255,0.08)]!" : ""}`}
                   >
                     <div className="absolute top-4 right-4">
                       <div
@@ -184,6 +217,7 @@ export function TableClient({ allData }: TableClientProps) {
                           {entry.user.githubUsername}
                         </h3>
                       </a>
+                      {isMe && <YouBadge />}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="rounded-lg border border-line bg-[rgba(13,17,23,0.5)] p-3">

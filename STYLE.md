@@ -166,13 +166,13 @@ Trigger: native button with `aria-haspopup="menu"`, `aria-expanded`, `aria-contr
 
 ### Navigation
 
-- Navbar: `fixed h-18 border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md`; links `font-outfit font-medium`, full navbar height, `text-lo hover:text-hi`. The current page is `text-hi` with a 2px brand-gradient underline on the bottom border that slides between links (motion `layoutId`).
+- Navbar: `fixed h-18 border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md`; links `font-outfit font-medium`, full navbar height, `text-lo hover:text-hi`. The current page is `text-hi` with a 2px brand-gradient underline on the bottom border that slides between links (one element animated by `x`/`width` from `offsetLeft`; `layoutId` jumps when navigation resets the scroll).
 - Sidebar/drawer items: `rounded-md px-3 py-1.5 text-sm`; active `bg-surface font-medium text-blue`, inactive `text-lo hover:text-hi`.
 - Text links: `text-blue hover:text-lime` in copy; `text-lo hover:text-blue` in footers/meta; `text-lo hover:text-hi` for icon links.
 
 ### Tables
 
-Inside a glass panel. Header row `border-b border-line bg-[rgba(48,54,61,0.5)]`, header cells `px-6 py-4 font-outfit text-sm font-semibold tracking-wider text-lo uppercase`. Rows `border-b border-line last:border-0 hover:bg-[rgba(48,54,61,0.3)]`. Numbers centered in `font-mono text-lg`; the key metric `font-bold text-lime`, the rest `text-lo`. Below `lg`, switch to stacked glass cards with a 2×2 grid of insets.
+Inside a glass panel. Header row `border-b border-line bg-[rgba(48,54,61,0.5)]`, header cells `px-6 py-4 font-outfit text-sm font-semibold tracking-wider text-lo uppercase`. Rows `border-b border-line last:border-0 hover:bg-[rgba(48,54,61,0.3)]`. Numbers centered in `font-mono text-lg`; the key metric `font-bold text-lime`, the rest `text-lo`. The signed-in member's row: `bg-[rgba(88,166,255,0.08)] shadow-[inset_3px_0_0_var(--color-blue)]` plus a blue "You" accent chip. Below `lg`, switch to stacked glass cards with a 2×2 grid of insets.
 
 ### Avatars and ranks
 

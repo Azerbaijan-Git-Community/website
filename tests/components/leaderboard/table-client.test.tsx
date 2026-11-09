@@ -1,6 +1,7 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+import { SCROLL_TO_ME_KEY } from "@/components/leaderboard/scroll-to-me";
 import { TableClient } from "@/components/leaderboard/table-client";
 import type { AllTableData, LeaderboardEntry } from "@/data/leaderboard/get";
 
@@ -105,5 +106,44 @@ describe("TableClient", () => {
   test("BUG-15: lets visitors reach other periods when the current month is still empty", () => {
     render(<TableClient allData={{ ...data, monthly: [] }} />);
     expect(screen.getByRole("button", { name: "Last Year" })).toBeInTheDocument();
+  });
+});
+
+describe("TableClient for a signed-in member", () => {
+  test("highlights the member's row and labels it", () => {
+    render(<TableClient allData={data} currentUserId="second" />);
+    const rows = within(screen.getByRole("table")).getAllByRole("row").slice(1);
+
+    expect(rows[1]).toHaveAttribute("aria-current", "true");
+    expect(within(rows[1]).getByText("You")).toBeInTheDocument();
+    expect(rows[0]).not.toHaveAttribute("aria-current");
+    expect(within(rows[0]).queryByText("You")).not.toBeInTheDocument();
+  });
+
+  test("highlights nobody for visitors", () => {
+    render(<TableClient allData={data} />);
+    expect(screen.queryByText("You")).not.toBeInTheDocument();
+  });
+
+  test("scrolls to the member once after the welcome flow, then forgets the request", async () => {
+    const scrollIntoView = vi.fn<Element["scrollIntoView"]>();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    sessionStorage.setItem(SCROLL_TO_ME_KEY, "1");
+
+    render(<TableClient allData={data} currentUserId="third" />);
+
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    expect(scrollIntoView.mock.contexts[0]).toHaveAttribute("data-me");
+    expect(sessionStorage.getItem(SCROLL_TO_ME_KEY)).toBeNull();
+  });
+
+  test("doesn't scroll on ordinary visits", () => {
+    const scrollIntoView = vi.fn<Element["scrollIntoView"]>();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    sessionStorage.removeItem(SCROLL_TO_ME_KEY);
+
+    render(<TableClient allData={data} currentUserId="third" />);
+
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

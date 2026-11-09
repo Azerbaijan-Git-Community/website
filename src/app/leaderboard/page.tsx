@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { PiArrowsClockwise } from "react-icons/pi";
+import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { PodiumClient } from "@/components/leaderboard/podium-client";
 import { SyncCountdown } from "@/components/leaderboard/sync-countdown";
-import { TableClient } from "@/components/leaderboard/table-client";
 import { getLastSyncTime, getPodiumData, getTableData } from "@/data/leaderboard/get";
 import { cacheTags } from "@/lib/cache-tags";
 import { clientEnv } from "@/lib/env.client";
@@ -56,7 +56,7 @@ export default async function LeaderboardPage() {
           </div>
         )}
 
-        <TableClient allData={tableData} />
+        <LeaderboardTable allData={tableData} />
       </div>
     </div>
   );
