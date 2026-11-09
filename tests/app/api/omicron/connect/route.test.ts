@@ -33,4 +33,14 @@ describe("GET /api/omicron/connect", () => {
     const [a, b] = [await GET(request("/x", { headers })), await GET(request("/x", { headers }))];
     expect(a.cookies.get("omicron_oauth")?.value).not.toBe(b.cookies.get("omicron_oauth")?.value);
   });
+
+  test("remembers a connection started from the welcome flow", async () => {
+    const user = await createUser();
+    const headers = await sessionHeadersFor(user.id);
+    const fromWelcome = await GET(request("/api/omicron/connect?from=welcome", { headers }));
+    const plain = await GET(request("/api/omicron/connect", { headers }));
+
+    expect(fromWelcome.cookies.get("omicron_oauth")?.value.split(".")[2]).toBe("welcome");
+    expect(plain.cookies.get("omicron_oauth")?.value.split(".")).toHaveLength(2);
+  });
 });

@@ -12,8 +12,10 @@ export async function GET(req: NextRequest) {
   const verifier = randomBytes(32).toString("base64url");
   const challenge = createHash("sha256").update(verifier).digest("base64url");
 
+  // Remembered so the callback can send a new member back into the welcome flow's last step
+  const fromWelcome = req.nextUrl.searchParams.get("from") === "welcome";
   const res = NextResponse.redirect(omicronAuthorizeUrl(state, challenge));
-  res.cookies.set(OMICRON_OAUTH_COOKIE, `${state}.${verifier}`, {
+  res.cookies.set(OMICRON_OAUTH_COOKIE, [state, verifier, ...(fromWelcome ? ["welcome"] : [])].join("."), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

@@ -102,4 +102,17 @@ describe("AccountBlogPage", () => {
   test("is not indexed", () => {
     expect(metadata.robots).toEqual({ index: false, follow: false });
   });
+
+  test("leads members coming from the welcome flow on to the leaderboard", async () => {
+    await signIn();
+    await renderServer(<AccountBlogPage {...props({ from: "welcome" })} />);
+    expect(screen.getByText(/then head to the leaderboard/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeInTheDocument();
+  });
+
+  test("shows no welcome step on ordinary visits", async () => {
+    await signIn();
+    await renderServer(<AccountBlogPage {...props()} />);
+    expect(screen.queryByText(/then head to the leaderboard/)).not.toBeInTheDocument();
+  });
 });

@@ -130,4 +130,16 @@ describe("GET /api/omicron/callback", () => {
     expect(errorOf(res)).toBeNull();
     expect(await testPrisma.omicronConnection.count()).toBe(1);
   });
+
+  test("sends a member who started from the welcome flow back into it, errors included", async () => {
+    const user = await createUser();
+    fakeOmicronAuth();
+    fakeOmicronListing("ada", [[omicronPost()]]);
+
+    const ok = await callback(user.id, undefined, "the-state.the-verifier.welcome");
+    expect(ok.headers.get("location")).toBe("http://localhost:3000/account/blog?from=welcome");
+
+    const denied = await callback(user.id, "state=the-state&error=access_denied", "the-state.the-verifier.welcome");
+    expect(denied.headers.get("location")).toBe("http://localhost:3000/account/blog?error=denied&from=welcome");
+  });
 });
