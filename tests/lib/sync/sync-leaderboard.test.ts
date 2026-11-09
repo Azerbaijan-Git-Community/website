@@ -1,8 +1,9 @@
 import { HttpResponse } from "msw";
 import { revalidateTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { syncLeaderboard } from "@/lib/sync/sync-leaderboard";
-import { createUser, testPrisma } from "@test/db";
+import { getLastSyncTime } from "@/data/leaderboard/get";
+import { syncLeaderboard, syncUser } from "@/lib/sync/sync-leaderboard";
+import { createAllTimeStats, createUser, testPrisma } from "@test/db";
 import { fakeGraphQL, type GraphQLReply } from "@test/github";
 
 type Counts = { commits: number; prs: number; issues: number; reviews: number };
@@ -270,5 +271,47 @@ describe("syncLeaderboard", () => {
 
     const stats = await testPrisma.githubStats.findUniqueOrThrow({ where: { userId: user.id } });
     expect(stats.contributions).toBe(200);
+  });
+});
+
+describe("syncUser", () => {
+  test("syncs only the given member", async () => {
+    const me = await createUser({ githubUsername: "aysel" });
+    const other = await createUser({ githubUsername: "other" });
+    const { queries } = fakeGithubUsers(["aysel", "other"]);
+
+    await expect(syncUser(me)).resolves.toBe(true);
+
+    expect(queries).toHaveLength(1);
+    expect(queries[0]).toContain('login: "aysel"');
+    expect(queries[0]).not.toContain('login: "other"');
+    expect(await testPrisma.githubStats.findUnique({ where: { userId: me.id } })).toMatchObject({ commits: 50 });
+    expect(await testPrisma.githubStats.findUnique({ where: { userId: other.id } })).toBeNull();
+    expect(await testPrisma.githubStatsSnapshot.count({ where: { userId: me.id } })).toBe(2);
+  });
+
+  test("keeps the last hourly run as the sync time, so the countdown doesn't restart", async () => {
+    const earlier = await createUser({ githubUsername: "earlier" });
+    await createAllTimeStats(earlier.id, { commits: 1, updatedAt: new Date("2026-07-15T11:00:00Z") });
+    const me = await createUser({ githubUsername: "aysel" });
+    fakeGithubUsers(["aysel"]);
+
+    await syncUser(me);
+
+    expect(await getLastSyncTime()).toEqual(new Date("2026-07-15T11:00:00Z"));
+    expect(await testPrisma.githubStats.findUniqueOrThrow({ where: { userId: me.id } })).toMatchObject({ commits: 50 });
+  });
+
+  test("gives up at once on a rate limit instead of waiting it out", async () => {
+    const me = await createUser({ githubUsername: "aysel" });
+    const { queries } = fakeGithubUsers(
+      ["aysel"],
+      () => new HttpResponse("secondary rate limit", { status: 403, headers: { "retry-after": "60" } }),
+    );
+
+    await expect(syncUser(me)).resolves.toBe(false);
+
+    expect(queries).toHaveLength(1);
+    expect(await testPrisma.githubStats.findUnique({ where: { userId: me.id } })).toBeNull();
   });
 });

@@ -121,15 +121,20 @@ function isComplete(d: UserData | undefined): d is UserData {
   return Boolean(d?.weekly && d?.monthly && d?.allTime);
 }
 
-type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range };
+type FetchBatchOptions = { users: SyncUser[]; weekRange: Range; monthRange: Range; maxAttempts?: number };
 
 /**
  * Fetch one batch, retrying the whole batch across a secondary-rate-limit cool-down (the limit
  * throttles the entire token, so retrying before the window elapses just re-hits the 403). Returns
  * whatever completed; the caller records the rest as failed.
  */
-async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): Promise<Record<string, UserData>> {
-  for (let attempt = 1; attempt <= MAX_BATCH_ATTEMPTS; attempt++) {
+async function fetchBatch({
+  users,
+  weekRange,
+  monthRange,
+  maxAttempts = MAX_BATCH_ATTEMPTS,
+}: FetchBatchOptions): Promise<Record<string, UserData>> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const json = await ghGraphQL<Record<string, UserData | undefined>>(buildBatchQuery(users, weekRange, monthRange));
       const result: Record<string, UserData> = {};
@@ -141,7 +146,7 @@ async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): 
       return result;
     } catch (error) {
       const wait = rateLimitWaitMs(error);
-      if (wait === null || attempt === MAX_BATCH_ATTEMPTS) {
+      if (wait === null || attempt === maxAttempts) {
         console.error(`Batch request failed:`, error);
         return {};
       }
@@ -154,12 +159,13 @@ async function fetchBatch({ users, weekRange, monthRange }: FetchBatchOptions): 
 }
 
 /** Write one user's all-time stats plus their weekly and monthly snapshots. */
-function persistUser(userId: string, data: UserData, weekKey: string, monthKey: string) {
+function persistUser(userId: string, data: UserData, weekKey: string, monthKey: string, stampedAt?: Date) {
   const allTime = {
     ...toCounts(data.allTime),
     contributions: data.allTime.contributionCalendar.totalContributions,
     repositories: data.repositories.totalCount,
     followers: data.followers.totalCount,
+    ...(stampedAt && { updatedAt: stampedAt }),
   };
   const weekly = toCounts(data.weekly);
   const monthly = toCounts(data.monthly);
@@ -181,6 +187,25 @@ function persistUser(userId: string, data: UserData, weekKey: string, monthKey: 
       update: monthly,
     }),
   ]);
+}
+
+/**
+ * Sync one user right away (a new member's first visit). No rate-limit retries: someone is waiting
+ * on it, and the hourly sync covers a miss. Returns false when GitHub sent nothing usable.
+ */
+export async function syncUser(user: SyncUser): Promise<boolean> {
+  const now = new Date();
+  const data = await fetchBatch({
+    users: [user],
+    weekRange: getWeekRange(now),
+    monthRange: getMonthRange(now),
+    maxAttempts: 1,
+  });
+  if (!data.u0) return false;
+  // Stamp the row with the last hourly run: getLastSyncTime (the countdown, the API's lastSync) reads updatedAt
+  const lastRun = await prisma.githubStats.findFirst({ orderBy: { updatedAt: "desc" }, select: { updatedAt: true } });
+  await persistUser(user.id, data.u0, getWeekKey(), getMonthKey(), lastRun?.updatedAt);
+  return true;
 }
 
 /**

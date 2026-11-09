@@ -1,6 +1,12 @@
 import { cacheTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { getLastSyncTime, getPodiumData, getTableData, getTableDataByMonth } from "@/data/leaderboard/get";
+import {
+  getLastSyncTime,
+  getPodiumData,
+  getTableData,
+  getTableDataByMonth,
+  getUserRanks,
+} from "@/data/leaderboard/get";
 import { createAllTimeStats, createSnapshot, createUser } from "@test/db";
 
 beforeEach(() => {
@@ -157,5 +163,49 @@ describe("getPodiumData", () => {
     await createSnapshot(user.id, "WEEKLY", "2026-W20", { commits: 5 });
 
     await expect(getPodiumData()).resolves.toEqual({});
+  });
+});
+
+describe("getUserRanks", () => {
+  test("ranks a member by commits on each board", async () => {
+    const me = await createUser({ githubUsername: "me" });
+    const ahead = await createUser({ githubUsername: "ahead" });
+    await createSnapshot(me.id, "WEEKLY", "2026-W29", { commits: 5 });
+    await createSnapshot(ahead.id, "WEEKLY", "2026-W29", { commits: 9 });
+    await createSnapshot(me.id, "MONTHLY", "2026-07", { commits: 30 });
+    await createSnapshot(ahead.id, "MONTHLY", "2026-07", { commits: 20 });
+    await createAllTimeStats(me.id, { commits: 400 });
+
+    await expect(getUserRanks(me.id)).resolves.toEqual({
+      weekly: { rank: 2, commits: 5 },
+      monthly: { rank: 1, commits: 30 },
+      allTime: { rank: 1, commits: 400 },
+    });
+  });
+
+  test("ignores banned members and other periods", async () => {
+    const me = await createUser({ githubUsername: "me" });
+    const banned = await createUser({ githubUsername: "banned", banned: true });
+    await createSnapshot(me.id, "WEEKLY", "2026-W29", { commits: 5 });
+    await createSnapshot(banned.id, "WEEKLY", "2026-W29", { commits: 50 });
+    await createSnapshot(banned.id, "WEEKLY", "2026-W28", { commits: 50 });
+
+    expect((await getUserRanks(me.id)).weekly).toEqual({ rank: 1, commits: 5 });
+  });
+
+  test("leaves members without commits or outside the top 50 unranked", async () => {
+    const me = await createUser({ githubUsername: "me" });
+    await createSnapshot(me.id, "WEEKLY", "2026-W29", { commits: 0 });
+    await createAllTimeStats(me.id, { commits: 3 });
+    for (let i = 0; i < 50; i++) {
+      const other = await createUser({ githubUsername: `other-${i}` });
+      await createAllTimeStats(other.id, { commits: 10 + i });
+    }
+
+    await expect(getUserRanks(me.id)).resolves.toEqual({
+      weekly: { rank: null, commits: 0 },
+      monthly: { rank: null, commits: 0 },
+      allTime: { rank: null, commits: 3 },
+    });
   });
 });

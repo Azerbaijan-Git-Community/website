@@ -108,3 +108,40 @@ export async function getPodiumData(): Promise<Record<string, LeaderboardEntry[]
   });
   return podium;
 }
+
+export type BoardRank = { rank: number | null; commits: number };
+export type UserRanks = Record<LeaderboardPeriod, BoardRank>;
+
+/** Position among the top 50 by commits, or null when off the board (or without commits). */
+async function rankAmong(commits: number | undefined, countAhead: (commits: number) => Promise<number>) {
+  if (!commits) return { rank: null, commits: commits ?? 0 };
+  const rank = (await countAhead(commits)) + 1;
+  return { rank: rank <= 50 ? rank : null, commits };
+}
+
+/** Where a member stands on each board; uncached, so it reflects a sync that just happened. */
+export async function getUserRanks(userId: string): Promise<UserRanks> {
+  const notBanned = { user: { banned: false } };
+  const snapshot = (period: "WEEKLY" | "MONTHLY", periodKey: string) =>
+    prisma.githubStatsSnapshot.findUnique({
+      where: { userId_period_periodKey: { userId, period, periodKey } },
+      select: { commits: true },
+    });
+  const snapshotRank = async (period: "WEEKLY" | "MONTHLY", periodKey: string) =>
+    rankAmong((await snapshot(period, periodKey))?.commits, (commits) =>
+      prisma.githubStatsSnapshot.count({ where: { period, periodKey, commits: { gt: commits }, ...notBanned } }),
+    );
+
+  const [weekly, monthly, allTime] = await Promise.all([
+    snapshotRank("WEEKLY", getWeekKey()),
+    snapshotRank("MONTHLY", getMonthKey()),
+    prisma.githubStats
+      .findUnique({ where: { userId }, select: { commits: true } })
+      .then((stats) =>
+        rankAmong(stats?.commits, (commits) =>
+          prisma.githubStats.count({ where: { commits: { gt: commits }, ...notBanned } }),
+        ),
+      ),
+  ]);
+  return { weekly, monthly, allTime };
+}
