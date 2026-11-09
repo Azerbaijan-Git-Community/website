@@ -46,7 +46,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="font-outfit font-medium text-hi transition-colors hover:text-blue"
+              className="-mx-3 -my-2 rounded-md px-3 py-2 font-outfit font-medium text-hi transition-colors hover:text-blue"
             >
               {link.label}
             </Link>
