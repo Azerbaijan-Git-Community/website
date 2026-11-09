@@ -42,7 +42,7 @@ export function MobileMenu() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-20 right-0 z-50 flex h-[calc(100svh-80px)] w-64 flex-col border-l border-line bg-canvas transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-18 right-0 z-50 flex h-[calc(100svh-72px)] w-64 flex-col border-l border-line bg-canvas transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`}
       >
         <nav className="flex flex-col gap-1 p-4">
           {navigationLinks.map((link) => (

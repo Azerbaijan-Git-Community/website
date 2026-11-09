@@ -75,7 +75,7 @@ One word per heading may get `.text-gradient` ("Push the future of **Azerbaijan*
 ### Spacing and layout
 
 - **Container:** `mx-auto max-w-300 px-8` (1200px). Articles `max-w-200`, admin `max-w-4xl px-6`.
-- **Page top:** `pt-32 pb-24` (clears the fixed 80px navbar). Hero `pt-44 pb-32`.
+- **Page top:** `pt-32 pb-24` (clears the fixed 72px navbar). Hero `pt-44 pb-32`.
 - **Landing sections:** `py-24`; closing CTA `py-32`. Bands alternate between canvas and `bg-surface border-y border-line`.
 - **Section header:** `mb-12`–`mb-16`, centered.
 - **Grids:** cards `gap-6` (`gap-8` for 3 large cards), KPI tiles `gap-4`; columns `1 → sm:2 → lg:3`.
@@ -140,7 +140,7 @@ Sizes: large `px-8 py-4 text-lg` (landing CTAs), medium `h-11 px-6 text-sm` (err
 
 ### Pill badge (eyebrow)
 
-`inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo`, placed above a page or section heading ("Community Rankings", "Strategic Plan").
+`inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo`, placed above a landing section heading ("Strategic Plan", "Ecosystem Perks"). Not used on page headers, to save vertical space.
 
 ### Chips and status badges
 
@@ -166,7 +166,7 @@ Trigger: native button with `aria-haspopup="menu"`, `aria-expanded`, `aria-contr
 
 ### Navigation
 
-- Navbar: `fixed h-20 border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md`; links `font-outfit font-medium text-hi hover:text-blue`.
+- Navbar: `fixed h-18 border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md`; links `font-outfit font-medium`, full navbar height, `text-lo hover:text-hi`. The current page is `text-hi` with a 2px brand-gradient underline on the bottom border that slides between links (motion `layoutId`).
 - Sidebar/drawer items: `rounded-md px-3 py-1.5 text-sm`; active `bg-surface font-medium text-blue`, inactive `text-lo hover:text-hi`.
 - Text links: `text-blue hover:text-lime` in copy; `text-lo hover:text-blue` in footers/meta; `text-lo hover:text-hi` for icon links.
 
@@ -201,9 +201,6 @@ Input: `rounded-md border border-line bg-canvas px-3 py-2 font-mono text-sm text
 
 ```tsx
 <div className="mb-12 text-center">
-  <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
-    Community Rankings
-  </span>
   <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
     Monthly <span className="text-gradient">Leaderboard</span>
   </h1>

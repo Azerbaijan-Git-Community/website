@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
-import { navigationLinks } from "@/lib/constants";
 import { MobileMenu } from "./mobile-menu";
+import { NavLinks } from "./nav-links";
 import { SignInButton } from "./sign-in-button";
 import { UserAvatar } from "./user-avatar";
 
@@ -24,8 +24,8 @@ async function NavAuth() {
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 z-50 flex h-20 w-full items-center border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-300 items-center justify-between px-8">
+    <nav className="fixed top-0 left-0 z-50 flex h-18 w-full items-center border-b border-line bg-[rgba(13,17,23,0.8)] backdrop-blur-md">
+      <div className="mx-auto flex h-full w-full max-w-300 items-center justify-between px-8">
         {/* Logo */}
         <Link href="/" className="flex w-30 items-center">
           <Image
@@ -41,17 +41,7 @@ export function Navbar() {
         </Link>
 
         {/* Nav links — hidden on mobile */}
-        <div className="hidden gap-10 md:flex">
-          {navigationLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="-mx-3 -my-2 rounded-md px-3 py-2 font-outfit font-medium text-hi transition-colors hover:text-blue"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
+        <NavLinks />
 
         <div className="flex items-center gap-3">
           {/* Avatar-sized box: the wider sign-in button overflows it evenly, sharing the avatar's center */}

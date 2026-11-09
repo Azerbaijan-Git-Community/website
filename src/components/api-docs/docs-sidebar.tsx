@@ -3,7 +3,7 @@
 import { type MouseEvent, useEffect, useState } from "react";
 import { ALL_SECTION_IDS, DOC_NAV } from "./endpoints";
 
-const SCROLL_OFFSET = 100; // clears the fixed h-20 navbar plus breathing room.
+const SCROLL_OFFSET = 100; // clears the fixed h-18 navbar plus breathing room.
 
 export function DocsSidebar() {
   const [active, setActive] = useState(ALL_SECTION_IDS[0]);

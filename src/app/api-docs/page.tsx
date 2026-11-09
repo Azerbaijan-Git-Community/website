@@ -55,9 +55,6 @@ export default function ApiDocsPage() {
       <div className="mx-auto max-w-300 px-8">
         {/* Hero */}
         <header className="mb-12 text-center">
-          <span className="mb-4 inline-block rounded-full border border-line bg-[rgba(48,54,61,0.5)] px-3 py-1 text-sm font-medium text-lo">
-            Open Data API
-          </span>
           <h1 className="mb-4 font-outfit text-[clamp(2.5rem,5vw,4rem)] leading-tight font-bold">
             Build on our <span className="text-gradient">data</span>
           </h1>
