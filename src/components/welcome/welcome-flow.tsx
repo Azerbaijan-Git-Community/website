@@ -9,7 +9,6 @@ import { PiArrowRightBold, PiCheckBold } from "react-icons/pi";
 import { syncMyStats } from "@/app/welcome/actions";
 import { OmicronLogo } from "@/components/omicron-logo";
 import type { BoardRank, UserRanks } from "@/data/leaderboard/get";
-import { authClient } from "@/lib/auth-client";
 import { sizedGithubAvatar } from "@/lib/utils.client";
 import { ContinueToLeaderboard, PRIMARY_BUTTON, useGoToLeaderboard } from "./continue-to-leaderboard";
 
@@ -40,11 +39,12 @@ function Syncing({ image }: { image: string | null }) {
         <div aria-hidden className="absolute inset-0 animate-spin rounded-full border-2 border-line border-t-blue" />
         {image ? (
           <Image
-            src={sizedGithubAvatar(image, 128)}
+            src={sizedGithubAvatar(image, 112)}
             alt=""
             width={64}
             height={64}
             unoptimized
+            loading="eager"
             className="absolute inset-2 rounded-full"
           />
         ) : (
@@ -120,13 +120,13 @@ function OmicronConnected({ username }: { username: string }) {
         Posts from <span className="font-medium text-hi">@{username}</span> appear on the community blog.
       </p>
       <div className="mt-8 flex w-full flex-col gap-2">
+        <Link href="/account/blog" className={GHOST_BUTTON}>
+          Manage your posts
+        </Link>
         <ContinueToLeaderboard>
           Go to leaderboard
           <PiArrowRightBold className="size-4" />
         </ContinueToLeaderboard>
-        <Link href="/account/blog" className={GHOST_BUTTON}>
-          Manage your posts
-        </Link>
       </div>
     </div>
   );
@@ -153,9 +153,9 @@ function Omicron({ onSkip }: { onSkip: () => void }) {
   );
 }
 
-export function WelcomeFlow() {
+// `image` comes from the server so the avatar paints at once, from the same URL the navbar already loaded
+export function WelcomeFlow({ image = null }: { image?: string | null }) {
   const router = useRouter();
-  const session = authClient.useSession();
   const [step, setStep] = useState<Step>({ name: "syncing" });
   const [omicronUsername, setOmicronUsername] = useState<string | null>(null);
   const goToLeaderboard = useGoToLeaderboard();
@@ -180,8 +180,6 @@ export function WelcomeFlow() {
 
   const next = () => setStep({ name: "omicron" });
 
-  const user = session.data?.user;
-
   return (
     <MotionConfig reducedMotion="user">
       <section aria-live="polite" className="glass w-full max-w-md rounded-xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
@@ -193,7 +191,7 @@ export function WelcomeFlow() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: EASE }}
           >
-            {step.name === "syncing" && <Syncing image={user?.image ?? null} />}
+            {step.name === "syncing" && <Syncing image={image} />}
             {step.name === "ranks" && <Ranks ranks={step.ranks} onContinue={next} />}
             {step.name === "omicron" &&
               (omicronUsername ? (
