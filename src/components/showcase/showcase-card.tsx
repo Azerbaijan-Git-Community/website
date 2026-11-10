@@ -20,6 +20,11 @@ function formatCount(n: number): string {
   return `${Math.round(n / 100_000) / 10}M`;
 }
 
+/** PNG and WebP can be transparent, and logos drawn for light pages vanish on the dark card. */
+function mayBeTransparent(url: string | null): boolean {
+  return url !== null && /\.(png|webp)$/i.test(url.split(/[?#]/)[0]);
+}
+
 export function ShowcaseCard({ project, index }: { project: ShowcaseProject; index: number }) {
   const [owner, repoName] = project.repo.split("/");
   const ogFallback = `https://opengraph.githubassets.com/1/${project.repo}`;
@@ -46,7 +51,9 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
       className="glass flex flex-col overflow-hidden rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
     >
       {/* Banner */}
-      <div className="relative h-44 w-full overflow-hidden bg-overlay">
+      <div
+        className={`relative h-44 w-full overflow-hidden ${mayBeTransparent(project.banner) ? "bg-white" : "bg-overlay"}`}
+      >
         <ImageFallback
           src={project.banner ?? ogFallback}
           fallback={ogFallback}

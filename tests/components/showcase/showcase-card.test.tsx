@@ -50,6 +50,16 @@ describe("ShowcaseCard", () => {
     );
   });
 
+  test.each([
+    ["https://raw.githubusercontent.com/a/b/main/logo.png", "bg-white"],
+    ["https://example.com/banner.WEBP?v=2", "bg-white"],
+    ["https://example.com/banner.jpg", "bg-overlay"],
+    [null, "bg-overlay"],
+  ])("puts %s on a %s backdrop, so transparent logos stay visible", (banner, backdrop) => {
+    render(<ShowcaseCard project={project({ banner })} index={0} />);
+    expect(screen.getByRole("img", { name: "acme/rocket banner" }).closest("div")).toHaveClass(backdrop);
+  });
+
   test("loads the first three banners eagerly and the rest lazily", () => {
     render(<ShowcaseCard project={project({ repo: "a/top" })} index={2} />);
     render(<ShowcaseCard project={project({ repo: "a/below" })} index={3} />);
