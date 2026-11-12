@@ -15,5 +15,4 @@ allowBuilds:
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - "@better-auth/infra@0.4.27"
-  - "@electric-sql/pglite@0.5.15"
   - better-call@1.4.5
