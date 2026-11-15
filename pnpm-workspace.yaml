@@ -14,5 +14,4 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
-  - "@better-auth/infra@0.4.27"
   - better-call@1.4.5
