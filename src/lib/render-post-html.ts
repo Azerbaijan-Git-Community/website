@@ -126,7 +126,11 @@ export async function renderPostHtml(html: string): Promise<ReactNode> {
     .use(rehypeCodeTitles)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: "wrap" })
-    .use(rehypePrettyCode, { theme: "github-dark", keepBackground: false, defaultLang: { block: "plaintext" } });
+    .use(rehypePrettyCode, {
+      theme: "github-dark-default",
+      keepBackground: false,
+      defaultLang: { block: "plaintext" },
+    });
   const tree = await processor.run(processor.parse(html));
   return toJsxRuntime(tree, { Fragment, jsx, jsxs, components: mdxComponents });
 }

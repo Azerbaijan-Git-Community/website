@@ -113,9 +113,9 @@ function PodiumCard({ entry, config, className }: PodiumCardProps) {
         rel="noopener noreferrer"
         className="text-center"
       >
-        <h3 className={`mb-1 font-outfit font-bold text-hi ${config.isFirst ? "text-2xl" : "text-xl"}`}>
+        <h2 className={`mb-1 font-outfit font-bold text-hi ${config.isFirst ? "text-2xl" : "text-xl"}`}>
           {entry.user.githubUsername}
-        </h3>
+        </h2>
       </a>
       <div className={`mb-3 text-sm ${config.isFirst ? "text-gradient font-semibold" : "text-lo"}`}>{config.label}</div>
       <div

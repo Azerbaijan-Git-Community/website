@@ -47,8 +47,13 @@ export default function RootLayout({
         <Navbar />
         <main>{children}</main>
         <Footer />
-        <Analytics />
-        <SpeedInsights />
+        {/* Their scripts are served by Vercel only; elsewhere (CI, local) they 404. */}
+        {process.env.VERCEL && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

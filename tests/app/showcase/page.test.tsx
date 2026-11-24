@@ -12,7 +12,7 @@ describe("ShowcasePage", () => {
     await renderServer(<ShowcasePage />);
 
     expect(screen.getByText(/^2 projects built by Azerbaijan GitHub Community members\./)).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["newer", "older"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["newer", "older"]);
   });
 
   test("uses the singular for one project", async () => {

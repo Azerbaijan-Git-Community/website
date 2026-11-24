@@ -4,7 +4,7 @@ import { PiClock } from "react-icons/pi";
 import type { BlogPostItem } from "@/data/blog/get";
 import { formatDate, sizedGithubAvatar } from "@/lib/utils.client";
 
-export function BlogPostCard({ post }: { post: BlogPostItem }) {
+export function BlogPostCard({ post, index }: { post: BlogPostItem; index: number }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -21,12 +21,15 @@ export function BlogPostCard({ post }: { post: BlogPostItem }) {
           unoptimized
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"
+          // The first row is above the fold, and the first cover is the page's LCP.
+          loading={index < 3 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : undefined}
         />
       </div>
 
       {/* Body */}
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="line-clamp-2 font-outfit text-xl font-bold text-hi">{post.title}</h3>
+        <h2 className="line-clamp-2 font-outfit text-xl font-bold text-hi">{post.title}</h2>
         <p className="line-clamp-2 text-sm text-lo">{post.description}</p>
 
         {/* Footer */}

@@ -154,7 +154,7 @@ Glass panel, `p-5`–`p-8`. Content order: icon or image → title (`font-outfit
 
 ### Segmented control (period tabs)
 
-Container `glass inline-flex gap-1 rounded-lg p-1`; tab `rounded-md px-6 py-2 font-outfit font-semibold`. Active `bg-green text-white shadow-[0_0_15px_rgba(46,160,67,0.4)]`, inactive `text-lo hover:text-hi`. Small inline tabs (code terminal): active `bg-surface text-hi`.
+Container `glass inline-flex gap-1 rounded-lg p-1`; tab `rounded-md px-6 py-2 font-outfit font-semibold`. Active `bg-green text-black shadow-[0_0_15px_rgba(46,160,67,0.4)]`, inactive `text-lo hover:text-hi`. Small inline tabs (code terminal): active `bg-surface text-hi`.
 
 ### Stepper (month selector)
 

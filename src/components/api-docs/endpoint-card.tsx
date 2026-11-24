@@ -87,7 +87,7 @@ export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; bas
             type="button"
             onClick={run}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-md bg-green px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-lime disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-md bg-green px-2.5 py-1 text-xs font-semibold text-black transition-colors hover:bg-lime disabled:opacity-60"
           >
             {loading ? <PiCircleNotch className="animate-spin" /> : <PiPlay />}
             {loading ? "Running…" : "Try it"}
@@ -100,7 +100,7 @@ export function EndpointCard({ endpoint, baseUrl }: { endpoint: EndpointDoc; bas
           <div className="flex items-center gap-3 border-b border-line bg-[rgba(48,54,61,0.5)] px-4 py-2">
             <span
               className={`rounded-md px-2 py-0.5 font-mono text-xs font-bold ${
-                result.ok ? "bg-[rgba(63,185,80,0.15)] text-lime" : "bg-[rgba(248,81,73,0.15)] text-[#f85149]"
+                result.ok ? "bg-[rgba(63,185,80,0.15)] text-lime" : "bg-[rgba(248,81,73,0.15)] text-danger"
               }`}
             >
               {result.status || "ERR"}

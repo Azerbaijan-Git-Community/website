@@ -70,7 +70,7 @@ export function ShowcaseCard({ project, index }: { project: ShowcaseProject; ind
         {/* Repo name */}
         <div className="min-w-0">
           <span className="truncate text-sm text-dim">{owner} /</span>
-          <h3 className="truncate font-outfit text-xl font-bold text-hi">{repoName}</h3>
+          <h2 className="truncate font-outfit text-xl font-bold text-hi">{repoName}</h2>
         </div>
 
         <div className="flex flex-row items-center justify-between">

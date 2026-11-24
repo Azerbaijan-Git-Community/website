@@ -15,7 +15,7 @@ function entry(githubUsername: string, commits: number): LeaderboardEntry {
   };
 }
 
-const usernames = () => screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
+const usernames = () => screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
 
 describe("PodiumClient", () => {
   test("shows the latest month's top three with medals", () => {

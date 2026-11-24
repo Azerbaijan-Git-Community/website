@@ -69,7 +69,7 @@ describe("EndpointCard", () => {
 
     await user.click(screen.getByRole("button", { name: "Try it" }));
 
-    expect(await screen.findByText("429")).toHaveClass("text-[#f85149]");
+    expect(await screen.findByText("429")).toHaveClass("text-danger");
   });
 
   test("shows non-JSON bodies verbatim", async () => {

@@ -49,7 +49,7 @@ export default async function ShowcasePage() {
               href="https://github.com/Azerbaijan-Git-Community/showcase#readme"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue transition-colors hover:text-lime"
+              className="text-blue underline underline-offset-2 transition-colors hover:text-lime"
             >
               Submit your project
             </a>

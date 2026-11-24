@@ -69,7 +69,7 @@ export default function ApiDocsPage() {
           {highlights.map((h) => (
             <div key={h.title} className="glass rounded-xl p-5">
               <h.Icon className="mb-3 text-2xl text-blue" />
-              <h3 className="mb-1 font-outfit font-bold">{h.title}</h3>
+              <h2 className="mb-1 font-outfit font-bold">{h.title}</h2>
               <p className="text-sm text-lo">{h.body}</p>
             </div>
           ))}

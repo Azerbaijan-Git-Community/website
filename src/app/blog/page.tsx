@@ -43,9 +43,9 @@ async function BlogListing() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {blogPosts.map((post) => {
-            return <BlogPostCard key={post.id} post={post} />;
-          })}
+          {blogPosts.map((post, i) => (
+            <BlogPostCard key={post.id} post={post} index={i} />
+          ))}
         </div>
       )}
     </>
