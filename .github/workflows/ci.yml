@@ -109,14 +109,15 @@ jobs:
       - name: Build
         run: pnpm next build
 
+      # A tar keeps .next/node_modules' symlinks into the pnpm store; an artifact upload would copy them and break resolution.
+      - name: Pack build
+        run: tar -cf next-build.tar --exclude=.next/cache .next
+
       - name: Upload build
         uses: actions/upload-artifact@v7
         with:
           name: next-build
-          path: |
-            .next
-            !.next/cache
-          include-hidden-files: true
+          path: next-build.tar
           retention-days: 1
 
       - name: Start server
@@ -128,7 +129,7 @@ jobs:
       - name: Check pages render
         run: |
           bot="Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36 Chrome-Lighthouse"
-          for page in / /blog /blog/yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr /leaderboard /showcase /api-docs; do
+          for page in / /blog /blog/hello-world /leaderboard /showcase /api-docs; do
             curl -fsS -o /dev/null --max-time 30 --retry 30 --retry-connrefused --retry-delay 1 "http://localhost:3000$page"
             curl -fsS -o /dev/null --max-time 30 -A "$bot" "http://localhost:3000$page"
             echo "ok $page"
@@ -145,15 +146,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        page:
-          [
-            /,
-            /blog,
-            /blog/yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr,
-            /leaderboard,
-            /showcase,
-            /api-docs,
-          ]
+        page: [/, /blog, /blog/hello-world, /leaderboard, /showcase, /api-docs]
     permissions:
       contents: read
       pull-requests: write
@@ -194,7 +187,9 @@ jobs:
             uses: actions/download-artifact@v8
             with:
               name: next-build
-              path: .next
+
+      - name: Unpack build
+        run: tar -xf next-build.tar
 
       - name: Set up database
         run: pnpm prisma db push && pnpm prisma db execute --file prisma/seed.sql

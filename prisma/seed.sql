@@ -43,7 +43,7 @@ VALUES (
 )
 ON CONFLICT DO NOTHING;
 
--- A real post (from githubcommunity.az), so Lighthouse audits realistic content. Lighthouse audits /blog/yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr.
+-- A real post from githubcommunity.az, so Lighthouse audits realistic content (served at /blog/hello-world).
 INSERT INTO "user" ("id", "name", "email", "emailVerified", "githubUsername", "githubId", "image", "role", "updatedAt")
 VALUES ('nmDjDW2fGHH2xuGCeVNs0TACB4AdCvFl', 'Yusif Aliyev', 'seed-author@example.com', true, 'yusifaliyevpro', 114253515, 'https://avatars.githubusercontent.com/u/114253515?v=4', 'user', now())
 ON CONFLICT DO NOTHING;
@@ -51,7 +51,7 @@ ON CONFLICT DO NOTHING;
 INSERT INTO "blog_post" ("id", "slug", "title", "description", "tags", "coverImage", "userId", "contentHtml", "readingTime", "aiAssisted", "sourceOrigin", "sourcePostId", "sourceUrl", "sourceUpdatedAt", "createdAt", "updatedAt")
 VALUES (
   '01a1b646-e6f4-70d1-9fd2-68106fd5dfce',
-  'yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr',
+  'hello-world',
   'NextJS App Router Rendering Strategies: CSR, SSR, SSG, ISR & PPR',
   'In this post, I walk you through all the main rendering strategies in the Next.js App Router: CSR, SSR, SSG, ISR, and even the experimental PPR. We will look at when to use each one, with real examples and simple code you can try yourself. I will also share my experiences and best practices along the way.',
   '{"approuter","csr","nextjs","renderingstrategies","ssr"}',
