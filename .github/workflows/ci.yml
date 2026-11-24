@@ -9,10 +9,11 @@ on:
 
 env:
   LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  # Throwaway Postgres from the lhci job's service container; the Checks job uses in-memory PGlite.
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
   NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
   NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL: "https://kv.better-auth.com/projects/ci"
-  DIRECT_URL: "nice_try"
+  DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
   BETTER_AUTH_SECRET_V1: "abcdefghijklmnopqrstuvwxyz1234567890"
   BETTER_AUTH_SECRET_V2: "abcdefghijklmnopqrstuvwxyz1234567890"
   BETTER_AUTH_URL: "http://localhost:3000"
@@ -52,18 +53,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm prisma generate && pnpm next typegen
+      - parallel:
+          - name: Generate Prisma client
+            run: pnpm prisma generate
+          - name: Generate route types
+            run: pnpm next typegen
 
       - name: Checks
         run: pnpm check
 
-  lhci:
-    name: Lighthouse
+  build:
+    name: Build
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
 
     steps:
       - name: Checkout
@@ -83,8 +99,88 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - parallel:
+          - name: Set up database
+            run: pnpm prisma db push && pnpm prisma db execute --file prisma/seed.sql
+          - name: Generate Prisma client
+            run: pnpm prisma generate
+
+      # `pnpm build` minus prisma generate (done above) and the QStash sync (no token in CI).
       - name: Build
-        run: pnpm build
+        run: pnpm next build
+
+      - name: Upload build
+        uses: actions/upload-artifact@v7
+        with:
+          name: next-build
+          path: |
+            .next
+            !.next/cache
+          include-hidden-files: true
+          retention-days: 1
+
+      - name: Start server
+        id: server
+        background: true
+        run: pnpm start
+
+      - name: Check pages render
+        run: |
+          for page in / /blog /blog/hello-world /leaderboard /showcase /api-docs; do
+            curl -fsS -o /dev/null --retry 30 --retry-connrefused --retry-delay 1 "http://localhost:3000$page"
+            echo "ok $page"
+          done
+
+      - name: Stop server
+        cancel: server
+
+  lhci:
+    name: Lighthouse ${{ matrix.page }}
+    needs: build
+    runs-on: ubuntu-latest
+    # One runner per page: audits sharing a CPU would skew each other's performance scores.
+    strategy:
+      fail-fast: false
+      matrix:
+        page: [/, /blog, /blog/hello-world, /leaderboard, /showcase, /api-docs]
+    permissions:
+      contents: read
+      pull-requests: write
+
+    # No database: pages are prerendered at build, and anonymous requests don't query it.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 12.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - parallel:
+          - name: Install dependencies
+            run: pnpm install --frozen-lockfile
+          - name: Download build
+            uses: actions/download-artifact@v8
+            with:
+              name: next-build
+              path: .next
 
       - name: Run Lighthouse CI
-        run: pnpx @lhci/cli@0.15.x autorun
+        run: pnpx @lhci/cli@0.15.x autorun --collect.url="http://localhost:3000${{ matrix.page }}"
+
+  lighthouse:
+    name: Lighthouse
+    needs: lhci
+    if: always()
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check all pages passed
+        run: test "${{ needs.lhci.result }}" = success
