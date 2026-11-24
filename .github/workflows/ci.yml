@@ -124,10 +124,13 @@ jobs:
         background: true
         run: pnpm start
 
+      # Crawlers (Googlebot, Lighthouse…) get a blocking render instead of the prerendered shell, so check both.
       - name: Check pages render
         run: |
-          for page in / /blog /blog/hello-world /leaderboard /showcase /api-docs; do
-            curl -fsS -o /dev/null --retry 30 --retry-connrefused --retry-delay 1 "http://localhost:3000$page"
+          bot="Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36 Chrome-Lighthouse"
+          for page in / /blog /blog/yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr /leaderboard /showcase /api-docs; do
+            curl -fsS -o /dev/null --max-time 30 --retry 30 --retry-connrefused --retry-delay 1 "http://localhost:3000$page"
+            curl -fsS -o /dev/null --max-time 30 -A "$bot" "http://localhost:3000$page"
             echo "ok $page"
           done
 
@@ -142,7 +145,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        page: [/, /blog, /blog/hello-world, /leaderboard, /showcase, /api-docs]
+        page:
+          [
+            /,
+            /blog,
+            /blog/yusifaliyevpro-nextjs-app-router-rendering-strategies-csr-ssr-ssg-isr-ppr,
+            /leaderboard,
+            /showcase,
+            /api-docs,
+          ]
     permissions:
       contents: read
       pull-requests: write
