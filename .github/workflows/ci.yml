@@ -147,7 +147,20 @@ jobs:
       contents: read
       pull-requests: write
 
-    # No database: pages are prerendered at build, and anonymous requests don't query it.
+    # Partially prerendered pages (e.g. /blog/[slug]) still read the database when served.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -171,6 +184,9 @@ jobs:
             with:
               name: next-build
               path: .next
+
+      - name: Set up database
+        run: pnpm prisma db push && pnpm prisma db execute --file prisma/seed.sql
 
       - name: Run Lighthouse CI
         run: pnpx @lhci/cli@0.15.x autorun --collect.url="http://localhost:3000${{ matrix.page }}"
